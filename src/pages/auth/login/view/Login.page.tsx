@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { useLoginMutation } from "../../../../hooks/auth/use-auth";
 import { LoginForm } from "../components/Login.form";
 
@@ -9,6 +10,25 @@ export default function LoginPage() {
     mutate(values, {
       onSuccess: () => {
         navigate("/", { replace: true });
+      },
+      onError: (err: any) => {
+        const errorCode = err.errorCode;
+        console.log("E :", err);
+
+        if (errorCode === "InvalidCredentials") {
+          toast.error("Błąd logowania", {
+            description: "Nieprawidłowy login lub hasło",
+            position: "top-center",
+          });
+        } else if (errorCode === "AccountDisabled") {
+          toast.error("Konto zablokowane", {
+            description: "Skontaktuj się z administratorem",
+          });
+        } else {
+          toast.error("Błąd", {
+            description: "Coś poszło nie tak",
+          });
+        }
       },
     });
   };
