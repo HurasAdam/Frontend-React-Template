@@ -1,4 +1,4 @@
-import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
+import { Collapsible } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -6,6 +6,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Link } from "react-router-dom";
 
 export function NavMain({
   items,
@@ -33,12 +34,12 @@ export function NavMain({
             className="group/collapsible"
           >
             <SidebarMenuItem>
-              <SidebarMenuButton tooltip={item.title}>
-                {item.icon}
-                <span>{item.title}</span>
+              <SidebarMenuButton tooltip={item.title} asChild>
+                <Link to={item.url}>
+                  {item.icon}
+                  <span>{item.title}</span>
+                </Link>
               </SidebarMenuButton>
-
-              <CollapsibleContent></CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
         ))}

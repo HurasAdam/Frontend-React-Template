@@ -21,6 +21,7 @@ import {
   GalleryVerticalEndIcon,
   MapIcon,
   PieChartIcon,
+  Settings,
   Settings2Icon,
   TerminalIcon,
   TerminalSquareIcon,
@@ -53,7 +54,7 @@ const data = {
   navMain: [
     {
       title: "Start",
-      url: "#",
+      url: "dashboard",
       icon: <TerminalSquareIcon />,
     },
     {
@@ -68,7 +69,7 @@ const data = {
     },
     {
       title: "Settings",
-      url: "#",
+      url: "settings",
       icon: <Settings2Icon />,
     },
     {
@@ -108,8 +109,8 @@ const data = {
     },
     {
       title: "Settings",
-      url: "#",
-      icon: <Settings2Icon />,
+      url: "/settings",
+      icon: <Settings />,
     },
   ],
   projects: [
