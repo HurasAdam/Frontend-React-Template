@@ -15,16 +15,22 @@ import {
 } from "@/components/ui/sidebar";
 import {
   AudioLinesIcon,
-  BookOpenIcon,
-  BotIcon,
-  FrameIcon,
-  GalleryVerticalEndIcon,
+  BookOpen,
+  BookSearch,
+  ChartNoAxesCombined,
+  Heart,
+  House,
+  Link,
   MapIcon,
+  Network,
+  NotebookTabs,
+  NotepadText,
+  Origami,
   PieChartIcon,
+  School,
   Settings,
-  Settings2Icon,
+  Smile,
   TerminalIcon,
-  TerminalSquareIcon,
 } from "lucide-react";
 
 // This is sample data.
@@ -36,9 +42,9 @@ const data = {
   },
   teams: [
     {
-      name: "Acme Inc",
-      logo: <GalleryVerticalEndIcon />,
-      plan: "Enterprise",
+      name: "Baza wiedzy",
+      logo: <Origami />,
+      plan: "Librus",
     },
     {
       name: "Acme Corp.",
@@ -55,57 +61,57 @@ const data = {
     {
       title: "Start",
       url: "dashboard",
-      icon: <TerminalSquareIcon />,
+      icon: <House />,
     },
     {
       title: "Baza artykułów",
       url: "#",
-      icon: <BotIcon />,
+      icon: <BookSearch />,
     },
     {
-      title: "Documentation",
+      title: "Przydate linki",
       url: "#",
-      icon: <BookOpenIcon />,
+      icon: <Link />,
     },
     {
-      title: "Settings",
+      title: "Rejestr tematów",
       url: "settings",
-      icon: <Settings2Icon />,
+      icon: <NotepadText />,
     },
     {
-      title: "Start",
+      title: "FAQ",
       url: "#",
-      icon: <TerminalSquareIcon />,
+      icon: <BookOpen />,
     },
     {
-      title: "Baza artykułów",
+      title: "Statystyki",
       url: "#",
-      icon: <BotIcon />,
+      icon: <ChartNoAxesCombined />,
     },
     {
-      title: "Documentation",
+      title: "Narzędzia sieciowe",
       url: "#",
-      icon: <BookOpenIcon />,
+      icon: <Network />,
     },
     {
-      title: "Settings",
+      title: "Szkoły projektowe",
       url: "#",
-      icon: <Settings2Icon />,
+      icon: <School />,
     },
     {
-      title: "Start",
+      title: "Działy i kontakty",
       url: "#",
-      icon: <TerminalSquareIcon />,
+      icon: <NotebookTabs />,
     },
     {
-      title: "Baza artykułów",
+      title: "Zabawne wiad.",
       url: "#",
-      icon: <BotIcon />,
+      icon: <Smile />,
     },
     {
-      title: "Documentation",
+      title: "Oczekujące weryfikacji",
       url: "#",
-      icon: <BookOpenIcon />,
+      icon: <PieChartIcon />,
     },
     {
       title: "Settings",
@@ -117,7 +123,7 @@ const data = {
     {
       name: "Ulubione artykuły",
       url: "#",
-      icon: <FrameIcon />,
+      icon: <Heart />,
     },
     {
       name: "Kolekcje",
