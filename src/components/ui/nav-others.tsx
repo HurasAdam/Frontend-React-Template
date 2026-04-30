@@ -8,11 +8,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Link } from "react-router-dom";
 
-export function NavProjects({
-  projects,
+export function NavOthers({
+  others,
 }: {
-  projects: {
+  others: {
     name: string;
     url: string;
     icon: React.ReactNode;
@@ -24,13 +25,13 @@ export function NavProjects({
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Moje</SidebarGroupLabel>
       <SidebarMenu>
-        {projects.map((item) => (
+        {others.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
-              <a href={item.url}>
+              <Link to={item.url}>
                 {item.icon}
                 <span>{item.name}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}

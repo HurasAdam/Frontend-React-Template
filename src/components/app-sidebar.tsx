@@ -18,11 +18,15 @@ import {
   BookOpen,
   BookSearch,
   ChartNoAxesCombined,
+  CircleQuestionMark,
   Heart,
   House,
+  LandPlot,
+  Layers2,
   Link,
-  MapIcon,
+  MailQuestionMark,
   Network,
+  Newspaper,
   NotebookTabs,
   NotepadText,
   Origami,
@@ -32,6 +36,7 @@ import {
   Smile,
   TerminalIcon,
 } from "lucide-react";
+import { NavOthers } from "./ui/nav-others";
 
 // This is sample data.
 const data = {
@@ -65,12 +70,12 @@ const data = {
     },
     {
       title: "Baza artykułów",
-      url: "#",
+      url: "articles",
       icon: <BookSearch />,
     },
     {
       title: "Przydate linki",
-      url: "#",
+      url: "important-links",
       icon: <Link />,
     },
     {
@@ -113,11 +118,6 @@ const data = {
       url: "#",
       icon: <PieChartIcon />,
     },
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: <Settings />,
-    },
   ],
   projects: [
     {
@@ -128,12 +128,35 @@ const data = {
     {
       name: "Kolekcje",
       url: "#",
-      icon: <PieChartIcon />,
+      icon: <Layers2 />,
     },
     {
       name: "Wpisy",
       url: "#",
-      icon: <MapIcon />,
+      icon: <Newspaper />,
+    },
+    {
+      name: "Etykiety",
+      url: "#",
+      icon: <LandPlot />,
+    },
+  ],
+
+  others: [
+    {
+      name: "Ustawienia",
+      url: "settings",
+      icon: <Settings />,
+    },
+    {
+      name: "Zgłoszenia i sugestie",
+      url: "#",
+      icon: <MailQuestionMark />,
+    },
+    {
+      name: "Lista zmian",
+      url: "#",
+      icon: <CircleQuestionMark />,
     },
   ],
 };
@@ -147,6 +170,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
+        <NavOthers others={data.others} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
