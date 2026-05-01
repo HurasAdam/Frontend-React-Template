@@ -16,7 +16,7 @@ export const SettingsPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto w-full max-w-[900px] px-6 py-12">
+      <div className="mx-auto w-full max-w-[900px] ">
         <h1 className="text-2xl flex items-center gap-2 font-semibold mb-10">
           <SettingsIcon
             size={24}
