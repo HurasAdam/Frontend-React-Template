@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Origami } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { IMAGES } from "../../../../constants/images";
+import { IMAGES } from "../../../../../constants/images";
 
 interface Props {
   onSubmit: (values: unknown) => void;

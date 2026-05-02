@@ -1,7 +1,7 @@
-import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
-import { NavUser } from "@/components/nav-user";
-import { TeamSwitcher } from "@/components/team-switcher";
+import { NavMain } from "@/components/sidebar/base-sidebar/nav-main";
+import { NavProjects } from "@/components/sidebar/base-sidebar/nav-projects";
+import { NavUser } from "@/components/sidebar/base-sidebar/nav-user";
+import { TeamSwitcher } from "@/components/sidebar/base-sidebar/team-switcher";
 import { NavOthers } from "@/components/ui/nav-others";
 import * as React from "react";
 
@@ -34,6 +34,7 @@ import {
   NotepadText,
   Origami,
   PieChartIcon,
+  Plus,
   School,
   Settings,
   Smile,
@@ -47,23 +48,21 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
+
   teams: [
-    {
-      name: "Baza wiedzy",
-      logo: <Origami />,
-      plan: "Librus",
-    },
-    {
-      name: "Acme Corp.",
-      logo: <AudioLinesIcon />,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: <TerminalIcon />,
-      plan: "Free",
-    },
+    { name: "Baza wiedzy", logo: <Origami />, plan: "Librus" },
+    { name: "Acme Corp.", logo: <AudioLinesIcon />, plan: "Startup" },
+    { name: "Evil Corp.", logo: <TerminalIcon />, plan: "Free" },
   ],
+
+  actions: [
+    { title: "Nowy artykuł", url: "/articles/new", icon: <Plus /> },
+    { title: "Nowa kategoria", url: "/categories/new", icon: <Layers2 /> },
+    { title: "Dodaj link", url: "/links/new", icon: <Link /> },
+    { title: "Import danych", url: "/import", icon: <Network /> },
+    { title: "Zgłoszenie", url: "/feedback/new", icon: <MailQuestionMark /> },
+  ],
+
   navMain: [
     { title: "Start", url: "/dashboard", icon: <House /> },
     { title: "Baza artykułów", url: "/articles", icon: <BookSearch /> },
@@ -77,12 +76,14 @@ const data = {
     { title: "Zabawne wiad.", url: "/fun", icon: <Smile /> },
     { title: "Oczekujące", url: "/pending", icon: <PieChartIcon /> },
   ],
+
   projects: [
     { name: "Ulubione artykuły", url: "#", icon: <Heart /> },
     { name: "Kolekcje", url: "#", icon: <Layers2 /> },
     { name: "Wpisy", url: "#", icon: <Newspaper /> },
     { name: "Etykiety", url: "#", icon: <LandPlot /> },
   ],
+
   others: [
     { name: "Ustawienia", url: "/settings", icon: <Settings /> },
     { name: "Zgłoszenia", url: "/feedback", icon: <MailQuestionMark /> },
@@ -94,49 +95,42 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible="icon"
-      className="overflow-hidden border-r bg-sidebar/80 backdrop-blur *:data-[sidebar=sidebar]:flex-row"
+      className="overflow-hidden border-r bg-sidebar/80 backdrop-blur"
       {...props}
     >
-      {/*  LEWY SIDEBAR (IKONY) */}
-      <Sidebar
-        collapsible="none"
-        className="w-[calc(var(--sidebar-width-icon)+1px)]! border-r"
-      >
-        <SidebarHeader />
-
-        <SidebarContent className="py-2">
-          <SidebarMenu className="gap-1">
-            {data.navMain.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton
-                  asChild
-                  tooltip={{ children: item.title }}
-                  className="h-9 w-9 rounded-xl mx-auto hover:bg-sidebar-accent/70 transition"
-                >
-                  <a href={item.url}>{item.icon}</a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarContent>
-
-        <SidebarFooter>
-          <NavUser user={data.user} />
-        </SidebarFooter>
-      </Sidebar>
-
-      {/*  PRAWY SIDEBAR */}
+      {/* SIDEBAR CONTENT */}
       <Sidebar collapsible="none" className="flex-1">
+        {/* HEADER */}
         <SidebarHeader className="px-4 py-3">
           <TeamSwitcher teams={data.teams} />
         </SidebarHeader>
 
-        <SidebarContent className="px-2 py-3 space-y-5">
+        {/* CONTENT */}
+        <SidebarContent className="px-2 py-3 space-y-6">
+          {/* QUICK ACTIONS */}
+          <div className="space-y-1">
+            <p className="px-3 text-xs text-muted-foreground">Szybkie akcje</p>
+
+            <SidebarMenu>
+              {data.actions.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild className="h-9">
+                    <a href={item.url} className="flex items-center gap-2">
+                      {item.icon}
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </div>
+
           <NavMain items={data.navMain} />
           <NavProjects projects={data.projects} />
           <NavOthers others={data.others} />
         </SidebarContent>
 
+        {/* FOOTER */}
         <SidebarFooter className="p-2 border-t">
           <NavUser user={data.user} />
         </SidebarFooter>

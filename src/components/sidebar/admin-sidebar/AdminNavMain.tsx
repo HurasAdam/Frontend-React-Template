@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
 
-export function NavMain({
+export function AdminNavMain({
   items,
 }: {
   items: {
@@ -24,7 +24,7 @@ export function NavMain({
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>Główne</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible

@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { AppSidebar } from "../components/sidebar/base-sidebar/app-sidebar";
+import { AdminSidebar } from "../components/sidebar/admin-sidebar/AdminSidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,7 +15,7 @@ import {
   SidebarTrigger,
 } from "../components/ui/sidebar";
 
-export const BaseLayout = () => {
+export const AdminLayout = () => {
   return (
     <div className="w-full h-screen">
       <SidebarProvider
@@ -25,7 +25,7 @@ export const BaseLayout = () => {
           } as React.CSSProperties
         }
       >
-        <AppSidebar />
+        <AdminSidebar />
         <SidebarInset>
           <header className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b bg-background px-6">
             <SidebarTrigger className="-ml-1" />

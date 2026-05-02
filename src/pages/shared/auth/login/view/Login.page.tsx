@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useLoginMutation } from "../../../../hooks/auth/use-auth";
+
+import { useLoginMutation } from "../../../../../hooks/auth/use-auth";
 import { LoginForm } from "../components/Login.form";
 
 export default function LoginPage() {
@@ -8,8 +9,14 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const handleLogin = (values: unknown) => {
     mutate(values, {
-      onSuccess: () => {
-        navigate("/", { replace: true });
+      onSuccess: (data: any) => {
+        const user = data; // albo skąd to bierzesz
+
+        if (user.role === "ADMIN") {
+          navigate("/admin/dashboard", { replace: true });
+        } else {
+          navigate("/dashboard", { replace: true });
+        }
       },
       onError: (err: any) => {
         const errorCode = err.errorCode;

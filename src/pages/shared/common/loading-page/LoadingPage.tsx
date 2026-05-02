@@ -1,5 +1,5 @@
 import { LuLoader } from "react-icons/lu";
-import { ModeToggle } from "../../../components/theme/ModeToggle";
+import { ModeToggle } from "../../../../components/theme/ModeToggle";
 
 export const LoadingPage = () => {
   return (

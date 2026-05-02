@@ -43,8 +43,8 @@ API.interceptors.response.use(
 
       try {
         // Spróbuj odświeżyć access token za pomocą refresh tokena
-        await TokenRefreshClient.get("/auth/refresh");
-
+        await TokenRefreshClient.get("/api/auth/refresh");
+        console.log("ODSWIEŻAM TOKEN");
         // Powtórz oryginalne żądanie z nowym tokenem
         return API(config);
       } catch (refreshError) {

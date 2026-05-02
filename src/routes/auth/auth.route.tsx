@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthQuery } from "../../hooks/auth/use-auth";
-import { LoadingPage } from "../../pages/common/loading-page/LoadingPage";
+import { LoadingPage } from "../../pages/shared/common/loading-page/LoadingPage";
 
 export const AuthRoute = () => {
   const { data: authData, isLoading } = useAuthQuery();
@@ -8,7 +8,7 @@ export const AuthRoute = () => {
   if (isLoading) return <LoadingPage />;
 
   if (authData) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;
