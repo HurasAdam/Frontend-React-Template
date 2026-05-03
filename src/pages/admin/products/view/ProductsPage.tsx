@@ -1,5 +1,6 @@
 import { Layers, Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useFindProductsQuery } from "../../../../hooks/products/use-products";
 
 type Product = {
   id: string;
@@ -22,7 +23,12 @@ const MOCK_PRODUCTS: Product[] = [
   { id: "10", name: "Monitoring", color: "#64748b", articlesCount: 11 },
 ];
 
-export const ProductsPage = () => {
+type Props = {
+  openAdd: () => void;
+};
+
+export const ProductsPage = ({ openAdd }: Props) => {
+  const { data } = useFindProductsQuery();
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
@@ -42,7 +48,10 @@ export const ProductsPage = () => {
           </p>
         </div>
 
-        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90">
+        <button
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
+          onClick={openAdd}
+        >
           <Plus size={16} />
           Dodaj produkt
         </button>
