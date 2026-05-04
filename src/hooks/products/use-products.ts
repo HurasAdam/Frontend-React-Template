@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { CreateProductPayload } from "../../features/products/validation/product.schema";
-import { productService } from "../../services/product.service";
+import { productService } from "../../services/product/product.service";
+import type { IFindProductsResponse } from "../../services/product/product.types";
 
 export const useCreateProductMutation = () => {
   return useMutation({
@@ -11,7 +12,7 @@ export const useCreateProductMutation = () => {
 };
 
 export const useFindProductsQuery = () => {
-  return useQuery({
+  return useQuery<IFindProductsResponse>({
     queryKey: ["products"],
     queryFn: () => {
       return productService.find();

@@ -18,18 +18,21 @@ import {
 } from "../validation/product.schema";
 
 export const colorOptions = [
-  "#C94C4C", // ciepła, zgaszona czerwień
-  "#2EA9A1", // stonowany teal
-  "#3EA549", // średnia zieleń
-  "#D9A32A", // złoto / musztardowy
-  "#E07A2E", // ciepły pomarańcz
-  "#274872", // głęboki granat
-  "#4B6CB7", // umiarkowany niebieski
-  "#7D5BA6", // stonowany fiolet
-  "#6B8E23", // oliwkowa zieleń
-  "#6B7280", // neutralny slate / szary
-  "#E27D7D", // pastelowy koral
-  "#2BB3C0", // jasny cyan / morski
+  "#6366F1", // indigo
+  "#22C55E", // green
+  "#F97316", // orange
+  "#EF4444", // red
+  "#EAB308", // yellow
+  "#06B6D4", // cyan
+  "#A855F7", // purple
+  "#14B8A6", // teal
+  "#EC4899", // pink
+  "#84CC16", // lime
+  "#3B82F6", // blue
+  "#F43F5E", // rose
+  "#10B981", // emerald
+  "#F59E0B", // amber
+  "#8B5CF6", // violet
 ];
 
 interface ProductFormProps {
