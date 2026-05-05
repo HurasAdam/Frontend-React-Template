@@ -1,5 +1,5 @@
 import { Layers, Plus, Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useFindProductsQuery } from "../../../../hooks/products/use-products";
 import type { IProduct } from "../../../../services/product/product.types";
 
@@ -8,14 +8,9 @@ type Props = {
 };
 
 export const ProductsPage = ({ openAdd }: Props) => {
-  const { data = [] } = useFindProductsQuery();
   const [search, setSearch] = useState("");
 
-  const filtered = useMemo(() => {
-    return data.filter((p) =>
-      p.name.toLowerCase().includes(search.toLowerCase()),
-    );
-  }, [data, search]);
+  const { data = [] } = useFindProductsQuery({ name: search });
 
   return (
     <div className="w-full space-y-6">
@@ -55,7 +50,7 @@ export const ProductsPage = ({ openAdd }: Props) => {
 
       {/* LIST */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {filtered.map((product: IProduct) => (
+        {data.map((product: IProduct) => (
           <div
             key={product.id}
             className="rounded-2xl border bg-card p-5 hover:shadow-md transition"
@@ -94,7 +89,7 @@ export const ProductsPage = ({ openAdd }: Props) => {
           </div>
         ))}
 
-        {filtered.length === 0 && (
+        {data.length === 0 && (
           <div className="col-span-full text-center text-sm text-muted-foreground py-10">
             Brak produktów
           </div>

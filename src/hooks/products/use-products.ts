@@ -11,11 +11,11 @@ export const useCreateProductMutation = () => {
   });
 };
 
-export const useFindProductsQuery = () => {
+export const useFindProductsQuery = (filters: { name?: string }) => {
   return useQuery<IFindProductsResponse>({
-    queryKey: ["products"],
+    queryKey: ["products", filters.name],
     queryFn: () => {
-      return productService.find();
+      return productService.find(filters);
     },
   });
 };

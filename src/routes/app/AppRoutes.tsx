@@ -7,6 +7,7 @@ import { SettingsPage } from "../../pages/app/settings/view/SettingsPage";
 import { AdminLayout } from "../../layouts/AdminLayout";
 import { AdminsPage } from "../../pages/admin/admins/view/AdminsPage";
 import { AdminDashboardPage } from "../../pages/admin/dashboard/view/AdminDashboardPage";
+import { ProductLayout } from "../../pages/admin/product/view/ProductLayout";
 import { ProductsLayout } from "../../pages/admin/products/view/ProductsLayout";
 import { UsersPage } from "../../pages/admin/users/views/UsersPage";
 import { ArticlesLayout } from "../../pages/app/articles/view/ArticlesLayout";
@@ -43,6 +44,7 @@ export const AppRoutes = () => {
               <Route path="/admin/users" element={<UsersPage />} />
               <Route path="/admin/admins" element={<AdminsPage />} />
               <Route path="/admin/products" element={<ProductsLayout />} />
+              <Route path="/admin/products/:id" element={<ProductLayout />} />
             </Route>
           </Route>
         </Route>

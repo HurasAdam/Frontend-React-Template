@@ -8,10 +8,11 @@ const create = (data: CreateProductPayload): Promise<void> => {
   return API.post(BASE_URL, data);
 };
 
-const find = (): Promise<IFindProductsResponse> => {
-  return API.get(BASE_URL);
+const find = (filters: { name?: string }): Promise<IFindProductsResponse> => {
+  return API.get(BASE_URL, {
+    params: filters.name ? { name: filters.name } : {},
+  });
 };
-
 export const productService = {
   create,
   find,
