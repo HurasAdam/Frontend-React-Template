@@ -37,6 +37,7 @@ import {
   Settings,
   ShieldCog,
   Smile,
+  Tags,
   TerminalIcon,
   Users,
 } from "lucide-react";
@@ -70,6 +71,7 @@ const data = {
     { title: "Administratorzy", url: "admin/admins", icon: <ShieldCog /> },
     { title: "Role i uprawnienia", url: "admin/roles", icon: <CogIcon /> },
     { title: "Produkty", url: "admin/products", icon: <Box /> },
+    { title: "Tagi", url: "admin/tags", icon: <Tags /> },
     { title: "Rejestr tematów", url: "/topics", icon: <NotepadText /> },
     { title: "FAQ", url: "/faq", icon: <BookOpen /> },
     { title: "Statystyki", url: "/stats", icon: <ChartNoAxesCombined /> },

@@ -19,3 +19,11 @@ export const useFindProductsQuery = (filters: { name?: string }) => {
     },
   });
 };
+
+export const useFindOneProductQuery = (id?: string) => {
+  return useQuery({
+    queryKey: ["product", id],
+    queryFn: () => productService.findOne(id as string),
+    enabled: !!id,
+  });
+};

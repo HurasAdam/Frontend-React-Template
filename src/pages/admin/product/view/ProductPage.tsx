@@ -6,6 +6,8 @@ import {
   Palette,
   Tag,
 } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { useFindOneProductQuery } from "../../../../hooks/products/use-products";
 
 type Category = {
   id: string;
@@ -48,6 +50,9 @@ type Props = {
 };
 
 export const ProductPage = ({ onBack }: Props) => {
+  const { id } = useParams();
+  const { data: productData } = useFindOneProductQuery(id);
+
   const product = MOCK_PRODUCT;
 
   return (

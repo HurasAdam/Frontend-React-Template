@@ -13,7 +13,13 @@ const find = (filters: { name?: string }): Promise<IFindProductsResponse> => {
     params: filters.name ? { name: filters.name } : {},
   });
 };
+
+const findOne = (id: string) => {
+  return API.get(`${BASE_URL}/${id}`);
+};
+
 export const productService = {
   create,
   find,
+  findOne,
 };

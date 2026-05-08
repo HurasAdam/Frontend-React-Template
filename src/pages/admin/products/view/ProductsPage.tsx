@@ -1,5 +1,6 @@
 import { Layers, Plus, Search } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useFindProductsQuery } from "../../../../hooks/products/use-products";
 import type { IProduct } from "../../../../services/product/product.types";
 
@@ -51,42 +52,41 @@ export const ProductsPage = ({ openAdd }: Props) => {
       {/* LIST */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {data.map((product: IProduct) => (
-          <div
-            key={product.id}
-            className="rounded-2xl border bg-card p-5 hover:shadow-md transition"
-          >
-            <div className="flex items-center justify-between">
-              {/* NAME */}
-              <div className="flex items-center gap-3">
-                {/* COLOR DOT */}
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: product.labelColor }}
-                />
+          <Link key={product.id} to={`/admin/products/${product.id}`}>
+            <div className="rounded-2xl border bg-card p-5 hover:shadow-md transition">
+              <div className="flex items-center justify-between">
+                {/* NAME */}
+                <div className="flex items-center gap-3">
+                  {/* COLOR DOT */}
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: product.labelColor }}
+                  />
 
-                <p className="text-sm font-semibold">{product.name}</p>
+                  <p className="text-sm font-semibold">{product.name}</p>
+                </div>
+
+                {/* COUNT */}
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <Layers size={14} />
+                  99+
+                </div>
               </div>
 
-              {/* COUNT */}
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Layers size={14} />
-                99+
+              {/* BADGE */}
+              <div className="mt-4">
+                <span
+                  className="text-xs px-2 py-1 rounded-md"
+                  style={{
+                    backgroundColor: `${product.labelColor}20`,
+                    color: product.labelColor,
+                  }}
+                >
+                  {product.name}
+                </span>
               </div>
             </div>
-
-            {/* BADGE */}
-            <div className="mt-4">
-              <span
-                className="text-xs px-2 py-1 rounded-md"
-                style={{
-                  backgroundColor: `${product.labelColor}20`,
-                  color: product.labelColor,
-                }}
-              >
-                {product.name}
-              </span>
-            </div>
-          </div>
+          </Link>
         ))}
 
         {data.length === 0 && (

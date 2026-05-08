@@ -11,6 +11,7 @@ import { ProductLayout } from "../../pages/admin/product/view/ProductLayout";
 import { ProductsLayout } from "../../pages/admin/products/view/ProductsLayout";
 import { AddRoleLayout } from "../../pages/admin/role/view/AddRoleLayout";
 import { RolesLayout } from "../../pages/admin/roles/view/RolesLayout";
+import { TagsLayout } from "../../pages/admin/tags/view/TagsLayout";
 import { AddUserLayout } from "../../pages/admin/user/view/AddUserLayout";
 import { UsersLayout } from "../../pages/admin/users/views/UsersLayout";
 import { ArticlesLayout } from "../../pages/app/articles/view/ArticlesLayout";
@@ -51,6 +52,7 @@ export const AppRoutes = () => {
               <Route path="/admin/roles/new" element={<AddRoleLayout />} />
               <Route path="/admin/products" element={<ProductsLayout />} />
               <Route path="/admin/products/:id" element={<ProductLayout />} />
+              <Route path="/admin/tags" element={<TagsLayout />} />
             </Route>
           </Route>
         </Route>
