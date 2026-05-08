@@ -106,7 +106,7 @@ const MOCK_USERS: AppUser[] = [
 const ROLES = ["Wszystkie", "ADMIN", "USER"];
 const STATUS = ["Wszystkie", "Aktywne", "Wyłączone"];
 
-export const UsersPage = () => {
+export const UsersPage = ({ openAdd }) => {
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("Wszystkie");
   const [status, setStatus] = useState("Wszystkie");
@@ -137,7 +137,10 @@ export const UsersPage = () => {
           </p>
         </div>
 
-        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90">
+        <button
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
+          onClick={openAdd}
+        >
           <Plus size={16} />
           Dodaj użytkownika
         </button>

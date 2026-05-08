@@ -21,6 +21,7 @@ import {
   ChartNoAxesCombined,
   CircleQuestionMark,
   Cog,
+  CogIcon,
   Heart,
   LandPlot,
   Layers2,
@@ -67,6 +68,7 @@ const data = {
   navMain: [
     { title: "Użytkownicy", url: "admin/users", icon: <Users /> },
     { title: "Administratorzy", url: "admin/admins", icon: <ShieldCog /> },
+    { title: "Role i uprawnienia", url: "admin/roles", icon: <CogIcon /> },
     { title: "Produkty", url: "admin/products", icon: <Box /> },
     { title: "Rejestr tematów", url: "/topics", icon: <NotepadText /> },
     { title: "FAQ", url: "/faq", icon: <BookOpen /> },
