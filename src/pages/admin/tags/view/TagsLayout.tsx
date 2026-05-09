@@ -1,5 +1,6 @@
 import { PageContainer } from "../../../../components/shared/PageContainer";
 import { AddTagModal } from "../../../../features/tags/components/AddTagModal";
+import { TagInfoModal } from "../../../../features/tags/components/TagInfoModal";
 import { useTagModal } from "../../../../features/tags/hooks/useTagModal";
 import { TagsPage } from "./TagsPage";
 
@@ -7,8 +8,13 @@ export const TagsLayout = () => {
   const modal = useTagModal();
   return (
     <PageContainer variant="full">
-      <TagsPage openAdd={modal.openAdd} />
-      <AddTagModal isOpen={modal.isOpen} onClose={modal.close} />
+      <TagsPage openAdd={modal.openAdd} openInfo={modal.openInfo} />
+      <AddTagModal isOpen={modal.isCreate} onClose={modal.close} />
+      <TagInfoModal
+        isOpen={modal.isInfo}
+        onClose={modal.close}
+        tag={modal.tag}
+      />
     </PageContainer>
   );
 };
