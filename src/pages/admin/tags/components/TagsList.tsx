@@ -4,14 +4,21 @@ import { TagItem } from "./TagItem";
 export const TagsGrid = ({
   tags,
   openInfo,
+  openEdit,
 }: {
   tags: ITag[];
   openInfo: (tag: ITag) => void;
+  openEdit: (id: string) => void;
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       {tags.map((tag) => (
-        <TagItem key={tag.id} tag={tag} openInfo={openInfo} />
+        <TagItem
+          key={tag.id}
+          tag={tag}
+          openInfo={openInfo}
+          openEdit={openEdit}
+        />
       ))}
 
       {tags.length === 0 && (

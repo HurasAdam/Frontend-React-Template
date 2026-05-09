@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -11,12 +10,11 @@ import {
   FormLabel,
   FormMessage,
 } from "../../../components/ui/form";
-import { type CreateProductPayload } from "../../products/validation/product.schema";
 import { tagSchema, type CreateTagPayload } from "../validation/tag.schema";
 
 interface TagFormProps {
   defaultValues: CreateTagPayload;
-  onSubmit: (data: CreateProductPayload) => void;
+  onSubmit: (data: CreateTagPayload) => void;
   submitText?: string;
   isSubmitting?: boolean;
 }
@@ -40,7 +38,6 @@ export const TagForm = ({
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-6.5 py-4 "
       >
-        {/* Nazwa produktu */}
         <FormField
           control={form.control}
           name="name"

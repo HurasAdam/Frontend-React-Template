@@ -7,10 +7,11 @@ import { TagsGrid } from "../components/TagsList";
 
 interface Props {
   openAdd: () => void;
+  openEdit: (id: string) => void;
   openInfo: (tag: ITag) => void;
 }
 
-export const TagsPage = ({ openAdd, openInfo }: Props) => {
+export const TagsPage = ({ openAdd, openEdit, openInfo }: Props) => {
   const [search, setSearch] = useState("");
   const { data: tags = [] } = useFindTagsQuery({ name: search });
 
@@ -20,7 +21,7 @@ export const TagsPage = ({ openAdd, openInfo }: Props) => {
 
       <TagsFilterSection value={search} onChange={setSearch} />
 
-      <TagsGrid tags={tags} openInfo={openInfo} />
+      <TagsGrid tags={tags} openInfo={openInfo} openEdit={openEdit} />
     </div>
   );
 };

@@ -13,7 +13,17 @@ const find = (filters: { name: string }): Promise<ITag[]> => {
     params: filters.name ? { name: filters.name } : {},
   });
 };
+
+const updateOne = (id: string, data: unknown) => {
+  return API.patch(`${BASE_URL}/${id}`, data);
+};
+
+const findOne = (id: string): Promise<ITag> => {
+  return API.get(`${BASE_URL}/${id}`);
+};
 export const tagService = {
   create,
   find,
+  findOne,
+  updateOne,
 };

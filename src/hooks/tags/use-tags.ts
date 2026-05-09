@@ -18,3 +18,19 @@ export const useFindTagsQuery = (params: { name: string }) => {
     },
   });
 };
+
+export const useFindOneTagQuery = (id?: string | null) => {
+  return useQuery({
+    queryKey: ["tag", id],
+    queryFn: () => tagService.findOne(id as string),
+    enabled: !!id,
+  });
+};
+
+export const useUpdateTagMutation = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: CreateTagPayload }) => {
+      return tagService.updateOne(id, data);
+    },
+  });
+};

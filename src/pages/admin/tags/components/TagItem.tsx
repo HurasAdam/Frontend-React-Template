@@ -12,9 +12,11 @@ import type { ITag } from "../../../../features/tags/hooks/useTagModal";
 export const TagItem = ({
   tag,
   openInfo,
+  openEdit,
 }: {
   tag: ITag;
   openInfo: (tag: ITag) => void;
+  openEdit: (id: string) => void;
 }) => {
   return (
     <div className="group rounded-2xl border bg-card p-4 hover:bg-accent/40 transition">
@@ -57,7 +59,10 @@ export const TagItem = ({
                 <span>Szczegóły</span>
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="flex items-center gap-3 py-2 cursor-pointer">
+              <DropdownMenuItem
+                onClick={() => openEdit(tag.id)}
+                className="flex items-center gap-3 py-2 cursor-pointer"
+              >
                 <Pencil className="w-4 h-4 opacity-70" />
                 <span>Edytuj</span>
               </DropdownMenuItem>
