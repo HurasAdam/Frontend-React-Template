@@ -6,6 +6,7 @@ import { TagsPage } from "./TagsPage";
 
 export const TagsLayout = () => {
   const modal = useTagModal();
+
   return (
     <PageContainer variant="full">
       <TagsPage openAdd={modal.openAdd} openInfo={modal.openInfo} />

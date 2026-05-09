@@ -29,7 +29,7 @@ export const AddTagModal = ({
     mutate(data, {
       onSuccess: () => {
         onClose();
-        queryClient.invalidateQueries({ queryKey: ["products"] });
+        queryClient.invalidateQueries({ queryKey: ["tags"] });
         toast.success("Dodano nowy produkt", {
           position: "bottom-right",
         });
