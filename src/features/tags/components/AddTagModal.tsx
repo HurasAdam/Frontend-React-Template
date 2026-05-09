@@ -1,7 +1,7 @@
 import type { AxiosError } from "axios";
 import { toast } from "sonner";
 
-import { Tag } from "lucide-react";
+import { Info, Tag } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -108,10 +108,11 @@ export const AddTagModal = ({
           </div>
 
           {/* INFO BOX */}
-          <div className="mt-4 rounded-xl border bg-muted/40 p-3">
+          <div className="mt-4 flex items-start gap-2 rounded-xl border bg-muted/40 p-3">
+            <Info className="w-7 h-7 text-primary" />
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Tagi pomagają w kategoryzacji artykułów i umożliwają ich prostsze
-              filtrowanie, wyszukiwanie i organizację.
+              Tagi usprawniają kategoryzację artykułów i umożliwają ich prostsze
+              wyszukiwanie i organizację.
             </p>
           </div>
         </div>
