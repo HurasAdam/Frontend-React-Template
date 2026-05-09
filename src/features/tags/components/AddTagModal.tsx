@@ -1,7 +1,6 @@
 import type { AxiosError } from "axios";
-import { toast } from "sonner";
-
 import { Info, Tag } from "lucide-react";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,

@@ -53,6 +53,11 @@ export const AppRoutes = () => {
               <Route path="/admin/products" element={<ProductsLayout />} />
               <Route path="/admin/products/:id" element={<ProductLayout />} />
               <Route path="/admin/tags" element={<TagsLayout />} />
+
+              <Route
+                path="/admin/account-settings"
+                element={<SettingsPage />}
+              />
             </Route>
           </Route>
         </Route>

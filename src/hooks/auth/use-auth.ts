@@ -17,3 +17,11 @@ export const useAuthQuery = () => {
     retry: false,
   });
 };
+
+export const useLogoutMutation = () => {
+  return useMutation({
+    mutationFn: () => {
+      return authService.logout();
+    },
+  });
+};

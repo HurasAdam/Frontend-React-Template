@@ -90,7 +90,7 @@ const data = {
   ],
 
   others: [
-    { name: "Ustawienia", url: "/settings", icon: <Settings /> },
+    { name: "Ustawienia", url: "/admin/account-settings", icon: <Settings /> },
     { name: "Zgłoszenia", url: "/feedback", icon: <MailQuestionMark /> },
     { name: "Lista zmian", url: "/changelog", icon: <CircleQuestionMark /> },
   ],

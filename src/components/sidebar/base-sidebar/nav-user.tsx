@@ -22,6 +22,9 @@ import {
   LogOutIcon,
   SparklesIcon,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import queryClient from "../../../config/query.config";
+import { useLogoutMutation } from "../../../hooks/auth/use-auth";
 
 export function NavUser({
   user,
@@ -33,6 +36,17 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const { mutate: logoutMutate } = useLogoutMutation();
+  const navigate = useNavigate();
+
+  const onLogout = () => {
+    logoutMutate(undefined, {
+      onSuccess: () => {
+        queryClient.removeQueries();
+        navigate("/login");
+      },
+    });
+  };
 
   return (
     <SidebarMenu>
@@ -95,7 +109,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={onLogout}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>
