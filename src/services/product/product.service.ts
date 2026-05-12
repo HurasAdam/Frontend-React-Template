@@ -1,6 +1,9 @@
 import API from "../../config/api.config";
 import type { CreateProductPayload } from "../../features/products/validation/product.schema";
-import type { IFindProductsResponse } from "./product.types";
+import type {
+  IFindOneProductResponse,
+  IFindProductsResponse,
+} from "./product.types";
 
 const BASE_URL = "/api/products";
 
@@ -14,7 +17,7 @@ const find = (filters: { name?: string }): Promise<IFindProductsResponse> => {
   });
 };
 
-const findOne = (id: string) => {
+const findOne = (id: string): Promise<IFindOneProductResponse> => {
   return API.get(`${BASE_URL}/${id}`);
 };
 

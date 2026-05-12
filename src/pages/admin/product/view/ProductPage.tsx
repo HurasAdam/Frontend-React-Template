@@ -1,13 +1,15 @@
 import {
   ArrowLeft,
   Calendar,
+  ChevronRight,
   Layers,
   MessageSquare,
   Palette,
-  Tag,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
+import type { IProductInfo } from "../../../../features/products/hooks/useProductCategoryModal";
 import { useFindOneProductQuery } from "../../../../hooks/products/use-products";
+import type { IProduct } from "../../../../services/product/product.types";
 
 type Category = {
   id: string;
@@ -47,13 +49,19 @@ const MOCK_PRODUCT: ProductDetails = {
 
 type Props = {
   onBack: () => void;
+  openAddProductCategory: (product: IProductInfo) => void;
 };
 
-export const ProductPage = ({ onBack }: Props) => {
+export const ProductPage = ({ onBack, openAddProductCategory }: Props) => {
   const { id } = useParams();
   const { data: productData } = useFindOneProductQuery(id);
 
   const product = MOCK_PRODUCT;
+
+  const handleAddCategory = (productData: IProduct): void => {
+    const { id, name } = productData;
+    openAddProductCategory({ id, name });
+  };
 
   return (
     <div className="w-full space-y-6">
@@ -125,6 +133,11 @@ export const ProductPage = ({ onBack }: Props) => {
               <h2 className="text-sm font-semibold">Kategorie</h2>
 
               <button
+                onClick={() => {
+                  if (!productData) return;
+
+                  handleAddCategory(productData);
+                }}
                 className="text-xs px-3 py-1 rounded-lg border hover:bg-muted"
                 style={{
                   borderColor: `${product.labelColor}40`,
@@ -141,7 +154,10 @@ export const ProductPage = ({ onBack }: Props) => {
                   className="flex items-center justify-between px-3 py-2 rounded-xl border hover:bg-muted/50 transition group"
                 >
                   <div className="flex items-center gap-3">
-                    <Tag size={14} style={{ color: product.labelColor }} />
+                    <ChevronRight
+                      size={14}
+                      style={{ color: product.labelColor }}
+                    />
                     <span className="text-sm">{cat.name}</span>
                   </div>
 
