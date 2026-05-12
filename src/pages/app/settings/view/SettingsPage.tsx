@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import { SettingsIcon } from "lucide-react";
+import { ModeToggle } from "../../../../components/theme/ModeToggle";
 import { SettingsCard } from "../components/SettingsCard";
 import { SettingsRow } from "../components/SettingsRow";
 import { SettingsSection } from "../components/SettingsSection";
@@ -78,7 +79,7 @@ export const SettingsPage = () => {
             <SettingsRow
               title="Motyw aplikacji"
               description="Zmień tryb jasny / ciemny"
-              right={<SettingsThemeSelect />}
+              right={<ModeToggle />}
             />
           </SettingsCard>
         </SettingsSection>
