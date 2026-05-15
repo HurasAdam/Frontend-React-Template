@@ -8,24 +8,23 @@ const ProtectedRoute = () => {
   const location = useLocation();
 
   if (isLoading) {
-    return <LoadingUI />; // Twój loader
+    return <LoadingUI />;
   }
 
   if (!authData) {
     return <Navigate to="/login" replace />;
   }
 
-  // 🔥 DOPIERO TERAZ
-  const isAdmin = authData.role === "ADMIN";
+  const isAdmin = authData.role.name === "ADMIN";
+  const permissions = authData.role.permissions;
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const canAccessAdmin = permissions.includes("ACCESS_ADMIN_PANEL");
 
-  // admin próbuje wejść do app
-  if (isAdmin && !isAdminRoute) {
+  if (canAccessAdmin && !isAdminRoute) {
     return <Navigate to="/admin/dashboard" replace />;
   }
 
-  // user próbuje wejść do admina
-  if (!isAdmin && isAdminRoute) {
+  if (isAdminRoute && !canAccessAdmin) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -37,7 +36,7 @@ export default ProtectedRoute;
 const LoadingUI = () => {
   return (
     <div className="h-screen w-full flex items-center justify-center bg-gradient-to-b from-background via-background to-muted/20">
-      {/* BACKDROP GLOW */}
+      {/* BACKDROP */}
       <div className="absolute w-[420px] h-[420px] bg-primary/10 rounded-full blur-3xl animate-pulse" />
 
       <Card className="relative w-[360px] border border-muted/40 shadow-2xl rounded-2xl bg-background/60 backdrop-blur-xl">
