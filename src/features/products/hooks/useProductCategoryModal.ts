@@ -37,7 +37,8 @@ export const useProductCategoryModal = () => {
 
     // tag: state?.mode === "INFO" ? state.tag : null,
     categoryId: state?.mode === "EDIT" ? state.categoryId : null,
-    product: state?.mode === "CREATE" ? state.product : null,
+    product:
+      state?.mode === "CREATE" || state?.mode === "EDIT" ? state.product : null,
 
     openAddProductCategory,
     openEditProductCategory,

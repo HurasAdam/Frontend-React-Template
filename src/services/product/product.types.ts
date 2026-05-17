@@ -5,5 +5,15 @@ export interface IProduct {
   createdBy: string;
 }
 
+export interface IProductWithDetails {
+  id: string;
+  name: string;
+  labelColor: string;
+  createdBy: string;
+
+  categories: [id: string, name: string];
+}
+
 export type IFindOneProductResponse = IProduct;
 export type IFindProductsResponse = IProduct[];
+export type IFindOneWithDetailsProductResponse = IProductWithDetails;

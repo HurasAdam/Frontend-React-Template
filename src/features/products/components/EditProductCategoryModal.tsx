@@ -7,7 +7,10 @@ import {
   DialogTitle,
 } from "../../../components/ui/dialog";
 import queryClient from "../../../config/query.config";
-import { useCreateProductCategoryMutation } from "../../../hooks/product-categories/use-product-categories";
+import {
+  useFindOneProductCategoryQuery,
+  useUpdateProductCategoryMutation,
+} from "../../../hooks/product-categories/use-product-categories";
 import type { ProductCategoryFormData } from "../validation/product-category.schema";
 import { ProductCategoryForm } from "./ProductCategoryForm";
 
@@ -19,26 +22,34 @@ interface CreateWorkspaceProps {
     id: string;
     name: string;
   } | null;
+  categoryId: string | null;
 }
 
-export const AddProductCategoryModal = ({
+export const EditProductCategoryModal = ({
   isOpen,
   onClose,
   closeOnOutsideClick = false,
   product,
+  categoryId,
 }: CreateWorkspaceProps) => {
-  const { mutate, isPending } = useCreateProductCategoryMutation();
+  const { data: productCategory } = useFindOneProductCategoryQuery(categoryId);
+  const { mutate, isPending } = useUpdateProductCategoryMutation();
 
   const onSubmit = (data: ProductCategoryFormData) => {
-    if (!product) return;
+    if (!productCategory || !product) return;
 
     mutate(
-      { productId: product.id, data, name: data.name },
+      {
+        id: productCategory.id,
+        payload: {
+          name: data.name,
+        },
+      },
       {
         onSuccess: () => {
           onClose();
 
-          toast.success("Kategoria została dodana", {
+          toast.success("Kategoria została zaktualizowana", {
             position: "bottom-right",
           });
 
@@ -96,11 +107,11 @@ export const AddProductCategoryModal = ({
         <div className="px-8 pt-8 pb-6 border-b bg-muted/30">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold tracking-tight">
-              Dodaj kategorię
+              Edytuj kategorię
             </DialogTitle>
 
             <p className="text-sm text-muted-foreground mt-1">
-              Utwórz nową kategorię dla produktu
+              Zmień nazwę kategorii przypisanej do produktu.
             </p>
           </DialogHeader>
 
@@ -118,11 +129,15 @@ export const AddProductCategoryModal = ({
 
         {/* FORM */}
         <div className="px-8 py-6">
-          <ProductCategoryForm
-            onSubmit={onSubmit}
-            defaultValues={{ name: "" }}
-            isSubmitting={isPending}
-          />
+          {!productCategory ? (
+            <div>Ładowanie</div>
+          ) : (
+            <ProductCategoryForm
+              onSubmit={onSubmit}
+              defaultValues={{ name: productCategory.name }}
+              isSubmitting={isPending}
+            />
+          )}
         </div>
       </DialogContent>
     </Dialog>

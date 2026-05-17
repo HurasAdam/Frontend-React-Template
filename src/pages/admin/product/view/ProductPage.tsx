@@ -7,8 +7,10 @@ import {
   Palette,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
+import { Button } from "../../../../components/ui/button";
 import type { IProductInfo } from "../../../../features/products/hooks/useProductCategoryModal";
-import { useFindOneProductQuery } from "../../../../hooks/products/use-products";
+import { useFindOneWithDetailsProductQuery } from "../../../../hooks/products/use-products";
+import { formatDate } from "../../../../lib/utils";
 import type { IProduct } from "../../../../services/product/product.types";
 
 type Category = {
@@ -50,11 +52,17 @@ const MOCK_PRODUCT: ProductDetails = {
 type Props = {
   onBack: () => void;
   openAddProductCategory: (product: IProductInfo) => void;
+  openEditProductCategory: (product: IProductInfo, categoryId: string) => void;
 };
 
-export const ProductPage = ({ onBack, openAddProductCategory }: Props) => {
+export const ProductPage = ({
+  onBack,
+  openAddProductCategory,
+  openEditProductCategory,
+}: Props) => {
   const { id } = useParams();
-  const { data: productData } = useFindOneProductQuery(id);
+  const { data: productData, isLoading } =
+    useFindOneWithDetailsProductQuery(id);
 
   const product = MOCK_PRODUCT;
 
@@ -62,6 +70,14 @@ export const ProductPage = ({ onBack, openAddProductCategory }: Props) => {
     const { id, name } = productData;
     openAddProductCategory({ id, name });
   };
+
+  const handleEditCategory = (productData, categoryId) => {
+    openEditProductCategory(productData, categoryId);
+  };
+
+  if (isLoading || !productData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="w-full space-y-6">
@@ -76,7 +92,7 @@ export const ProductPage = ({ onBack, openAddProductCategory }: Props) => {
           </button>
 
           <div>
-            <h1 className="text-2xl font-semibold">{product.name}</h1>
+            <h1 className="text-2xl font-semibold">{productData.name}</h1>
             <p className="text-sm text-muted-foreground mt-1">
               Szczegóły produktu
             </p>
@@ -87,11 +103,11 @@ export const ProductPage = ({ onBack, openAddProductCategory }: Props) => {
         <div
           className="px-3 py-1 rounded-lg text-xs font-medium"
           style={{
-            backgroundColor: `${product.labelColor}20`,
-            color: product.labelColor,
+            backgroundColor: `${productData.labelColor}20`,
+            color: productData.labelColor,
           }}
         >
-          {product.name}
+          {productData.name}
         </div>
       </div>
 
@@ -108,12 +124,15 @@ export const ProductPage = ({ onBack, openAddProductCategory }: Props) => {
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <Layers size={16} className="text-muted-foreground" />
-                <span className="text-sm">{product.name}</span>
+                <span className="text-sm">{productData.name}</span>
               </div>
 
               <div className="flex items-center gap-3">
-                <Palette size={16} style={{ color: product.labelColor }} />
-                <span className="text-sm" style={{ color: product.labelColor }}>
+                <Palette size={16} style={{ color: productData.labelColor }} />
+                <span
+                  className="text-sm"
+                  style={{ color: productData.labelColor }}
+                >
                   kolor produktu
                 </span>
               </div>
@@ -121,7 +140,7 @@ export const ProductPage = ({ onBack, openAddProductCategory }: Props) => {
               <div className="flex items-center gap-3">
                 <Calendar size={16} className="text-muted-foreground" />
                 <span className="text-sm">
-                  {new Date(product.createdAt).toLocaleDateString()}
+                  {formatDate(productData.createdAt)}
                 </span>
               </div>
             </div>
@@ -148,7 +167,7 @@ export const ProductPage = ({ onBack, openAddProductCategory }: Props) => {
             </div>
 
             <div className="space-y-2">
-              {product.categories.map((cat) => (
+              {productData.categories.map((cat) => (
                 <div
                   key={cat.id}
                   className="flex items-center justify-between px-3 py-2 rounded-xl border hover:bg-muted/50 transition group"
@@ -165,7 +184,12 @@ export const ProductPage = ({ onBack, openAddProductCategory }: Props) => {
                     className="opacity-0 group-hover:opacity-100 transition text-xs"
                     style={{ color: product.labelColor }}
                   >
-                    Edytuj
+                    <Button
+                      onClick={() => handleEditCategory(productData, cat.id)}
+                      size="sm"
+                    >
+                      Edytuj
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -227,7 +251,9 @@ export const ProductPage = ({ onBack, openAddProductCategory }: Props) => {
 
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Kategorie</span>
-                <span className="font-medium">{product.categories.length}</span>
+                <span className="font-medium">
+                  {productData.categories.length}
+                </span>
               </div>
 
               <div className="flex justify-between">
