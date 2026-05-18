@@ -172,42 +172,56 @@ export const ProductPage = ({
             </div>
 
             <div className="space-y-2">
-              {productData.categories.map((cat) => (
-                <div
-                  key={cat.id}
-                  className="flex items-center justify-between px-3 py-2 rounded-xl border hover:bg-muted/50 transition group"
-                >
-                  <div className="flex items-center gap-3">
-                    <ChevronRight
-                      size={14}
-                      style={{ color: productData.labelColor }}
-                    />
-                    <span className="text-sm">{cat.name}</span>
+              {productData.categories.length === 0 ? (
+                <div className="rounded-2xl border bg-card p-6 text-center">
+                  <div className="text-sm font-semibold">Brak kategorii</div>
+
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Ten produkt nie ma jeszcze przypisanych kategorii.
                   </div>
 
-                  <div
-                    className="opacity-0 group-hover:opacity-100 transition text-xs flex items-center gap-2"
-                    style={{ color: productData.labelColor }}
+                  <Button
+                    className="mt-4"
+                    onClick={() => handleAddCategory(productData)}
                   >
-                    <Button
-                      onClick={() => handleEditCategory(productData, cat.id)}
-                      size="sm"
-                    >
-                      <Pencil size={10} />
-                      Edytuj
-                    </Button>
-
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => onDelete(cat)}
-                    >
-                      <Trash2 size={10} />
-                      Usuń
-                    </Button>
-                  </div>
+                    Dodaj pierwszą kategorię
+                  </Button>
                 </div>
-              ))}
+              ) : (
+                productData.categories.map((cat) => (
+                  <div
+                    key={cat.id}
+                    className="flex items-center justify-between px-3 py-2 rounded-xl border hover:bg-muted/50 transition group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <ChevronRight
+                        size={14}
+                        style={{ color: productData.labelColor }}
+                      />
+                      <span className="text-sm">{cat.name}</span>
+                    </div>
+
+                    <div className="opacity-0 group-hover:opacity-100 transition text-xs flex items-center gap-2">
+                      <Button
+                        onClick={() => handleEditCategory(productData, cat.id)}
+                        size="sm"
+                      >
+                        <Pencil size={10} />
+                        Edytuj
+                      </Button>
+
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => onDelete(cat)}
+                      >
+                        <Trash2 size={10} />
+                        Usuń
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
