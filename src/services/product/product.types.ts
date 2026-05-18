@@ -11,7 +11,10 @@ export interface IProductWithDetails {
   labelColor: string;
   createdBy: string;
 
-  categories: [id: string, name: string];
+  categories: {
+    id: string;
+    name: string;
+  }[];
 }
 
 export type IFindOneProductResponse = IProduct;

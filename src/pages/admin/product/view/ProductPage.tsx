@@ -5,12 +5,15 @@ import {
   Layers,
   MessageSquare,
   Palette,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { Button } from "../../../../components/ui/button";
 import type { IProductInfo } from "../../../../features/products/hooks/useProductCategoryModal";
 import { useFindOneWithDetailsProductQuery } from "../../../../hooks/products/use-products";
 import { formatDate } from "../../../../lib/utils";
+import type { IProductCategory } from "../../../../services/product-category/product-category.types";
 import type { IProduct } from "../../../../services/product/product.types";
 
 type Category = {
@@ -49,22 +52,24 @@ const MOCK_PRODUCT: ProductDetails = {
   ],
 };
 
+const product = MOCK_PRODUCT;
+
 type Props = {
   onBack: () => void;
   openAddProductCategory: (product: IProductInfo) => void;
+  onDelete: (cat: IProductCategory) => void;
   openEditProductCategory: (product: IProductInfo, categoryId: string) => void;
 };
 
 export const ProductPage = ({
   onBack,
+  onDelete,
   openAddProductCategory,
   openEditProductCategory,
 }: Props) => {
   const { id } = useParams();
   const { data: productData, isLoading } =
     useFindOneWithDetailsProductQuery(id);
-
-  const product = MOCK_PRODUCT;
 
   const handleAddCategory = (productData: IProduct): void => {
     const { id, name } = productData;
@@ -159,7 +164,7 @@ export const ProductPage = ({
                 }}
                 className="text-xs px-3 py-1 rounded-lg border hover:bg-muted"
                 style={{
-                  borderColor: `${product.labelColor}40`,
+                  borderColor: `${productData.labelColor}40`,
                 }}
               >
                 Dodaj kategorię
@@ -175,20 +180,30 @@ export const ProductPage = ({
                   <div className="flex items-center gap-3">
                     <ChevronRight
                       size={14}
-                      style={{ color: product.labelColor }}
+                      style={{ color: productData.labelColor }}
                     />
                     <span className="text-sm">{cat.name}</span>
                   </div>
 
                   <div
-                    className="opacity-0 group-hover:opacity-100 transition text-xs"
-                    style={{ color: product.labelColor }}
+                    className="opacity-0 group-hover:opacity-100 transition text-xs flex items-center gap-2"
+                    style={{ color: productData.labelColor }}
                   >
                     <Button
                       onClick={() => handleEditCategory(productData, cat.id)}
                       size="sm"
                     >
+                      <Pencil size={10} />
                       Edytuj
+                    </Button>
+
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => onDelete(cat)}
+                    >
+                      <Trash2 size={10} />
+                      Usuń
                     </Button>
                   </div>
                 </div>
@@ -204,7 +219,7 @@ export const ProductPage = ({
               <button
                 className="text-xs px-3 py-1 rounded-lg border hover:bg-muted"
                 style={{
-                  borderColor: `${product.labelColor}40`,
+                  borderColor: `${productData.labelColor}40`,
                 }}
               >
                 Dodaj temat

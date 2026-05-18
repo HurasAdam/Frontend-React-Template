@@ -18,8 +18,13 @@ const updateOne = (id: string, payload: unknown) => {
   return API.patch(`${BASE_URL}/${id}`, payload);
 };
 
+const deleteOne = (id: string) => {
+  return API.delete(`${BASE_URL}/${id}`);
+};
+
 export const productCategoryService = {
   create,
   findOne,
   updateOne,
+  deleteOne,
 };

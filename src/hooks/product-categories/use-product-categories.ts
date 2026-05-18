@@ -23,3 +23,11 @@ export const useUpdateProductCategoryMutation = () => {
       productCategoryService.updateOne(id, payload),
   });
 };
+
+export const useDeleteProductCategoryMutate = () => {
+  return useMutation({
+    mutationFn: (id: string) => {
+      return productCategoryService.deleteOne(id);
+    },
+  });
+};
