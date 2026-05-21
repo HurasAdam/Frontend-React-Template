@@ -5,8 +5,10 @@ import { useConfirmDialog } from "../../../../components/shared/hooks/useConfirm
 import { PageContainer } from "../../../../components/shared/PageContainer";
 import queryClient from "../../../../config/query.config";
 import { AddProductCategoryModal } from "../../../../features/products/components/AddProductCategoryModal";
+import { AddProductTopicModal } from "../../../../features/products/components/AddProductTopicModal";
 import { EditProductCategoryModal } from "../../../../features/products/components/EditProductCategoryModal";
 import { useProductCategoryModal } from "../../../../features/products/hooks/useProductCategoryModal";
+import { useProductTopicModal } from "../../../../features/products/hooks/useProductTopicModal";
 import { useDeleteProductCategoryMutate } from "../../../../hooks/product-categories/use-product-categories";
 import type { IProductCategory } from "../../../../services/product-category/product-category.types";
 import { ProductPage } from "./ProductPage";
@@ -15,6 +17,7 @@ export const ProductLayout = () => {
   const { id: productId } = useParams();
   const navigate = useNavigate();
   const modal = useProductCategoryModal();
+  const topicModal = useProductTopicModal();
   const confirmDialog = useConfirmDialog();
 
   const { mutate: deleteMutate, isPending: isDeletePending } =
@@ -61,6 +64,7 @@ export const ProductLayout = () => {
         openAddProductCategory={modal.openAddProductCategory}
         openEditProductCategory={modal.openEditProductCategory}
         onDelete={handleDeleteCategory}
+        openAddProductTopic={topicModal.openAddProductTopic}
       />
       <AddProductCategoryModal
         isOpen={modal.isCreate}
@@ -89,6 +93,14 @@ export const ProductLayout = () => {
       >
         {confirmDialog.description}
       </ConfirmDialog>
+
+      {topicModal.isCreate && (
+        <AddProductTopicModal
+          isOpen={topicModal.isCreate}
+          onClose={topicModal.close}
+          product={topicModal.product}
+        />
+      )}
     </PageContainer>
   );
 };

@@ -59,6 +59,7 @@ type Props = {
   openAddProductCategory: (product: IProductInfo) => void;
   onDelete: (cat: IProductCategory) => void;
   openEditProductCategory: (product: IProductInfo, categoryId: string) => void;
+  openAddProductTopic: (product: IProductInfo) => void;
 };
 
 export const ProductPage = ({
@@ -66,6 +67,7 @@ export const ProductPage = ({
   onDelete,
   openAddProductCategory,
   openEditProductCategory,
+  openAddProductTopic,
 }: Props) => {
   const { id } = useParams();
   const { data: productData, isLoading } =
@@ -74,6 +76,12 @@ export const ProductPage = ({
   const handleAddCategory = (productData: IProduct): void => {
     const { id, name } = productData;
     openAddProductCategory({ id, name });
+  };
+
+  const handleAddTopic = (productData: IProduct) => {
+    const { id, name } = productData;
+
+    openAddProductTopic({ id, name });
   };
 
   const handleEditCategory = (productData, categoryId) => {
@@ -235,6 +243,7 @@ export const ProductPage = ({
                 style={{
                   borderColor: `${productData.labelColor}40`,
                 }}
+                onClick={() => handleAddTopic(productData)}
               >
                 Dodaj temat
               </button>

@@ -93,7 +93,7 @@ export const AddProductCategoryModal = ({
         "
       >
         {/* HEADER */}
-        <div className="px-8 pt-8 pb-6 border-b bg-muted/30">
+        <div className="px-8 pt-8 pb-6 border-b bg-muted/25">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold tracking-tight">
               Dodaj kategorię
