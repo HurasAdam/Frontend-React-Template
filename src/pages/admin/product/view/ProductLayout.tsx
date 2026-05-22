@@ -7,6 +7,7 @@ import queryClient from "../../../../config/query.config";
 import { AddProductCategoryModal } from "../../../../features/products/components/AddProductCategoryModal";
 import { AddProductTopicModal } from "../../../../features/products/components/AddProductTopicModal";
 import { EditProductCategoryModal } from "../../../../features/products/components/EditProductCategoryModal";
+import { EditProductTopicModal } from "../../../../features/products/components/EditProductTopicModal";
 import { useProductCategoryModal } from "../../../../features/products/hooks/useProductCategoryModal";
 import { useProductTopicModal } from "../../../../features/products/hooks/useProductTopicModal";
 import { useDeleteProductCategoryMutate } from "../../../../hooks/product-categories/use-product-categories";
@@ -65,6 +66,7 @@ export const ProductLayout = () => {
         openEditProductCategory={modal.openEditProductCategory}
         onDelete={handleDeleteCategory}
         openAddProductTopic={topicModal.openAddProductTopic}
+        openEditProductTopic={topicModal.openEditProductTopic}
       />
       <AddProductCategoryModal
         isOpen={modal.isCreate}
@@ -99,6 +101,15 @@ export const ProductLayout = () => {
           isOpen={topicModal.isCreate}
           onClose={topicModal.close}
           product={topicModal.product}
+        />
+      )}
+
+      {topicModal.isEdit && (
+        <EditProductTopicModal
+          isOpen={topicModal.isEdit}
+          onClose={topicModal.close}
+          product={topicModal.product}
+          topicId={topicModal.topicId}
         />
       )}
     </PageContainer>

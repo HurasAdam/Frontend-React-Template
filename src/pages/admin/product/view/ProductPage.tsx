@@ -22,6 +22,7 @@ type Props = {
   onDelete: (cat: IProductCategory) => void;
   openEditProductCategory: (product: IProductInfo, categoryId: string) => void;
   openAddProductTopic: (product: IProductInfo) => void;
+  openEditProductTopic: (product: IProductInfo, topicId: string) => void;
 };
 
 export const ProductPage = ({
@@ -30,6 +31,7 @@ export const ProductPage = ({
   openAddProductCategory,
   openEditProductCategory,
   openAddProductTopic,
+  openEditProductTopic,
 }: Props) => {
   const { id } = useParams();
   const { data: productData, isLoading } =
@@ -48,6 +50,10 @@ export const ProductPage = ({
 
   const handleEditCategory = (productData, categoryId) => {
     openEditProductCategory(productData, categoryId);
+  };
+
+  const handleEditTopic = (productData, topicId) => {
+    openEditProductTopic(productData, topicId);
   };
 
   if (isLoading || !productData) {
@@ -225,12 +231,13 @@ export const ProductPage = ({
                     <span className="text-sm">{topic.name}</span>
                   </div>
 
-                  <div
-                    className="opacity-0 group-hover:opacity-100 transition text-xs"
-                    style={{ color: productData.labelColor }}
+                  <Button
+                    onClick={() => handleEditTopic(productData, topic.id)}
+                    size="sm"
                   >
+                    <Pencil size={10} />
                     Edytuj
-                  </div>
+                  </Button>
                 </div>
               ))}
             </div>

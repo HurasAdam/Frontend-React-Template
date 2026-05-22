@@ -15,3 +15,25 @@ export const useFindProductTopicsQuery = (productId: string | null) => {
     queryFn: () => productTopicService.find(),
   });
 };
+
+export const useFindOneProductTopicQuery = (topicId: string | null) => {
+  return useQuery({
+    queryKey: ["product-topic", topicId],
+    enabled: !!topicId,
+    queryFn: () => productTopicService.findOne(topicId as string),
+  });
+};
+
+export const useUpdateOneProductTopicMutation = () => {
+  return useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: { name: string };
+    }) => {
+      return productTopicService.updateOne(id, payload);
+    },
+  });
+};

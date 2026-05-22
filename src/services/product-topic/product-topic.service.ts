@@ -1,4 +1,5 @@
 import API from "../../config/api.config";
+import type { IFindOneProductTopicResponse } from "./product-topic.types";
 
 const BASE_URL = "/api/product-topics";
 
@@ -13,7 +14,17 @@ const find = () => {
   return API.get(`${BASE_URL}`);
 };
 
+const findOne = (id: string): Promise<IFindOneProductTopicResponse> => {
+  return API.get(`${BASE_URL}/${id}`);
+};
+
+const updateOne = (id: string, payload: unknown) => {
+  return API.patch(`${BASE_URL}/${id}`, payload);
+};
+
 export const productTopicService = {
   create,
   find,
+  findOne,
+  updateOne,
 };
