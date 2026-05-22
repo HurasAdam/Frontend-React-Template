@@ -37,3 +37,9 @@ export const useUpdateOneProductTopicMutation = () => {
     },
   });
 };
+
+export const useDeleteOneProductTopicMutation = () => {
+  return useMutation({
+    mutationFn: (id: string) => productTopicService.deleteOne(id),
+  });
+};

@@ -11,6 +11,7 @@ import { EditProductTopicModal } from "../../../../features/products/components/
 import { useProductCategoryModal } from "../../../../features/products/hooks/useProductCategoryModal";
 import { useProductTopicModal } from "../../../../features/products/hooks/useProductTopicModal";
 import { useDeleteProductCategoryMutate } from "../../../../hooks/product-categories/use-product-categories";
+import { useDeleteOneProductTopicMutation } from "../../../../hooks/product-topics/use-product-topics";
 import type { IProductCategory } from "../../../../services/product-category/product-category.types";
 import { ProductPage } from "./ProductPage";
 
@@ -19,13 +20,17 @@ export const ProductLayout = () => {
   const navigate = useNavigate();
   const modal = useProductCategoryModal();
   const topicModal = useProductTopicModal();
-  const confirmDialog = useConfirmDialog();
+  const deleteCategoryDialog = useConfirmDialog();
+  const deleteTopicDialog = useConfirmDialog();
 
   const { mutate: deleteMutate, isPending: isDeletePending } =
     useDeleteProductCategoryMutate();
 
+  const { mutate: deleteTopicMutate, isPending: isDeleteTopicPending } =
+    useDeleteOneProductTopicMutation();
+
   const handleDeleteCategory = (cat: IProductCategory) => {
-    confirmDialog.open({
+    deleteCategoryDialog.open({
       title: "Czy jesteś pewien ?",
       type: "warning",
       description: (
@@ -48,7 +53,38 @@ export const ProductLayout = () => {
             toast.success(`Kategoria ${cat.name} została usunięta  `, {
               position: "bottom-right",
             });
-            confirmDialog.close();
+            deleteCategoryDialog.close();
+          },
+        }),
+    });
+  };
+
+  const handleDeleteTopic = (cat: IProductCategory) => {
+    deleteTopicDialog.open({
+      title: "Czy jesteś pewien ?",
+      type: "warning",
+      description: (
+        <>
+          <p className="mb-3">
+            Czy na pewno chcesz usunąć temat kontaktu <b>{cat.name}</b>?
+          </p>
+
+          <p className="text-sm text-muted-foreground  ">
+            Po zatwierdzeniu tematu zostanie{" "}
+            <span className="text-rose-700/95 font-medium">usunięty</span> z
+            produktu i nie będzie już dostępny.
+          </p>
+        </>
+      ),
+      data: cat,
+      onConfirm: (cat) =>
+        deleteTopicMutate(cat.id, {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["product", productId] });
+            toast.success(`Temat ${cat.name} został usunięty  `, {
+              position: "bottom-right",
+            });
+            deleteTopicDialog.close();
           },
         }),
     });
@@ -65,6 +101,7 @@ export const ProductLayout = () => {
         openAddProductCategory={modal.openAddProductCategory}
         openEditProductCategory={modal.openEditProductCategory}
         onDelete={handleDeleteCategory}
+        onDeleteTopic={handleDeleteTopic}
         openAddProductTopic={topicModal.openAddProductTopic}
         openEditProductTopic={topicModal.openEditProductTopic}
       />
@@ -83,19 +120,6 @@ export const ProductLayout = () => {
         />
       )}
 
-      <ConfirmDialog
-        isOpen={confirmDialog.isOpen}
-        title={confirmDialog.title}
-        type={confirmDialog.type}
-        onCancel={confirmDialog.close}
-        onConfirm={confirmDialog.confirm}
-        isLoading={isDeletePending}
-        requireConfirmation={true}
-        isConfirmEnabled={true}
-      >
-        {confirmDialog.description}
-      </ConfirmDialog>
-
       {topicModal.isCreate && (
         <AddProductTopicModal
           isOpen={topicModal.isCreate}
@@ -112,6 +136,32 @@ export const ProductLayout = () => {
           topicId={topicModal.topicId}
         />
       )}
+
+      <ConfirmDialog
+        isOpen={deleteCategoryDialog.isOpen}
+        title={deleteCategoryDialog.title}
+        type={deleteCategoryDialog.type}
+        onCancel={deleteCategoryDialog.close}
+        onConfirm={deleteCategoryDialog.confirm}
+        isLoading={isDeletePending}
+        requireConfirmation={true}
+        isConfirmEnabled={true}
+      >
+        {deleteCategoryDialog.description}
+      </ConfirmDialog>
+
+      <ConfirmDialog
+        isOpen={deleteTopicDialog.isOpen}
+        title={deleteTopicDialog.title}
+        type={deleteTopicDialog.type}
+        onCancel={deleteTopicDialog.close}
+        onConfirm={deleteTopicDialog.confirm}
+        isLoading={isDeletePending}
+        requireConfirmation={true}
+        isConfirmEnabled={true}
+      >
+        {deleteTopicDialog.description}
+      </ConfirmDialog>
     </PageContainer>
   );
 };

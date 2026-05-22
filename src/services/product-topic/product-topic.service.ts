@@ -22,9 +22,13 @@ const updateOne = (id: string, payload: unknown) => {
   return API.patch(`${BASE_URL}/${id}`, payload);
 };
 
+const deleteOne = (id: string): Promise<void> => {
+  return API.delete(`${BASE_URL}/${id}`);
+};
 export const productTopicService = {
   create,
   find,
   findOne,
   updateOne,
+  deleteOne,
 };

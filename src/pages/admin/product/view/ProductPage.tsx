@@ -20,6 +20,7 @@ type Props = {
   onBack: () => void;
   openAddProductCategory: (product: IProductInfo) => void;
   onDelete: (cat: IProductCategory) => void;
+  onDeleteTopic: (topic) => void;
   openEditProductCategory: (product: IProductInfo, categoryId: string) => void;
   openAddProductTopic: (product: IProductInfo) => void;
   openEditProductTopic: (product: IProductInfo, topicId: string) => void;
@@ -28,6 +29,7 @@ type Props = {
 export const ProductPage = ({
   onBack,
   onDelete,
+  onDeleteTopic,
   openAddProductCategory,
   openEditProductCategory,
   openAddProductTopic,
@@ -231,13 +233,23 @@ export const ProductPage = ({
                     <span className="text-sm">{topic.name}</span>
                   </div>
 
-                  <Button
-                    onClick={() => handleEditTopic(productData, topic.id)}
-                    size="sm"
-                  >
-                    <Pencil size={10} />
-                    Edytuj
-                  </Button>
+                  <div className="opacity-0 group-hover:opacity-100 transition text-xs flex items-center gap-2">
+                    <Button
+                      onClick={() => handleEditTopic(productData, topic.id)}
+                      size="sm"
+                    >
+                      <Pencil size={10} />
+                      Edytuj
+                    </Button>
+                    <Button
+                      onClick={() => onDeleteTopic(topic)}
+                      variant="destructive"
+                      size="sm"
+                    >
+                      <Trash2 size={10} />
+                      Usuń
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
