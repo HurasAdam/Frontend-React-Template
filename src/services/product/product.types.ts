@@ -15,6 +15,11 @@ export interface IProductWithDetails {
     id: string;
     name: string;
   }[];
+
+  topics: {
+    id: string;
+    name: string;
+  }[];
 }
 
 export type IFindOneProductResponse = IProduct;

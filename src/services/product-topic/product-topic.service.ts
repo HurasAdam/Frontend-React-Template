@@ -9,6 +9,11 @@ const create = (data: { name: string; product: string }) => {
   });
 };
 
+const find = () => {
+  return API.get(`${BASE_URL}`);
+};
+
 export const productTopicService = {
   create,
+  find,
 };

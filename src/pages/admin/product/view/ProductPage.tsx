@@ -16,44 +16,6 @@ import { formatDate } from "../../../../lib/utils";
 import type { IProductCategory } from "../../../../services/product-category/product-category.types";
 import type { IProduct } from "../../../../services/product/product.types";
 
-type Category = {
-  id: string;
-  name: string;
-};
-
-type ConversationTopic = {
-  id: string;
-  name: string;
-};
-
-type ProductDetails = {
-  id: string;
-  name: string;
-  labelColor: string;
-  createdAt: string;
-  categories: Category[];
-  topics: ConversationTopic[];
-};
-
-const MOCK_PRODUCT: ProductDetails = {
-  id: "1",
-  name: "Produkt Premium",
-  labelColor: "#6366F1",
-  createdAt: "2026-05-01",
-  categories: [
-    { id: "1", name: "Elektronika" },
-    { id: "2", name: "Dom" },
-    { id: "3", name: "Nowość" },
-  ],
-  topics: [
-    { id: "1", name: "Reklamacje" },
-    { id: "2", name: "Sprzedaż" },
-    { id: "3", name: "Wsparcie" },
-  ],
-};
-
-const product = MOCK_PRODUCT;
-
 type Props = {
   onBack: () => void;
   openAddProductCategory: (product: IProductInfo) => void;
@@ -250,7 +212,7 @@ export const ProductPage = ({
             </div>
 
             <div className="space-y-2">
-              {product.topics.map((topic) => (
+              {productData.topics.map((topic) => (
                 <div
                   key={topic.id}
                   className="flex items-center justify-between px-3 py-2 rounded-xl border hover:bg-muted/50 transition group"
@@ -258,14 +220,14 @@ export const ProductPage = ({
                   <div className="flex items-center gap-3">
                     <MessageSquare
                       size={14}
-                      style={{ color: product.labelColor }}
+                      style={{ color: productData.labelColor }}
                     />
                     <span className="text-sm">{topic.name}</span>
                   </div>
 
                   <div
                     className="opacity-0 group-hover:opacity-100 transition text-xs"
-                    style={{ color: product.labelColor }}
+                    style={{ color: productData.labelColor }}
                   >
                     Edytuj
                   </div>
@@ -296,7 +258,7 @@ export const ProductPage = ({
 
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Tematy</span>
-                <span className="font-medium">{product.topics.length}</span>
+                <span className="font-medium">{productData.topics.length}</span>
               </div>
             </div>
           </div>
@@ -305,7 +267,7 @@ export const ProductPage = ({
           <div className="rounded-2xl border bg-card p-5 space-y-3">
             <button
               className="w-full px-4 py-2 rounded-xl text-sm text-white hover:opacity-90"
-              style={{ backgroundColor: product.labelColor }}
+              style={{ backgroundColor: productData.labelColor }}
             >
               Edytuj produkt
             </button>
