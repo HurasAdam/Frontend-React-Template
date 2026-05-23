@@ -26,7 +26,7 @@ import {
   type CreateUserPayload,
 } from "../../../../features/users/validation/create-user.schema";
 import { useCreateUserMutation } from "../../../../hooks/admin/use-admin";
-import { useFindRolesQuery } from "../../../../hooks/roles/use-roles";
+import { useFindRolesQuery } from "../../../../hooks/roles/queries/use-roles.queries";
 
 interface Props {
   isSubmitting: boolean;

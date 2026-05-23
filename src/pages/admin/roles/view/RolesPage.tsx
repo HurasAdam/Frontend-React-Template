@@ -1,6 +1,6 @@
 import { KeyRound, Plus, Search, Shield } from "lucide-react";
 import { useState } from "react";
-import { useFindRolesQuery } from "../../../../hooks/roles/use-roles";
+import { useFindRolesQuery } from "../../../../hooks/roles/queries/use-roles.queries";
 
 const COLORS: Record<string, string> = {
   red: "bg-red-500/10 text-red-500",

@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "../../../components/ui/dialog";
 
-import { useCreateRoleMutation } from "../../../hooks/roles/use-roles";
+import { useCreateRoleMutation } from "../../../hooks/roles/mutations/use-roles.mutations";
 import type { CreateUserPayload } from "../validation/create-user.schema";
 import { AddUserForm } from "./AddUserForm";
 

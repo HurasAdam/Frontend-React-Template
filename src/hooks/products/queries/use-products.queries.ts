@@ -1,18 +1,9 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import type { CreateProductPayload } from "../../features/products/validation/product.schema";
-import { productService } from "../../services/product/product.service";
+import { useQuery } from "@tanstack/react-query";
+import { productService } from "../../../services/product/product.service";
 import type {
   IFindOneWithDetailsProductResponse,
   IFindProductsResponse,
-} from "../../services/product/product.types";
-
-export const useCreateProductMutation = () => {
-  return useMutation({
-    mutationFn: (data: CreateProductPayload) => {
-      return productService.create(data);
-    },
-  });
-};
+} from "../../../services/product/product.types";
 
 export const useFindProductsQuery = (filters: { name?: string }) => {
   return useQuery<IFindProductsResponse>({

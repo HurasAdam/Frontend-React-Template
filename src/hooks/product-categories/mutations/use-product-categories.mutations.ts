@@ -1,6 +1,10 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import type { ProductCategoryFormData } from "../../features/products/validation/product-category.schema";
-import { productCategoryService } from "../../services/product-category/product-category.service";
+import { useMutation } from "@tanstack/react-query";
+import type { ProductCategoryFormData } from "../../../features/products/validation/product-category.schema";
+import { productCategoryService } from "../../../services/product-category/product-category.service";
+
+/**
+ * ADD
+ */
 
 export const useCreateProductCategoryMutation = () => {
   return useMutation({
@@ -9,13 +13,9 @@ export const useCreateProductCategoryMutation = () => {
   });
 };
 
-export const useFindOneProductCategoryQuery = (id: string | null) => {
-  return useQuery({
-    queryKey: ["product-category", id],
-    queryFn: () => productCategoryService.findOne(id as string),
-    enabled: !!id,
-  });
-};
+/**
+ * UPDATE
+ */
 
 export const useUpdateProductCategoryMutation = () => {
   return useMutation({
@@ -23,6 +23,10 @@ export const useUpdateProductCategoryMutation = () => {
       productCategoryService.updateOne(id, payload),
   });
 };
+
+/**
+ * DELETE
+ */
 
 export const useDeleteProductCategoryMutate = () => {
   return useMutation({

@@ -7,10 +7,9 @@ import {
   DialogTitle,
 } from "../../../components/ui/dialog";
 import queryClient from "../../../config/query.config";
-import {
-  useFindOneProductCategoryQuery,
-  useUpdateProductCategoryMutation,
-} from "../../../hooks/product-categories/use-product-categories";
+
+import { useUpdateProductCategoryMutation } from "../../../hooks/product-categories/mutations/use-product-categories.mutations";
+import { useFindOneProductCategoryQuery } from "../../../hooks/product-categories/queries/use-product-categories.queries";
 import type { ProductCategoryFormData } from "../validation/product-category.schema";
 import { ProductCategoryForm } from "./ProductCategoryForm";
 

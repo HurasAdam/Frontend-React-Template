@@ -10,8 +10,9 @@ import { EditProductCategoryModal } from "../../../../features/products/componen
 import { EditProductTopicModal } from "../../../../features/products/components/EditProductTopicModal";
 import { useProductCategoryModal } from "../../../../features/products/hooks/useProductCategoryModal";
 import { useProductTopicModal } from "../../../../features/products/hooks/useProductTopicModal";
-import { useDeleteProductCategoryMutate } from "../../../../hooks/product-categories/use-product-categories";
-import { useDeleteOneProductTopicMutation } from "../../../../hooks/product-topics/use-product-topics";
+
+import { useDeleteProductCategoryMutate } from "../../../../hooks/product-categories/mutations/use-product-categories.mutations";
+import { useDeleteOneProductTopicMutation } from "../../../../hooks/product-topics/mutations/use-product-topic-mutations";
 import type { IProductCategory } from "../../../../services/product-category/product-category.types";
 import { ProductPage } from "./ProductPage";
 

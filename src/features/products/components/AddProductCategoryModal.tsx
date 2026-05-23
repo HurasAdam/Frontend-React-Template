@@ -7,7 +7,8 @@ import {
   DialogTitle,
 } from "../../../components/ui/dialog";
 import queryClient from "../../../config/query.config";
-import { useCreateProductCategoryMutation } from "../../../hooks/product-categories/use-product-categories";
+
+import { useCreateProductCategoryMutation } from "../../../hooks/product-categories/mutations/use-product-categories.mutations";
 import type { ProductCategoryFormData } from "../validation/product-category.schema";
 import { ProductCategoryForm } from "./ProductCategoryForm";
 

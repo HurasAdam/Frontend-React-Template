@@ -20,11 +20,8 @@ import { toast } from "sonner";
 import { Button } from "../../../../components/ui/button";
 import { Input } from "../../../../components/ui/input";
 import queryClient from "../../../../config/query.config";
-
-import {
-  useCreateRoleMutation,
-  useGetPermissionsQuery,
-} from "../../../../hooks/roles/use-roles";
+import { useCreateRoleMutation } from "../../../../hooks/roles/mutations/use-roles.mutations";
+import { useGetPermissionsQuery } from "../../../../hooks/roles/queries/use-roles.queries";
 
 type PermissionDTO = {
   key: string;

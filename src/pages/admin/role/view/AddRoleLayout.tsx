@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { PageContainer } from "../../../../components/shared/PageContainer";
-import { useGetPermissionsQuery } from "../../../../hooks/roles/use-roles";
+
+import { useGetPermissionsQuery } from "../../../../hooks/roles/queries/use-roles.queries";
 import { AddRolePage } from "./AddRolePage";
 
 export const AddRoleLayout = () => {

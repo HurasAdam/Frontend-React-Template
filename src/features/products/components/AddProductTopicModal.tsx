@@ -8,7 +8,8 @@ import {
   DialogTitle,
 } from "../../../components/ui/dialog";
 import queryClient from "../../../config/query.config";
-import { useCreateProductTopicMutation } from "../../../hooks/product-topics/use-product-topics";
+
+import { useCreateProductTopicMutation } from "../../../hooks/product-topics/mutations/use-product-topic-mutations";
 import type { ProductTopicFormData } from "../validation/product-topic.schema";
 import { ProductTopicForm } from "./ProductTopicForm";
 

@@ -11,7 +11,8 @@ import {
 import { useParams } from "react-router-dom";
 import { Button } from "../../../../components/ui/button";
 import type { IProductInfo } from "../../../../features/products/hooks/useProductCategoryModal";
-import { useFindOneWithDetailsProductQuery } from "../../../../hooks/products/use-products";
+
+import { useFindOneWithDetailsProductQuery } from "../../../../hooks/products/queries/use-products.queries";
 import { formatDate } from "../../../../lib/utils";
 import type { IProductCategory } from "../../../../services/product-category/product-category.types";
 import type { IProduct } from "../../../../services/product/product.types";
@@ -220,38 +221,55 @@ export const ProductPage = ({
             </div>
 
             <div className="space-y-2">
-              {productData.topics.map((topic) => (
-                <div
-                  key={topic.id}
-                  className="flex items-center justify-between px-3 py-2 rounded-xl border hover:bg-muted/50 transition group"
-                >
-                  <div className="flex items-center gap-3">
-                    <MessageSquare
-                      size={14}
-                      style={{ color: productData.labelColor }}
-                    />
-                    <span className="text-sm">{topic.name}</span>
+              {productData.topics.length === 0 ? (
+                <div className="rounded-2xl border bg-card p-6 text-center">
+                  <div className="text-sm font-semibold">Brak tematów</div>
+
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Ten produkt nie ma jeszcze przypisanych kategorii.
                   </div>
 
-                  <div className="opacity-0 group-hover:opacity-100 transition text-xs flex items-center gap-2">
-                    <Button
-                      onClick={() => handleEditTopic(productData, topic.id)}
-                      size="sm"
-                    >
-                      <Pencil size={10} />
-                      Edytuj
-                    </Button>
-                    <Button
-                      onClick={() => onDeleteTopic(topic)}
-                      variant="destructive"
-                      size="sm"
-                    >
-                      <Trash2 size={10} />
-                      Usuń
-                    </Button>
-                  </div>
+                  <Button
+                    className="mt-4"
+                    onClick={() => handleAddCategory(productData)}
+                  >
+                    Dodaj pierwszy temat
+                  </Button>
                 </div>
-              ))}
+              ) : (
+                productData.topics.map((topic) => (
+                  <div
+                    key={topic.id}
+                    className="flex items-center justify-between px-3 py-2 rounded-xl border hover:bg-muted/50 transition group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <MessageSquare
+                        size={14}
+                        style={{ color: productData.labelColor }}
+                      />
+                      <span className="text-sm">{topic.name}</span>
+                    </div>
+
+                    <div className="opacity-0 group-hover:opacity-100 transition text-xs flex items-center gap-2">
+                      <Button
+                        onClick={() => handleEditTopic(productData, topic.id)}
+                        size="sm"
+                      >
+                        <Pencil size={10} />
+                        Edytuj
+                      </Button>
+                      <Button
+                        onClick={() => onDeleteTopic(topic)}
+                        variant="destructive"
+                        size="sm"
+                      >
+                        <Trash2 size={10} />
+                        Usuń
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

@@ -1,7 +1,8 @@
 import { Layers, Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useFindProductsQuery } from "../../../../hooks/products/use-products";
+
+import { useFindProductsQuery } from "../../../../hooks/products/queries/use-products.queries";
 import type { IProduct } from "../../../../services/product/product.types";
 
 type Props = {

@@ -8,7 +8,8 @@ import {
   DialogTitle,
 } from "../../../components/ui/dialog";
 import queryClient from "../../../config/query.config";
-import { useCreateProductMutation } from "../../../hooks/products/use-products";
+
+import { useCreateProductMutation } from "../../../hooks/products/mutations/use-products.mutations";
 import type { CreateProductPayload } from "../validation/product.schema";
 import { ProductForm } from "./ProductForm";
 
