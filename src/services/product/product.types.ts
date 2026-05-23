@@ -10,6 +10,7 @@ export interface IProductWithDetails {
   name: string;
   labelColor: string;
   createdBy: string;
+  createdAt: string;
 
   categories: {
     id: string;

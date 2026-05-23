@@ -226,12 +226,12 @@ export const ProductPage = ({
                   <div className="text-sm font-semibold">Brak tematów</div>
 
                   <div className="text-xs text-muted-foreground mt-1">
-                    Ten produkt nie ma jeszcze przypisanych kategorii.
+                    Ten produkt nie ma jeszcze żadnych tematów rozmów.
                   </div>
 
                   <Button
                     className="mt-4"
-                    onClick={() => handleAddCategory(productData)}
+                    onClick={() => handleAddTopic(productData)}
                   >
                     Dodaj pierwszy temat
                   </Button>

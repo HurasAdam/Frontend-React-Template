@@ -1,18 +1,15 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "sonner";
 import { ConfirmDialog } from "../../../../components/shared/ConfirmDialog";
 import { useConfirmDialog } from "../../../../components/shared/hooks/useConfirmDialog";
 import { PageContainer } from "../../../../components/shared/PageContainer";
-import queryClient from "../../../../config/query.config";
 import { AddProductCategoryModal } from "../../../../features/products/components/AddProductCategoryModal";
 import { AddProductTopicModal } from "../../../../features/products/components/AddProductTopicModal";
 import { EditProductCategoryModal } from "../../../../features/products/components/EditProductCategoryModal";
 import { EditProductTopicModal } from "../../../../features/products/components/EditProductTopicModal";
 import { useProductCategoryModal } from "../../../../features/products/hooks/useProductCategoryModal";
 import { useProductTopicModal } from "../../../../features/products/hooks/useProductTopicModal";
-
-import { useDeleteProductCategoryMutate } from "../../../../hooks/product-categories/mutations/use-product-categories.mutations";
-import { useDeleteOneProductTopicMutation } from "../../../../hooks/product-topics/mutations/use-product-topic-mutations";
+import { useDeleteProductCategoryAction } from "../../../../hooks/product-categories/actions/use-delete-product-category.action";
+import { useDeleteProductTopicAction } from "../../../../hooks/product-topics/actions/use-delete-product-topic.action";
 import type { IProductCategory } from "../../../../services/product-category/product-category.types";
 import { ProductPage } from "./ProductPage";
 
@@ -24,11 +21,11 @@ export const ProductLayout = () => {
   const deleteCategoryDialog = useConfirmDialog();
   const deleteTopicDialog = useConfirmDialog();
 
-  const { mutate: deleteMutate, isPending: isDeletePending } =
-    useDeleteProductCategoryMutate();
+  const { deleteCategory, isPending: isDeleteCategoryPending } =
+    useDeleteProductCategoryAction(productId);
 
-  const { mutate: deleteTopicMutate, isPending: isDeleteTopicPending } =
-    useDeleteOneProductTopicMutation();
+  const { deleteTopic, isPending: isDeleteTopicPending } =
+    useDeleteProductTopicAction(productId);
 
   const handleDeleteCategory = (cat: IProductCategory) => {
     deleteCategoryDialog.open({
@@ -47,16 +44,13 @@ export const ProductLayout = () => {
         </>
       ),
       data: cat,
-      onConfirm: (cat) =>
-        deleteMutate(cat.id, {
-          onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["product", productId] });
-            toast.success(`Kategoria ${cat.name} została usunięta  `, {
-              position: "bottom-right",
-            });
-            deleteCategoryDialog.close();
-          },
-        }),
+      onConfirm: (cat) => {
+        deleteCategory({
+          categoryId: cat.id,
+          categoryName: cat.name,
+          onSuccess: deleteCategoryDialog.close,
+        });
+      },
     });
   };
 
@@ -79,14 +73,10 @@ export const ProductLayout = () => {
       ),
       data: cat,
       onConfirm: (cat) =>
-        deleteTopicMutate(cat.id, {
-          onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["product", productId] });
-            toast.success(`Temat ${cat.name} został usunięty  `, {
-              position: "bottom-right",
-            });
-            deleteTopicDialog.close();
-          },
+        deleteTopic({
+          topicId: cat.id,
+          topicName: cat.name,
+          onSuccess: deleteTopicDialog.close,
         }),
     });
   };
@@ -106,6 +96,7 @@ export const ProductLayout = () => {
         openAddProductTopic={topicModal.openAddProductTopic}
         openEditProductTopic={topicModal.openEditProductTopic}
       />
+
       <AddProductCategoryModal
         isOpen={modal.isCreate}
         onClose={modal.close}
@@ -144,7 +135,7 @@ export const ProductLayout = () => {
         type={deleteCategoryDialog.type}
         onCancel={deleteCategoryDialog.close}
         onConfirm={deleteCategoryDialog.confirm}
-        isLoading={isDeletePending}
+        isLoading={isDeleteCategoryPending}
         requireConfirmation={true}
         isConfirmEnabled={true}
       >
@@ -157,7 +148,7 @@ export const ProductLayout = () => {
         type={deleteTopicDialog.type}
         onCancel={deleteTopicDialog.close}
         onConfirm={deleteTopicDialog.confirm}
-        isLoading={isDeletePending}
+        isLoading={isDeleteTopicPending}
         requireConfirmation={true}
         isConfirmEnabled={true}
       >
