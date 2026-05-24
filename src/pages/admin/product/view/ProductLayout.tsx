@@ -5,8 +5,10 @@ import { PageContainer } from "../../../../components/shared/PageContainer";
 import { AddProductCategoryModal } from "../../../../features/products/components/AddProductCategoryModal";
 import { AddProductTopicModal } from "../../../../features/products/components/AddProductTopicModal";
 import { EditProductCategoryModal } from "../../../../features/products/components/EditProductCategoryModal";
+import { EditProductModal } from "../../../../features/products/components/EditProductModal";
 import { EditProductTopicModal } from "../../../../features/products/components/EditProductTopicModal";
 import { useProductCategoryModal } from "../../../../features/products/hooks/useProductCategoryModal";
+import { useProductModal } from "../../../../features/products/hooks/useProductModal";
 import { useProductTopicModal } from "../../../../features/products/hooks/useProductTopicModal";
 import { useDeleteProductCategoryAction } from "../../../../hooks/product-categories/actions/use-delete-product-category.action";
 import { useDeleteProductTopicAction } from "../../../../hooks/product-topics/actions/use-delete-product-topic.action";
@@ -16,6 +18,7 @@ import { ProductPage } from "./ProductPage";
 export const ProductLayout = () => {
   const { id: productId } = useParams();
   const navigate = useNavigate();
+  const productModal = useProductModal();
   const modal = useProductCategoryModal();
   const topicModal = useProductTopicModal();
   const deleteCategoryDialog = useConfirmDialog();
@@ -91,6 +94,7 @@ export const ProductLayout = () => {
         onBack={onBack}
         openAddProductCategory={modal.openAddProductCategory}
         openEditProductCategory={modal.openEditProductCategory}
+        openEditProduct={productModal.openEdit}
         onDelete={handleDeleteCategory}
         onDeleteTopic={handleDeleteTopic}
         openAddProductTopic={topicModal.openAddProductTopic}
@@ -129,6 +133,13 @@ export const ProductLayout = () => {
         />
       )}
 
+      {productModal.isEdit && (
+        <EditProductModal
+          isOpen={productModal.isEdit}
+          onClose={productModal.close}
+          productId={productModal.productId}
+        />
+      )}
       <ConfirmDialog
         isOpen={deleteCategoryDialog.isOpen}
         title={deleteCategoryDialog.title}

@@ -14,10 +14,18 @@ export const useFindProductsQuery = (filters: { name?: string }) => {
   });
 };
 
+export const useFindOneProductQuery = (id?: string) => {
+  return useQuery<IFindOneWithDetailsProductResponse>({
+    queryKey: ["productt", id],
+    queryFn: () => productService.findOne(id as string),
+    enabled: !!id,
+  });
+};
+
 export const useFindOneWithDetailsProductQuery = (id?: string) => {
   return useQuery<IFindOneWithDetailsProductResponse>({
     queryKey: ["product", id],
-    queryFn: () => productService.findOne(id as string),
+    queryFn: () => productService.findOneWithDetails(id as string),
     enabled: !!id,
   });
 };

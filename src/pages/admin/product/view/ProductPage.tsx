@@ -20,6 +20,7 @@ import type { IProduct } from "../../../../services/product/product.types";
 type Props = {
   onBack: () => void;
   openAddProductCategory: (product: IProductInfo) => void;
+  openEditProduct: (id: string) => void;
   onDelete: (cat: IProductCategory) => void;
   onDeleteTopic: (topic) => void;
   openEditProductCategory: (product: IProductInfo, categoryId: string) => void;
@@ -32,6 +33,7 @@ export const ProductPage = ({
   onDelete,
   onDeleteTopic,
   openAddProductCategory,
+  openEditProduct,
   openEditProductCategory,
   openAddProductTopic,
   openEditProductTopic,
@@ -303,6 +305,7 @@ export const ProductPage = ({
           {/* ACTIONS */}
           <div className="rounded-2xl border bg-card p-5 space-y-3">
             <button
+              onClick={() => openEditProduct(productData.id)}
               className="w-full px-4 py-2 rounded-xl text-sm text-white hover:opacity-90"
               style={{ backgroundColor: productData.labelColor }}
             >

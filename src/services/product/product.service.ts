@@ -21,8 +21,20 @@ const findOne = (id: string): Promise<IFindOneWithDetailsProductResponse> => {
   return API.get(`${BASE_URL}/${id}`);
 };
 
+const findOneWithDetails = (
+  id: string,
+): Promise<IFindOneWithDetailsProductResponse> => {
+  return API.get(`${BASE_URL}/${id}/details`);
+};
+
+const updateOne = (id: string, payload: unknown) => {
+  return API.patch(`${BASE_URL}/${id}`, payload);
+};
+
 export const productService = {
   create,
   find,
   findOne,
+  findOneWithDetails,
+  updateOne,
 };

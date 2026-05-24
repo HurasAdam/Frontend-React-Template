@@ -9,3 +9,11 @@ export const useCreateProductMutation = () => {
     },
   });
 };
+
+export const useUpdateProductMutation = () => {
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: unknown }) => {
+      return productService.updateOne(id, payload);
+    },
+  });
+};
