@@ -7,6 +7,7 @@ import { SettingsPage } from "../../pages/app/settings/view/SettingsPage";
 import { AdminLayout } from "../../layouts/AdminLayout";
 import { AdminsPage } from "../../pages/admin/admins/view/AdminsPage";
 import { AdminDashboardPage } from "../../pages/admin/dashboard/view/AdminDashboardPage";
+import FaqsLayout from "../../pages/admin/faqs/view/FaqsLayout";
 import { ProductLayout } from "../../pages/admin/product/view/ProductLayout";
 import { ProductsLayout } from "../../pages/admin/products/view/ProductsLayout";
 import { AddRoleLayout } from "../../pages/admin/role/view/AddRoleLayout";
@@ -53,6 +54,7 @@ export const AppRoutes = () => {
               <Route path="/admin/products" element={<ProductsLayout />} />
               <Route path="/admin/products/:id" element={<ProductLayout />} />
               <Route path="/admin/tags" element={<TagsLayout />} />
+              <Route path="/admin/faqs" element={<FaqsLayout />} />
 
               <Route
                 path="/admin/account-settings"

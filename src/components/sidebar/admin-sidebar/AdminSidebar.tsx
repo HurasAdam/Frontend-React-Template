@@ -73,7 +73,7 @@ const data = {
     { title: "Produkty", url: "admin/products", icon: <Box /> },
     { title: "Tagi", url: "admin/tags", icon: <Tags /> },
     { title: "Rejestr tematów", url: "/topics", icon: <NotepadText /> },
-    { title: "FAQ", url: "/faq", icon: <BookOpen /> },
+    { title: "FAQ", url: "admin/faqs", icon: <BookOpen /> },
     { title: "Statystyki", url: "/stats", icon: <ChartNoAxesCombined /> },
     { title: "Narzędzia sieciowe", url: "/network-tools", icon: <Network /> },
     { title: "Szkoły projektowe", url: "/schools", icon: <School /> },
