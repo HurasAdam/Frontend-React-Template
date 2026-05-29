@@ -1,12 +1,9 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-
-import { BaseLayout } from "../../layouts/BaseLayout";
-import { ImportantLinksPage } from "../../pages/app/important-links/views/ImportantLinksPage";
-import { SettingsPage } from "../../pages/app/settings/view/SettingsPage";
-
 import { AdminLayout } from "../../layouts/AdminLayout";
+import { BaseLayout } from "../../layouts/BaseLayout";
 import { AdminsPage } from "../../pages/admin/admins/view/AdminsPage";
 import { AdminDashboardPage } from "../../pages/admin/dashboard/view/AdminDashboardPage";
+import AddFaqLayout from "../../pages/admin/faq/view/AddFaqLayout";
 import FaqsLayout from "../../pages/admin/faqs/view/FaqsLayout";
 import { ProductLayout } from "../../pages/admin/product/view/ProductLayout";
 import { ProductsLayout } from "../../pages/admin/products/view/ProductsLayout";
@@ -17,6 +14,8 @@ import { AddUserLayout } from "../../pages/admin/user/view/AddUserLayout";
 import { UsersLayout } from "../../pages/admin/users/views/UsersLayout";
 import { ArticlesLayout } from "../../pages/app/articles/view/ArticlesLayout";
 import { DashboardLayout } from "../../pages/app/dashboard/view/DashboardLayout";
+import { ImportantLinksPage } from "../../pages/app/important-links/views/ImportantLinksPage";
+import { SettingsPage } from "../../pages/app/settings/view/SettingsPage";
 import LoginPage from "../../pages/shared/auth/login/view/Login.page";
 import { AdminRoute } from "../auth/admin.route";
 import { AuthRoute } from "../auth/auth.route";
@@ -55,6 +54,7 @@ export const AppRoutes = () => {
               <Route path="/admin/products/:id" element={<ProductLayout />} />
               <Route path="/admin/tags" element={<TagsLayout />} />
               <Route path="/admin/faqs" element={<FaqsLayout />} />
+              <Route path="/admin/faqs/new" element={<AddFaqLayout />} />
 
               <Route
                 path="/admin/account-settings"

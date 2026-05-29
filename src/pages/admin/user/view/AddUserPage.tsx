@@ -320,7 +320,7 @@ export const AddUserPage = ({ isSubmitting, onCancel }: Props) => {
               ) : (
                 <>
                   <Check className="mr-2" />
-                  Utwórz użytkownika
+                  Utwórz
                 </>
               )}
             </Button>

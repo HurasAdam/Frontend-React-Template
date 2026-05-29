@@ -1,8 +1,6 @@
 import { NavUser } from "@/components/sidebar/base-sidebar/nav-user";
 import { TeamSwitcher } from "@/components/sidebar/base-sidebar/team-switcher";
 import { NavOthers } from "@/components/ui/nav-others";
-import * as React from "react";
-
 import {
   Sidebar,
   SidebarContent,
@@ -13,6 +11,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import * as React from "react";
 
 import {
   AudioLinesIcon,
