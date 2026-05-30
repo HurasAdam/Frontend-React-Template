@@ -7,6 +7,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useFindUsersWithDetailsQuery } from "../../../../hooks/users/queries/use-users.queries";
 
 type UserDetails = {
@@ -127,7 +128,8 @@ export const UsersPage = ({ openAdd }) => {
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((user) => (
-            <div
+            <Link
+              to={`/admin/users/${user.id}`}
               key={user.id}
               className="rounded-2xl border bg-card p-5 transition hover:shadow-md"
             >
@@ -179,7 +181,7 @@ export const UsersPage = ({ openAdd }) => {
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
 
           {filtered.length === 0 && (

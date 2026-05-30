@@ -11,6 +11,7 @@ import { AddRoleLayout } from "../../pages/admin/role/view/AddRoleLayout";
 import { RolesLayout } from "../../pages/admin/roles/view/RolesLayout";
 import { TagsLayout } from "../../pages/admin/tags/view/TagsLayout";
 import { AddUserLayout } from "../../pages/admin/user/view/AddUserLayout";
+import { UserDetailsLayout } from "../../pages/admin/user/view/UserDetailsLayout";
 import { UsersLayout } from "../../pages/admin/users/views/UsersLayout";
 import { ArticlesLayout } from "../../pages/app/articles/view/ArticlesLayout";
 import { DashboardLayout } from "../../pages/app/dashboard/view/DashboardLayout";
@@ -47,6 +48,7 @@ export const AppRoutes = () => {
               <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
               <Route path="/admin/users" element={<UsersLayout />} />
               <Route path="/admin/users/new" element={<AddUserLayout />} />
+              <Route path="/admin/users/:id" element={<UserDetailsLayout />} />
               <Route path="/admin/admins" element={<AdminsPage />} />
               <Route path="/admin/roles" element={<RolesLayout />} />
               <Route path="/admin/roles/new" element={<AddRoleLayout />} />

@@ -20,7 +20,7 @@ export const roleIconOptions = [
   { name: "ChessKnight", icon: ChessKnight },
   { name: "TreePalm", icon: TreePalm },
   { name: "HandFist", icon: HandFist },
-  { name: "Eye", icon: Eye },
+  { name: "FaEye", icon: Eye },
   { name: "PenTool", icon: PenTool },
   { name: "FileText", icon: FileText },
   { name: "Rose", icon: Rose },
