@@ -1,14 +1,7 @@
-import { KeyRound, Plus, Search, Shield } from "lucide-react";
+import { Shield as FallbackIcon, KeyRound, Plus, Search } from "lucide-react";
 import { useState } from "react";
+import { roleIconMap } from "../../../../constants/role-icons";
 import { useFindRolesQuery } from "../../../../hooks/roles/queries/use-roles.queries";
-
-const COLORS: Record<string, string> = {
-  red: "bg-red-500/10 text-red-500",
-  orange: "bg-orange-500/10 text-orange-500",
-  blue: "bg-blue-500/10 text-blue-500",
-  green: "bg-green-500/10 text-green-500",
-  gray: "bg-gray-500/10 text-gray-400",
-};
 
 export const RolesPage = ({ openAdd }: { openAdd: () => void }) => {
   const [search, setSearch] = useState("");
@@ -63,11 +56,17 @@ export const RolesPage = ({ openAdd }: { openAdd: () => void }) => {
                 <div
                   className="w-9 h-9 rounded-lg flex items-center justify-center"
                   style={{
-                    backgroundColor: `${role.labelColor}20`, // 20 = opacity (hex alpha)
+                    backgroundColor: `${role.labelColor}20`,
                     color: role.labelColor,
                   }}
                 >
-                  <Shield size={16} />
+                  {(() => {
+                    const Icon =
+                      roleIconMap[role.iconKey as keyof typeof roleIconMap] ??
+                      FallbackIcon;
+
+                    return <Icon size={16} />;
+                  })()}
                 </div>
 
                 <div>

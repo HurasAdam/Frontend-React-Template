@@ -1,25 +1,11 @@
 import type { AxiosError } from "axios";
-import {
-  Check,
-  ChefHat,
-  ChessKnight,
-  CreativeCommons,
-  Eye,
-  FileText,
-  HandFist,
-  HandHelping,
-  PencilRuler,
-  PenTool,
-  Rose,
-  Shield,
-  TreePalm,
-  User,
-} from "lucide-react";
+import { Check, Shield } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../../../../components/ui/button";
 import { Input } from "../../../../components/ui/input";
 import queryClient from "../../../../config/query.config";
+import { roleIconOptions } from "../../../../constants/role-icons";
 import { useCreateRoleMutation } from "../../../../hooks/roles/mutations/use-roles.mutations";
 import { useGetPermissionsQuery } from "../../../../hooks/roles/queries/use-roles.queries";
 
@@ -48,22 +34,6 @@ export const colorOptions = [
 
   "#A855F7", // purple (creative/admin)
   "#7C3AED", // deep violet (distinct purple variant)
-];
-
-export const iconOptions = [
-  { key: "User", Icon: User },
-  { key: "PencilRuler", Icon: PencilRuler },
-
-  { key: "CreativeCommons", Icon: CreativeCommons },
-  { key: "ChessKnight", Icon: ChessKnight },
-  { key: "TreePalm", Icon: TreePalm },
-  { key: "HandFist", Icon: HandFist },
-  { key: "Eye", Icon: Eye },
-  { key: "PenTool", Icon: PenTool },
-  { key: "FileText", Icon: FileText },
-  { key: "Rose", Icon: Rose },
-  { key: "HandHelping", Icon: HandHelping },
-  { key: "ChefHat", Icon: ChefHat },
 ];
 
 export const AddRolePage = ({ onClose }) => {
@@ -221,13 +191,13 @@ export const AddRolePage = ({ onClose }) => {
               description="Wybierz ikonę"
               right={
                 <div className="grid grid-cols-6 gap-2 w-[240px]">
-                  {iconOptions.map(({ key, Icon }) => {
-                    const active = iconKey === key;
+                  {roleIconOptions.map(({ name, icon: Icon }) => {
+                    const active = iconKey === name;
 
                     return (
                       <button
-                        key={key}
-                        onClick={() => setIconKey(key)}
+                        key={name}
+                        onClick={() => setIconKey(name)}
                         className={`
                           w-9 h-9 rounded-md border flex items-center justify-center
                           transition
