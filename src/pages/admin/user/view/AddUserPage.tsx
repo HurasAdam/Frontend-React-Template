@@ -307,7 +307,6 @@ export const AddUserPage = ({ isSubmitting, onCancel }: Props) => {
               Anuluj
             </Button>
             <Button
-              onClick={onSubmit}
               type="submit"
               disabled={!form.formState.isValid || isSubmitting}
               className="min-w-[180px]"
