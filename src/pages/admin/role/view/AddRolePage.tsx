@@ -69,14 +69,14 @@ export const iconOptions = [
 export const AddRolePage = ({ onClose }) => {
   const [name, setName] = useState("");
   const [labelColor, setLabelColor] = useState("#3b82f6");
-  const [icon, setIcon] = useState("Shield");
+  const [iconKey, setIconKey] = useState("Shield");
   const [permissions, setPermissions] = useState<string[]>([]);
 
   const { data: permissionsList = [] } = useGetPermissionsQuery();
   const { mutate } = useCreateRoleMutation();
 
   const onsubmit = () => {
-    const payload = { name, labelColor, icon, permissions };
+    const payload = { name, labelColor, iconKey, permissions };
 
     mutate(payload, {
       onSuccess: () => {
@@ -222,12 +222,12 @@ export const AddRolePage = ({ onClose }) => {
               right={
                 <div className="grid grid-cols-6 gap-2 w-[240px]">
                   {iconOptions.map(({ key, Icon }) => {
-                    const active = icon === key;
+                    const active = iconKey === key;
 
                     return (
                       <button
                         key={key}
-                        onClick={() => setIcon(key)}
+                        onClick={() => setIconKey(key)}
                         className={`
                           w-9 h-9 rounded-md border flex items-center justify-center
                           transition
