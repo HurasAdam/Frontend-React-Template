@@ -7,124 +7,56 @@ import {
   XCircle,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useFindUsersWithDetailsQuery } from "../../../../hooks/users/queries/use-users.queries";
 
-type UserRole = "ADMIN" | "USER";
-
-type AppUser = {
+type UserDetails = {
   id: string;
   name: string;
+  surname: string;
   email: string;
-  role: UserRole;
+  role: {
+    id: string;
+    name: string;
+    iconKey: string;
+  } | null;
   isActive: boolean;
-  avatar: string;
 };
 
-// --- MOCK ---
-const MOCK_USERS: AppUser[] = [
-  {
-    id: "1",
-    name: "Jan Kowalski",
-    email: "jan@example.com",
-    role: "ADMIN",
-    isActive: true,
-    avatar: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    id: "2",
-    name: "Anna Nowak",
-    email: "anna@example.com",
-    role: "USER",
-    isActive: true,
-    avatar: "https://i.pravatar.cc/150?img=2",
-  },
-  {
-    id: "3",
-    name: "Piotr Zieliński",
-    email: "piotr@example.com",
-    role: "USER",
-    isActive: false,
-    avatar: "https://i.pravatar.cc/150?img=3",
-  },
-  {
-    id: "4",
-    name: "Katarzyna Wiśniewska",
-    email: "kasia@example.com",
-    role: "ADMIN",
-    isActive: true,
-    avatar: "https://i.pravatar.cc/150?img=4",
-  },
-  {
-    id: "5",
-    name: "Tomasz Lewandowski",
-    email: "tomasz@example.com",
-    role: "USER",
-    isActive: true,
-    avatar: "https://i.pravatar.cc/150?img=5",
-  },
-  {
-    id: "6",
-    name: "Michał Wójcik",
-    email: "michal@example.com",
-    role: "USER",
-    isActive: false,
-    avatar: "https://i.pravatar.cc/150?img=6",
-  },
-  {
-    id: "7",
-    name: "Agnieszka Kamińska",
-    email: "aga@example.com",
-    role: "USER",
-    isActive: true,
-    avatar: "https://i.pravatar.cc/150?img=7",
-  },
-  {
-    id: "8",
-    name: "Paweł Dąbrowski",
-    email: "pawel@example.com",
-    role: "ADMIN",
-    isActive: true,
-    avatar: "https://i.pravatar.cc/150?img=8",
-  },
-  {
-    id: "9",
-    name: "Karolina Mazur",
-    email: "karolina@example.com",
-    role: "USER",
-    isActive: false,
-    avatar: "https://i.pravatar.cc/150?img=9",
-  },
-  {
-    id: "10",
-    name: "Mateusz Kaczmarek",
-    email: "mateusz@example.com",
-    role: "USER",
-    isActive: true,
-    avatar: "https://i.pravatar.cc/150?img=10",
-  },
-];
-
-const ROLES = ["Wszystkie", "ADMIN", "USER"];
 const STATUS = ["Wszystkie", "Aktywne", "Wyłączone"];
 
 export const UsersPage = ({ openAdd }) => {
+  const { data = [], isLoading } = useFindUsersWithDetailsQuery();
+
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("Wszystkie");
   const [status, setStatus] = useState("Wszystkie");
 
-  const filtered = useMemo(() => {
-    return MOCK_USERS.filter((u) => {
-      const matchesSearch = u.name.toLowerCase().includes(search.toLowerCase());
+  const roles = useMemo(() => {
+    const roleNames = Array.from(
+      new Set(data.map((user) => user.role?.name).filter(Boolean)),
+    );
 
-      const matchesRole = role === "Wszystkie" || u.role === role;
+    return ["Wszystkie", ...roleNames];
+  }, [data]);
+
+  const filtered = useMemo(() => {
+    return (data as UserDetails[]).filter((user) => {
+      const fullName = `${user.name} ${user.surname}`;
+
+      const matchesSearch =
+        fullName.toLowerCase().includes(search.toLowerCase()) ||
+        user.email.toLowerCase().includes(search.toLowerCase());
+
+      const matchesRole = role === "Wszystkie" || user.role?.name === role;
 
       const matchesStatus =
         status === "Wszystkie" ||
-        (status === "Aktywne" && u.isActive) ||
-        (status === "Wyłączone" && !u.isActive);
+        (status === "Aktywne" && user.isActive) ||
+        (status === "Wyłączone" && !user.isActive);
 
       return matchesSearch && matchesRole && matchesStatus;
     });
-  }, [search, role, status]);
+  }, [data, search, role, status]);
 
   return (
     <div className="w-full space-y-6">
@@ -132,13 +64,13 @@ export const UsersPage = ({ openAdd }) => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Użytkownicy</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="mt-1 text-sm text-muted-foreground">
             Zarządzaj kontami użytkowników systemu
           </p>
         </div>
 
         <button
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
+          className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
           onClick={openAdd}
         >
           <Plus size={16} />
@@ -148,7 +80,7 @@ export const UsersPage = ({ openAdd }) => {
 
       {/* FILTERS */}
       <div className="rounded-2xl border bg-card p-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
           {/* SEARCH */}
           <div className="relative md:col-span-2">
             <Search
@@ -159,7 +91,7 @@ export const UsersPage = ({ openAdd }) => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Szukaj użytkownika..."
-              className="w-full pl-9 pr-3 py-2 rounded-lg border bg-background text-sm"
+              className="w-full rounded-lg border bg-background py-2 pl-9 pr-3 text-sm"
             />
           </div>
 
@@ -167,10 +99,10 @@ export const UsersPage = ({ openAdd }) => {
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="px-3 py-2 rounded-lg border bg-background text-sm"
+            className="rounded-lg border bg-background px-3 py-2 text-sm"
           >
-            {ROLES.map((r) => (
-              <option key={r}>{r}</option>
+            {roles.map((roleName) => (
+              <option key={roleName}>{roleName}</option>
             ))}
           </select>
 
@@ -178,77 +110,85 @@ export const UsersPage = ({ openAdd }) => {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="px-3 py-2 rounded-lg border bg-background text-sm"
+            className="rounded-lg border bg-background px-3 py-2 text-sm"
           >
-            {STATUS.map((s) => (
-              <option key={s}>{s}</option>
+            {STATUS.map((statusName) => (
+              <option key={statusName}>{statusName}</option>
             ))}
           </select>
         </div>
       </div>
 
       {/* LIST */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {filtered.map((user) => (
-          <div
-            key={user.id}
-            className="rounded-2xl border bg-card p-5 hover:shadow-md transition"
-          >
-            <div className="flex items-start gap-4">
-              {/* AVATAR */}
-              <img
-                src={user.avatar}
-                className="w-12 h-12 rounded-xl object-cover"
-              />
-
-              {/* INFO */}
-              <div className="flex-1">
-                <p className="text-sm font-semibold">{user.name}</p>
-
-                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                  <Mail size={12} />
-                  {user.email}
+      {isLoading ? (
+        <div className="py-10 text-center text-sm text-muted-foreground">
+          Ładowanie użytkowników...
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {filtered.map((user) => (
+            <div
+              key={user.id}
+              className="rounded-2xl border bg-card p-5 transition hover:shadow-md"
+            >
+              <div className="flex items-start gap-4">
+                {/* AVATAR PLACEHOLDER */}
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted text-sm font-semibold">
+                  {user.name.charAt(0)}
+                  {user.surname.charAt(0)}
                 </div>
 
-                <div className="flex items-center gap-2 mt-3">
-                  {/* ROLE */}
-                  <span className="text-xs px-2 py-1 rounded-md bg-muted flex items-center gap-1">
-                    <Shield size={12} />
-                    {user.role}
-                  </span>
+                {/* INFO */}
+                <div className="flex-1">
+                  <p className="text-sm font-semibold">
+                    {user.name} {user.surname}
+                  </p>
 
-                  {/* STATUS */}
-                  <span
-                    className={`text-xs px-2 py-1 rounded-md flex items-center gap-1 ${
-                      user.isActive
-                        ? "bg-green-500/10 text-green-600"
-                        : "bg-red-500/10 text-red-600"
-                    }`}
-                  >
-                    {user.isActive ? (
-                      <>
-                        <CheckCircle2 size={12} />
-                        Aktywny
-                      </>
-                    ) : (
-                      <>
-                        <XCircle size={12} />
-                        Wyłączony
-                      </>
-                    )}
-                  </span>
+                  <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+                    <Mail size={12} />
+                    {user.email}
+                  </div>
+
+                  <div className="mt-3 flex items-center gap-2">
+                    {/* ROLE */}
+                    <span className="flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-xs">
+                      <Shield size={12} />
+                      {user.role?.name ?? "Brak roli"}
+                    </span>
+
+                    {/* STATUS */}
+                    <span
+                      className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs ${
+                        user.isActive
+                          ? "bg-green-500/10 text-green-600"
+                          : "bg-red-500/10 text-red-600"
+                      }`}
+                    >
+                      {user.isActive ? (
+                        <>
+                          <CheckCircle2 size={12} />
+                          Aktywny
+                        </>
+                      ) : (
+                        <>
+                          <XCircle size={12} />
+                          Wyłączony
+                        </>
+                      )}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
 
-        {filtered.length === 0 && (
-          <div className="col-span-full text-center text-sm text-muted-foreground py-10">
-            Brak użytkowników
-          </div>
-        )}
-      </div>
+          {filtered.length === 0 && (
+            <div className="col-span-full py-10 text-center text-sm text-muted-foreground">
+              Brak użytkowników
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
