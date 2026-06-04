@@ -13,7 +13,12 @@ const findOneWithDetails = (
   return API.get(`${BASE_URL}/users/${id}`);
 };
 
+const resetPassword = (id: string): Promise<{ temporaryPassword: string }> => {
+  return API.post(`${BASE_URL}/users/${id}/reset-password`);
+};
+
 export const usersService = {
   create,
   findOneWithDetails,
+  resetPassword,
 };

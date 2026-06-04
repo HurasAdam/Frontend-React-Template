@@ -20,7 +20,11 @@ import {
 import { roleIconMap } from "../../../../constants/role-icons";
 import { useFindUserWithDetailsQuery } from "../../../../hooks/admin/use-admin";
 
-export const UserDetailsPage = () => {
+interface Props {
+  openPasswordReset: (user) => void;
+}
+
+export const UserDetailsPage = ({ openPasswordReset }: Props) => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
@@ -71,7 +75,10 @@ export const UserDetailsPage = () => {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem className="flex items-center gap-2">
+            <DropdownMenuItem
+              onClick={() => openPasswordReset(user)}
+              className="flex items-center gap-2"
+            >
               <RefreshCcw size={14} />
               Reset hasła
             </DropdownMenuItem>

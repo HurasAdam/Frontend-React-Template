@@ -1,25 +1,33 @@
 import { useState } from "react";
 
+interface ISelectedUser {
+  id: string;
+  name: string;
+  email: string;
+}
+
 type UserModalState = {
-  mode: "CREATE" | "EDIT";
-  userId?: string;
-};
+  mode: "PASSWORD_RESET";
+  user: ISelectedUser;
+} | null;
 
 export const useUserModal = () => {
-  const [state, setState] = useState<UserModalState | null>(null);
+  const [state, setState] = useState<UserModalState>(null);
 
-  const openAdd = () => setState({ mode: "CREATE" });
-  const openEdit = (id: string) => setState({ mode: "EDIT", userId: id });
+  const openPasswordReset = (user: ISelectedUser) => {
+    setState({
+      mode: "PASSWORD_RESET",
+      user,
+    });
+  };
 
   const close = () => setState(null);
 
   return {
     state,
     isOpen: state !== null,
-    isEdit: state?.mode === "EDIT",
-    userId: state?.userId,
-    openAdd,
-    openEdit,
+    user: state?.user ?? null,
+    openPasswordReset,
     close,
   };
 };

@@ -16,3 +16,9 @@ export const useFindUserWithDetailsQuery = (id?: string) => {
     enabled: !!id,
   });
 };
+
+export const useResetPasswordMutation = () => {
+  return useMutation({
+    mutationFn: (id: string) => adminService.users.resetPassword(id),
+  });
+};
