@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import {
+  ArrowLeft,
   CheckCircle2,
   Mail,
   MoreVertical,
@@ -8,7 +9,7 @@ import {
   UserCog,
   XCircle,
 } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   DropdownMenu,
@@ -20,6 +21,7 @@ import { roleIconMap } from "../../../../constants/role-icons";
 import { useFindUserWithDetailsQuery } from "../../../../hooks/admin/use-admin";
 
 export const UserDetailsPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
   const { data: user } = useFindUserWithDetailsQuery(id!);
@@ -31,17 +33,26 @@ export const UserDetailsPage = () => {
   const RoleIcon = roleIconMap[user.role.iconKey as keyof typeof roleIconMap];
 
   return (
-    <div className="py-8 space-y-8">
+    <div className="space-y-8">
+      {/* BACK */}
+      <button
+        onClick={() => navigate(-1)}
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft size={16} />
+        Powrót
+      </button>
+
       {/* HEADER */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
-          <div className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center font-semibold">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted font-semibold">
             {user.name[0]}
             {user.surname[0]}
           </div>
 
           <div>
-            <p className="text-base font-semibold">
+            <p className="text-lg font-semibold">
               {user.name} {user.surname}
             </p>
 
@@ -54,7 +65,7 @@ export const UserDetailsPage = () => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="p-2 rounded-lg border hover:bg-muted/40">
+            <button className="rounded-lg border p-2 hover:bg-muted/40">
               <MoreVertical size={16} />
             </button>
           </DropdownMenuTrigger>

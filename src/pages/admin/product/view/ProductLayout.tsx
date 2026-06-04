@@ -89,7 +89,7 @@ export const ProductLayout = () => {
   };
 
   return (
-    <PageContainer variant="full">
+    <PageContainer variant="wide">
       <ProductPage
         onBack={onBack}
         openAddProductCategory={modal.openAddProductCategory}

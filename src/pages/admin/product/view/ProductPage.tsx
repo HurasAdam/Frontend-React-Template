@@ -69,19 +69,33 @@ export const ProductPage = ({
     <div className="w-full space-y-6">
       {/* HEADER */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="space-y-4">
           <button
             onClick={onBack}
-            className="p-2 rounded-xl border hover:bg-muted"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft size={16} />
+            Powrót
           </button>
 
-          <div>
-            <h1 className="text-2xl font-semibold">{productData.name}</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Szczegóły produktu
-            </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold">{productData.name}</h1>
+
+              <p className="mt-1 text-sm text-muted-foreground">
+                Szczegóły produktu
+              </p>
+            </div>
+
+            <div
+              className="px-3 py-1 rounded-lg text-xs font-medium"
+              style={{
+                backgroundColor: `${productData.labelColor}20`,
+                color: productData.labelColor,
+              }}
+            >
+              {productData.name}
+            </div>
           </div>
         </div>
 
