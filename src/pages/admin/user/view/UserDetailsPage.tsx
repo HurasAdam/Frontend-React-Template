@@ -22,9 +22,10 @@ import { useFindUserWithDetailsQuery } from "../../../../hooks/admin/use-admin";
 
 interface Props {
   openPasswordReset: (user) => void;
+  openEditRole: (user) => void;
 }
 
-export const UserDetailsPage = ({ openPasswordReset }: Props) => {
+export const UserDetailsPage = ({ openPasswordReset, openEditRole }: Props) => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
@@ -80,7 +81,17 @@ export const UserDetailsPage = ({ openPasswordReset }: Props) => {
               className="flex items-center gap-2"
             >
               <RefreshCcw size={14} />
-              Reset hasła
+              Zresetuj hasło
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => {
+                openEditRole(user);
+              }}
+              className="flex items-center gap-2"
+            >
+              <UserCog size={14} />
+              Zmień role
             </DropdownMenuItem>
 
             <DropdownMenuItem className="flex items-center gap-2">
