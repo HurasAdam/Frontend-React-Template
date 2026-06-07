@@ -1,4 +1,5 @@
 import API from "../../../config/api.config";
+import type { EditUserPayload } from "../../../pages/admin/user/validation/edit-user.schema";
 import type { IFindOneWithDetailsResponse } from "./users.types";
 
 const BASE_URL = "/api/admin";
@@ -11,6 +12,10 @@ const findOneWithDetails = (
   id: string,
 ): Promise<IFindOneWithDetailsResponse> => {
   return API.get(`${BASE_URL}/users/${id}`);
+};
+
+const updateUser = (id: string, payload: EditUserPayload) => {
+  return API.patch(`${BASE_URL}/users/${id}`, payload);
 };
 
 const resetPassword = (id: string): Promise<{ temporaryPassword: string }> => {
@@ -26,4 +31,5 @@ export const usersService = {
   findOneWithDetails,
   resetPassword,
   changeUserRole,
+  updateUser,
 };

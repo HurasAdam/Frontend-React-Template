@@ -1,32 +1,32 @@
 import { Check, Shield as FallbackIcon, UserCog2 } from "lucide-react";
 import { useEffect, useState } from "react";
+
+import { toast } from "sonner";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "../../../components/ui/command";
+} from "../../../../components/ui/command";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "../../../components/ui/dialog";
+} from "../../../../components/ui/dialog";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "../../../components/ui/popover";
-
-import { roleIconMap } from "../../../constants/role-icons";
-
-import { toast } from "sonner";
-import { useChangeUserRoleAction } from "../../../hooks/admin/actions/use-change-user-role.action";
-import { useFindRolesQuery } from "../../../hooks/roles/queries/use-roles.queries";
+} from "../../../../components/ui/popover";
+import { roleIconMap } from "../../../../constants/role-icons";
+import { useChangeUserRoleAction } from "../../../../hooks/admin/actions/use-change-user-role.action";
+import { useFindRolesQuery } from "../../../../hooks/roles/queries/use-roles.queries";
 
 interface Props {
   isOpen: boolean;
+  closeOnOutsideClick?: boolean;
   onClose: () => void;
   user: {
     id: string;
@@ -42,7 +42,12 @@ interface Props {
   } | null;
 }
 
-export const EditRoleModal = ({ isOpen, onClose, user }: Props) => {
+export const EditRoleModal = ({
+  isOpen,
+  closeOnOutsideClick,
+  onClose,
+  user,
+}: Props) => {
   const { data: roles = [] } = useFindRolesQuery({});
 
   const { changeRole } = useChangeUserRoleAction();
@@ -89,7 +94,12 @@ export const EditRoleModal = ({ isOpen, onClose, user }: Props) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
-      <DialogContent className="sm:max-w-[460px] rounded-2xl border-0 bg-background text-foreground shadow-2xl p-0 overflow-hidden">
+      <DialogContent
+        {...(!closeOnOutsideClick
+          ? { onInteractOutside: (e) => e.preventDefault() }
+          : {})}
+        className="sm:max-w-[460px] rounded-2xl border-0 bg-background text-foreground shadow-2xl p-0 overflow-hidden"
+      >
         {/* HEADER */}
         <div className="px-6 pt-6 pb-4 border-b border-border bg-muted/20">
           <DialogHeader>

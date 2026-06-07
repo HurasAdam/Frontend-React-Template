@@ -1,14 +1,13 @@
 import { CheckCircle2, KeyRound } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "../../../components/ui/dialog";
-import { useResetUserPasswordAction } from "../../../hooks/admin/actions/use-reset-user-password.action";
+} from "../../../../components/ui/dialog";
+import { useResetUserPasswordAction } from "../../../../hooks/admin/actions/use-reset-user-password.action";
 
 interface Props {
   isOpen: boolean;

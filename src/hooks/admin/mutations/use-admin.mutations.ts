@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import type { EditUserPayload } from "../../../pages/admin/user/validation/edit-user.schema";
 import { adminService } from "../../../services/admin";
 
 export const useCreateUserMutation = () => {
@@ -12,6 +13,13 @@ export const useCreateUserMutation = () => {
 export const useResetPasswordMutation = () => {
   return useMutation({
     mutationFn: (id: string) => adminService.users.resetPassword(id),
+  });
+};
+
+export const useUpdateUserMutation = () => {
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: EditUserPayload }) =>
+      adminService.users.updateUser(id, payload),
   });
 };
 

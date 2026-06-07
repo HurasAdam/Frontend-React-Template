@@ -16,6 +16,7 @@ interface ISelectedUser {
 type UserModalState =
   | { mode: "PASSWORD_RESET"; user: ISelectedUser }
   | { mode: "EDIT_ROLE"; user: ISelectedUser }
+  | { mode: "EDIT_USER"; user: ISelectedUser }
   | null;
 
 export const useUserModal = () => {
@@ -29,12 +30,17 @@ export const useUserModal = () => {
     setState({ mode: "EDIT_ROLE", user });
   };
 
+  const openEditUser = (user: ISelectedUser) => {
+    setState({ mode: "EDIT_USER", user });
+  };
+
   const close = () => setState(null);
 
   const isOpen = state !== null;
 
   const isPasswordResetOpen = state?.mode === "PASSWORD_RESET";
   const isRoleEditOpen = state?.mode === "EDIT_ROLE";
+  const isUserEditOpen = state?.mode === "EDIT_USER";
 
   const user = state?.user ?? null;
 
@@ -44,12 +50,13 @@ export const useUserModal = () => {
     // actions
     openPasswordReset,
     openEditRole,
+    openEditUser,
     close,
 
     isOpen,
     isPasswordResetOpen,
     isRoleEditOpen,
-
+    isUserEditOpen,
     user,
   };
 };

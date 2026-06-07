@@ -3,6 +3,7 @@ import { pl } from "date-fns/locale";
 import {
   ArrowLeft,
   CheckCircle2,
+  Edit,
   Mail,
   MoreVertical,
   RefreshCcw,
@@ -23,9 +24,14 @@ import { useFindUserWithDetailsQuery } from "../../../../hooks/admin/queries/use
 interface Props {
   openPasswordReset: (user) => void;
   openEditRole: (user) => void;
+  openEditUser: (user) => void;
 }
 
-export const UserDetailsPage = ({ openPasswordReset, openEditRole }: Props) => {
+export const UserDetailsPage = ({
+  openPasswordReset,
+  openEditRole,
+  openEditUser,
+}: Props) => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
@@ -76,6 +82,14 @@ export const UserDetailsPage = ({ openPasswordReset, openEditRole }: Props) => {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem
+              onClick={() => openEditUser(user)}
+              className="flex items-center gap-2"
+            >
+              <Edit size={14} />
+              Edytuj
+            </DropdownMenuItem>
+
             <DropdownMenuItem
               onClick={() => openPasswordReset(user)}
               className="flex items-center gap-2"
