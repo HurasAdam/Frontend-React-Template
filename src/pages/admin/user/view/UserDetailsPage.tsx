@@ -18,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "../../../../components/ui/dropdown-menu";
 import { roleIconMap } from "../../../../constants/role-icons";
-import { useFindUserWithDetailsQuery } from "../../../../hooks/admin/use-admin";
+import { useFindUserWithDetailsQuery } from "../../../../hooks/admin/queries/use-admin.queries";
 
 interface Props {
   openPasswordReset: (user) => void;

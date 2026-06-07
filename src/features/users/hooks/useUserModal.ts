@@ -4,6 +4,13 @@ interface ISelectedUser {
   id: string;
   name: string;
   email: string;
+  surname: string;
+  role: {
+    id: string;
+    name: string;
+    labelColor: string;
+    iconKey: string;
+  };
 }
 
 type UserModalState =

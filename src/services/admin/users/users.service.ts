@@ -17,8 +17,13 @@ const resetPassword = (id: string): Promise<{ temporaryPassword: string }> => {
   return API.post(`${BASE_URL}/users/${id}/reset-password`);
 };
 
+const changeUserRole = (id: string, roleId: string) => {
+  return API.patch(`${BASE_URL}/users/${id}/role`, { roleId });
+};
+
 export const usersService = {
   create,
   findOneWithDetails,
   resetPassword,
+  changeUserRole,
 };

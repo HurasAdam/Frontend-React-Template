@@ -25,7 +25,8 @@ import {
   createUserSchema,
   type CreateUserPayload,
 } from "../../../../features/users/validation/create-user.schema";
-import { useCreateUserMutation } from "../../../../hooks/admin/use-admin";
+
+import { useCreateUserMutation } from "../../../../hooks/admin/mutations/use-admin.mutations";
 import { useFindRolesQuery } from "../../../../hooks/roles/queries/use-roles.queries";
 
 interface Props {

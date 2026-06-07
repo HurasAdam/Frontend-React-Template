@@ -8,8 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../../components/ui/dialog";
-
-import { useResetPasswordMutation } from "../../../hooks/admin/use-admin";
+import { useResetPasswordMutation } from "../../../hooks/admin/mutations/use-admin.mutations";
 
 interface Props {
   isOpen: boolean;
