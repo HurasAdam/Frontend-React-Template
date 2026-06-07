@@ -44,7 +44,6 @@ interface Props {
 
 export const EditRoleModal = ({ isOpen, onClose, user }: Props) => {
   const { data: roles = [] } = useFindRolesQuery({});
-  // const { mutate } = useChangeUserRoleMutation();
 
   const { changeRole } = useChangeUserRoleAction();
 

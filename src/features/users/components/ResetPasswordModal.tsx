@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../../components/ui/dialog";
-import { useResetPasswordMutation } from "../../../hooks/admin/mutations/use-admin.mutations";
+import { useResetUserPasswordAction } from "../../../hooks/admin/actions/use-reset-user-password.action";
 
 interface Props {
   isOpen: boolean;
@@ -21,7 +21,7 @@ interface Props {
 }
 
 export const ResetPasswordModal = ({ isOpen, onClose, user }: Props) => {
-  const { mutate, isPending } = useResetPasswordMutation();
+  const { resetPassword, isPending } = useResetUserPasswordAction();
 
   const [done, setDone] = useState(false);
   const [password, setPassword] = useState<string | null>(null);
@@ -30,21 +30,14 @@ export const ResetPasswordModal = ({ isOpen, onClose, user }: Props) => {
   const handleReset = () => {
     if (!user) return;
 
-    mutate(user.id, {
-      onSuccess: (res: { temporaryPassword: string }) => {
-        const tempPassword = res.temporaryPassword;
-
-        setPassword(tempPassword);
+    resetPassword({
+      userId: user.id,
+      onSuccess: (temporaryPassword) => {
+        setPassword(temporaryPassword);
         setVisible(false);
-
-        navigator.clipboard.writeText(tempPassword);
-
-        toast.success("Hasło zostało zresetowane", {
-          position: "bottom-right",
-          description: "I skopiowane do schowka",
-        });
-
         setDone(true);
+
+        toast.success("Hasło zostało zresetowane");
       },
       onError: () => {
         toast.error("Nie udało się zresetować hasła");
