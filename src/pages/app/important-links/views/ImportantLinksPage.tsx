@@ -50,7 +50,11 @@ const MOCK_LINKS: ImportantLink[] = [
   },
 ];
 
-export const ImportantLinksPage = () => {
+interface Props {
+  openAddCategory: () => void;
+}
+
+export const ImportantLinksPage = ({ openAddCategory }: Props) => {
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
@@ -75,7 +79,7 @@ export const ImportantLinksPage = () => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size="sm" className="gap-2">
+              <Button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90">
                 <Plus className="h-4 w-4" />
                 Dodaj
               </Button>
@@ -87,7 +91,7 @@ export const ImportantLinksPage = () => {
                 Dodaj link
               </DropdownMenuItem>
 
-              <DropdownMenuItem className="gap-2">
+              <DropdownMenuItem onClick={openAddCategory} className="gap-2">
                 <BadgePlus className="h-4 w-4" />
                 Dodaj kategorię
               </DropdownMenuItem>
