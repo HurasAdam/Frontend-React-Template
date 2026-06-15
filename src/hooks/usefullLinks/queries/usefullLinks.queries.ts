@@ -14,3 +14,11 @@ export const useFindUsefullLinksWithCategoryQuery = () => {
     queryFn: () => usefullLinksService.findWithCategory(),
   });
 };
+
+export const useFindOneWithDetailsUsefullLinkQuery = (id?: string | null) => {
+  return useQuery({
+    queryKey: ["usefull-link-with-details", id],
+    queryFn: () => usefullLinksService.findOneWithDetails(id as string),
+    enabled: !!id,
+  });
+};

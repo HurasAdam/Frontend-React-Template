@@ -37,7 +37,7 @@ export const useUsefullLinkModal = () => {
     isEdit: state?.mode === "EDIT",
     isInfo: state?.mode === "INFO",
 
-    tag: state?.mode === "INFO" ? state.link : null,
+    link: state?.mode === "INFO" ? state.link : null,
     linkCategoryId: state?.mode === "EDIT" ? state.linkId : null,
 
     openAdd,

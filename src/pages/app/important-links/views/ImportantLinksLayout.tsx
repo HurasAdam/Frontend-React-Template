@@ -30,7 +30,7 @@ export const ImportantLinksLayout = () => {
       <UsefullLinkInfoModal
         isOpen={linkModal.isInfo}
         onClose={linkModal.close}
-        tag={linkModal.tag}
+        link={linkModal.link}
       />
     </PageContainer>
   );

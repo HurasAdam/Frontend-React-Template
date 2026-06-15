@@ -18,12 +18,13 @@ import {
   Trash2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import type { ILink } from "../../../../features/usefull-links/hooks/useUsefullLinkModal";
 import { useFindUsefullLinksWithCategoryQuery } from "../../../../hooks/usefullLinks/queries/usefullLinks.queries";
 
 interface Props {
   openAddLink: () => void;
   openAddCategory: () => void;
-  openLinkInfo: () => void;
+  openLinkInfo: (link: ILink) => void;
 }
 
 const LinkRow = ({ link, openLinkInfo }: any) => {
