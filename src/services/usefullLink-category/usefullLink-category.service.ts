@@ -7,6 +7,11 @@ const create = (payload: CreateUsefullLinkCategoryPayload) => {
   return API.post(BASEURL, payload);
 };
 
+const find = () => {
+  return API.get(`${BASEURL}`);
+};
+
 export const usefullLinkCategoryService = {
   create,
+  find,
 };
