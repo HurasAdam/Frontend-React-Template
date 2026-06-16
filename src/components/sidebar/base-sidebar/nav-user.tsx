@@ -25,16 +25,13 @@ import {
 import { useNavigate } from "react-router-dom";
 import queryClient from "../../../config/query.config";
 import { useLogoutMutation } from "../../../hooks/auth/use-auth";
+import type { AuthUserData } from "../../../services/auth/auth.types";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+interface IProps {
+  user: AuthUserData;
+}
+
+export function NavUser({ user }: IProps) {
   const { isMobile } = useSidebar();
   const { mutate: logoutMutate } = useLogoutMutation();
   const navigate = useNavigate();

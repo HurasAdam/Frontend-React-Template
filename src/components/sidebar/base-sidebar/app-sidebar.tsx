@@ -40,6 +40,7 @@ import {
   Smile,
   TerminalIcon,
 } from "lucide-react";
+import type { AuthUserData } from "../../../services/auth/auth.types";
 
 // --- DATA ---
 const data = {
@@ -91,7 +92,11 @@ const data = {
   ],
 };
 
-export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
+interface IProps extends React.ComponentProps<typeof Sidebar> {
+  user: AuthUserData;
+}
+
+export function AppSidebar({ user, ...props }: IProps) {
   return (
     <Sidebar
       collapsible="icon"
@@ -132,7 +137,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
 
         {/* FOOTER */}
         <SidebarFooter className="p-2 border-t">
-          <NavUser user={data.user} />
+          <NavUser user={user} />
         </SidebarFooter>
 
         <SidebarRail />

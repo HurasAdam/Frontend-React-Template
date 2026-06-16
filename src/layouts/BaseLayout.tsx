@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useOutletContext } from "react-router-dom";
 import { AppSidebar } from "../components/sidebar/base-sidebar/app-sidebar";
 import {
   Breadcrumb,
@@ -14,8 +14,14 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "../components/ui/sidebar";
+import type { AuthUserData } from "../services/auth/auth.types";
+
+type ProtectedRouteContext = {
+  authData: AuthUserData;
+};
 
 export const BaseLayout = () => {
+  const { authData } = useOutletContext<ProtectedRouteContext>();
   return (
     <div className="w-full h-screen">
       <SidebarProvider
@@ -25,7 +31,7 @@ export const BaseLayout = () => {
           } as React.CSSProperties
         }
       >
-        <AppSidebar />
+        <AppSidebar user={authData} />
         <SidebarInset>
           <header className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b bg-background px-6">
             <SidebarTrigger className="-ml-1" />
@@ -46,7 +52,7 @@ export const BaseLayout = () => {
             </Breadcrumb>
           </header>
           <div className="flex flex-1 flex-col gap-6 px-10 py-6">
-            <Outlet />
+            <Outlet context={{ authData }} />
           </div>
         </SidebarInset>
       </SidebarProvider>

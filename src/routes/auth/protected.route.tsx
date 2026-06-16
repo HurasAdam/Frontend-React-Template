@@ -28,7 +28,7 @@ const ProtectedRoute = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  return <Outlet />;
+  return <Outlet context={{ authData }} />;
 };
 
 export default ProtectedRoute;
