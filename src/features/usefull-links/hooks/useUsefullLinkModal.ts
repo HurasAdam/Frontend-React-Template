@@ -3,14 +3,8 @@ import { useState } from "react";
 export type ILink = {
   id: string;
   name: string;
-  createdBy: {
-    id: string;
-    name: string;
-    surname: string;
-    email: string;
-  };
-  createdAt: string;
-  updatedAt: string;
+  url: string;
+  isFeatured: boolean;
 };
 
 type TagModalState =
@@ -25,7 +19,10 @@ export const useUsefullLinkModal = () => {
 
   const openEdit = (id: string) => setState({ mode: "EDIT", linkId: id });
 
-  const openInfo = (link: ILink) => setState({ mode: "INFO", link });
+  const openInfo = (link: ILink) => {
+    console.log("LINK ZE HOOKA:", link);
+    setState({ mode: "INFO", link });
+  };
 
   const close = () => setState(null);
 

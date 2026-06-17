@@ -4,15 +4,15 @@ import { useUsefullLinkCategoryModal } from "../../../../features/usefull-link-c
 import { AddUsefulLinkModal } from "../../../../features/usefull-links/components/AddUsefullLinkModal";
 import { UsefullLinkInfoModal } from "../../../../features/usefull-links/components/UsefullLinkInfoModal";
 import { useUsefullLinkModal } from "../../../../features/usefull-links/hooks/useUsefullLinkModal";
-import { ImportantLinksPage } from "./ImportantLinksPage";
+import { UsefulLinksPage } from "./UsefulLinksPage";
 
-export const ImportantLinksLayout = () => {
+export const UsefulLinksLayout = () => {
   const linkModal = useUsefullLinkModal();
   const categoryModal = useUsefullLinkCategoryModal();
 
   return (
     <PageContainer variant="wide">
-      <ImportantLinksPage
+      <UsefulLinksPage
         openAddLink={linkModal.openAdd}
         openLinkInfo={linkModal.openInfo}
         openAddCategory={categoryModal.openAdd}

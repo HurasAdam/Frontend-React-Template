@@ -1,3 +1,17 @@
+export interface ILinkCategory {
+  id: string;
+  name: string;
+  order: number;
+}
+
+export interface ILink {
+  id: string;
+  name: string;
+  url: string;
+  isFeatured: boolean;
+  category?: ILinkCategory;
+}
+
 export interface IUsefullLinkWithDetails {
   id: string;
   name: string;
@@ -5,11 +19,7 @@ export interface IUsefullLinkWithDetails {
   description: string;
   isFeatured: boolean;
   createdAt: string;
-  category: {
-    id: string;
-    name: string;
-    order: number;
-  };
+  category: ILinkCategory;
   createdBy: {
     id: string;
     name: string;
@@ -18,3 +28,4 @@ export interface IUsefullLinkWithDetails {
 }
 
 export type IFindOneUsefullLinkWithDetailsResponse = IUsefullLinkWithDetails;
+export type IFindWithCategoryResponse = ILink[];

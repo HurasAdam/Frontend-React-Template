@@ -1,5 +1,8 @@
 import API from "../../config/api.config";
-import type { IFindOneUsefullLinkWithDetailsResponse } from "./usefullLink.types";
+import type {
+  IFindOneUsefullLinkWithDetailsResponse,
+  IFindWithCategoryResponse,
+} from "./usefullLink.types";
 
 const BASE_URL = "/api/usefull-links";
 
@@ -11,7 +14,7 @@ const find = () => {
   return API.get(`${BASE_URL}`);
 };
 
-const findWithCategory = () => {
+const findWithCategory = (): Promise<IFindWithCategoryResponse> => {
   return API.get(`${BASE_URL}/with-category`);
 };
 
