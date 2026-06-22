@@ -7,10 +7,9 @@ import {
   DialogTitle,
 } from "../../../components/ui/dialog";
 import queryClient from "../../../config/query.config";
-import {
-  useFindOneTagQuery,
-  useUpdateTagMutation,
-} from "../../../hooks/tags/use-tags";
+
+import { useUpdateTagMutation } from "../../../hooks/tags/mutations/use-tags.mutations";
+import { useFindOneTagQuery } from "../../../hooks/tags/queries/use-tags.queries";
 import type { CreateTagPayload } from "../validation/tag.schema";
 import { TagForm } from "./TagForm";
 

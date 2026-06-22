@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ITag } from "../../../../features/tags/hooks/useTagModal";
-import { useFindTagsQuery } from "../../../../hooks/tags/use-tags";
+
+import { useFindTagsWithDetailsQuery } from "../../../../hooks/tags/queries/use-tags.queries";
 import { TagsFilterSection } from "../components/TagsFilterSection";
 import { TagsHeader } from "../components/TagsHeader";
 import { TagsGrid } from "../components/TagsList";
@@ -13,7 +14,7 @@ interface Props {
 
 export const TagsPage = ({ openAdd, openEdit, openInfo }: Props) => {
   const [search, setSearch] = useState("");
-  const { data: tags = [] } = useFindTagsQuery({ name: search });
+  const { data: tags = [] } = useFindTagsWithDetailsQuery({ name: search });
 
   return (
     <div className="w-full space-y-6">

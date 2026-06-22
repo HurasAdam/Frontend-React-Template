@@ -18,6 +18,7 @@ import { DashboardLayout } from "../../pages/app/dashboard/view/DashboardLayout"
 
 import { UsefulLinksLayout } from "../../pages/app/important-links/views/UsefulLinksLayout";
 import { NewArticleLayout } from "../../pages/app/newArticle/view/NewArticleLayout";
+import { RegisterActivityLayout } from "../../pages/app/register-activity/view/RegisterActivityLayout";
 import { SettingsPage } from "../../pages/app/settings/view/SettingsPage";
 import LoginPage from "../../pages/shared/auth/login/view/Login.page";
 import { AdminRoute } from "../auth/admin.route";
@@ -40,6 +41,10 @@ export const AppRoutes = () => {
             <Route path="/articles" element={<ArticlesLayout />} />
             <Route path="/articles/new" element={<NewArticleLayout />} />
             <Route path="/important-links" element={<UsefulLinksLayout />} />
+            <Route
+              path="/register-activity"
+              element={<RegisterActivityLayout />}
+            />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
         </Route>

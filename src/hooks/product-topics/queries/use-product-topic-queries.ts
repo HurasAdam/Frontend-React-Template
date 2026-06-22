@@ -1,7 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { productTopicService } from "../../../services/product-topic/product-topic.service";
 
-export const useFindProductTopicsQuery = (productId: string | null) => {
+export const useFindAllTopicsQuery = () => {
+  return useQuery({
+    queryKey: ["all-topics"],
+    queryFn: () => productTopicService.find(),
+  });
+};
+
+export const useFindTopicsByProductQuery = (productId: string | null) => {
   return useQuery({
     queryKey: ["product-topics", productId],
     enabled: !!productId,

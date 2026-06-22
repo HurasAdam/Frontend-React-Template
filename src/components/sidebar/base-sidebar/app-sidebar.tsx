@@ -68,7 +68,11 @@ const data = {
     { title: "Start", url: "/dashboard", icon: <House /> },
     { title: "Baza artykułów", url: "/articles", icon: <BookSearch /> },
     { title: "Przydatne linki", url: "/important-links", icon: <Link /> },
-    { title: "Rejestr tematów", url: "/topics", icon: <NotepadText /> },
+    {
+      title: "Rejestr tematów",
+      url: "/register-activity",
+      icon: <NotepadText />,
+    },
     { title: "FAQ", url: "/faq", icon: <BookOpen /> },
     { title: "Statystyki", url: "/stats", icon: <ChartNoAxesCombined /> },
     { title: "Narzędzia sieciowe", url: "/network-tools", icon: <Network /> },

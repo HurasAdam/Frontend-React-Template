@@ -7,7 +7,8 @@ import {
   DialogTitle,
 } from "../../../components/ui/dialog";
 import queryClient from "../../../config/query.config";
-import { useCreateTagMutation } from "../../../hooks/tags/use-tags";
+
+import { useCreateTagMutation } from "../../../hooks/tags/mutations/use-tags.mutations";
 import type { CreateTagPayload } from "../validation/tag.schema";
 import { TagForm } from "./TagForm";
 

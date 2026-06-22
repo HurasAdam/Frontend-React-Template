@@ -3,7 +3,7 @@ import { NewArticlePage } from "./NewArticlePage";
 
 export const NewArticleLayout = () => {
   return (
-    <PageContainer variant="full">
+    <PageContainer variant="default">
       <NewArticlePage />
     </PageContainer>
   );

@@ -10,6 +10,10 @@ const create = (data: { name: string; productId: string }) => {
   });
 };
 
+const findByProduct = (productId: string) => {
+  return API.get(`${BASE_URL}/product/${productId}`);
+};
+
 const findOne = (id: string): Promise<IFindOneProductCategoryResponse> => {
   return API.get(`${BASE_URL}/${id}`);
 };
@@ -24,6 +28,7 @@ const deleteOne = (id: string) => {
 
 export const productCategoryService = {
   create,
+  findByProduct,
   findOne,
   updateOne,
   deleteOne,
