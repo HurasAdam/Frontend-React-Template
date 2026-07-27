@@ -24,6 +24,7 @@ import { RegisterActivityLayout } from "../../pages/app/register-activity/view/R
 import { SettingsPage } from "../../pages/app/settings/view/SettingsPage";
 import { HomeLayout } from "../../pages/app/workspace/subpages/home/view/HomeLayout";
 import { MembersLayout } from "../../pages/app/workspace/subpages/members/view/MembersLayout";
+import { SettingsLayout } from "../../pages/app/workspace/subpages/settings/view/SettingsLayout";
 import LoginPage from "../../pages/shared/auth/login/view/Login.page";
 import { AdminRoute } from "../auth/admin.route";
 import { AuthRoute } from "../auth/auth.route";
@@ -60,6 +61,7 @@ export const AppRoutes = () => {
             <Route path="/workspace/:id" element={<WorkspaceLayout />}>
               <Route index element={<HomeLayout />} />
               <Route path="members" element={<MembersLayout />} />
+              <Route path="settings" element={<SettingsLayout />} />
             </Route>
           </Route>
         </Route>
