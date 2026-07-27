@@ -8,7 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -18,6 +17,9 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { ChevronsUpDownIcon, PlusIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { workspaceIconOptions } from "../../../constants/workspace-icons";
+import { useFindWorkspacesQuery } from "../../../hooks/workspaces/queries/use-workspace.queries";
 
 export function TeamSwitcher({
   teams,
@@ -30,6 +32,9 @@ export function TeamSwitcher({
 }) {
   const { isMobile } = useSidebar();
   const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+  const navigate = useNavigate();
+
+  const { data: workspaces = [] } = useFindWorkspacesQuery();
 
   if (!activeTeam) {
     return null;
@@ -63,25 +68,39 @@ export function TeamSwitcher({
             <DropdownMenuLabel className="text-xs text-muted-foreground">
               Teams
             </DropdownMenuLabel>
-            {teams.map((team, index) => (
-              <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
-                className="gap-2 p-2"
-              >
-                <div className="flex size-6 items-center justify-center rounded-md border">
-                  {team.logo}
-                </div>
-                {team.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            ))}
+            {workspaces.map((workspace) => {
+              const Icon = workspaceIconOptions.find(
+                (i) => i.name === workspace.iconKey,
+              )?.icon;
+
+              return (
+                <DropdownMenuItem
+                  key={workspace.id}
+                  onClick={() => navigate(`/workspace/${workspace.id}`)}
+                  className="gap-2 p-2"
+                >
+                  <div
+                    className="flex size-6 items-center justify-center rounded-md text-white"
+                    style={{ backgroundColor: workspace.labelColor }}
+                  >
+                    {Icon && <Icon size={16} />}
+                  </div>
+
+                  <span>{workspace.name}</span>
+                </DropdownMenuItem>
+              );
+            })}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
+            <DropdownMenuItem
+              onClick={() => navigate("/workspaces/new")}
+              className="gap-2 p-2"
+            >
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                 <PlusIcon className="size-4" />
               </div>
-              <div className="font-medium text-muted-foreground">Add team</div>
+              <div className="font-medium text-muted-foreground">
+                Nowa kolekcja
+              </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

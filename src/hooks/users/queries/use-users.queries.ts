@@ -7,3 +7,17 @@ export const useFindUsersWithDetailsQuery = () => {
     queryFn: () => userService.findWithDetails(),
   });
 };
+
+export const useFindUsersQuery = () => {
+  return useQuery({
+    queryKey: ["users-list"],
+    queryFn: () => userService.find(),
+  });
+};
+
+export const useFindWorkspaceCandidatesQuery = () => {
+  return useQuery({
+    queryKey: ["workspace-candidates"],
+    queryFn: () => userService.findWorkspaceCandidates(),
+  });
+};

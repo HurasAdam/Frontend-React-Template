@@ -16,14 +16,19 @@ import { UsersLayout } from "../../pages/admin/users/views/UsersLayout";
 import { ArticlesLayout } from "../../pages/app/articles/view/ArticlesLayout";
 import { DashboardLayout } from "../../pages/app/dashboard/view/DashboardLayout";
 
+import { WorkspaceLayout } from "../../layouts/WorkspaceLayout";
 import { UsefulLinksLayout } from "../../pages/app/important-links/views/UsefulLinksLayout";
 import { NewArticleLayout } from "../../pages/app/newArticle/view/NewArticleLayout";
+import { NewWorkspaceLayout } from "../../pages/app/newWorkspace/view/NewWorkspaceLayout";
 import { RegisterActivityLayout } from "../../pages/app/register-activity/view/RegisterActivityLayout";
 import { SettingsPage } from "../../pages/app/settings/view/SettingsPage";
+import { HomeLayout } from "../../pages/app/workspace/subpages/home/view/HomeLayout";
+import { MembersLayout } from "../../pages/app/workspace/subpages/members/view/MembersLayout";
 import LoginPage from "../../pages/shared/auth/login/view/Login.page";
 import { AdminRoute } from "../auth/admin.route";
 import { AuthRoute } from "../auth/auth.route";
 import ProtectedRoute from "../auth/protected.route";
+import { WorkspaceRoute } from "../auth/workspace.route";
 
 export const AppRoutes = () => {
   return (
@@ -40,12 +45,22 @@ export const AppRoutes = () => {
             <Route path="/dashboard" element={<DashboardLayout />} />
             <Route path="/articles" element={<ArticlesLayout />} />
             <Route path="/articles/new" element={<NewArticleLayout />} />
+            <Route path="/workspaces/new" element={<NewWorkspaceLayout />} />
             <Route path="/important-links" element={<UsefulLinksLayout />} />
             <Route
               path="/register-activity"
               element={<RegisterActivityLayout />}
             />
             <Route path="/settings" element={<SettingsPage />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute />}>
+          <Route element={<WorkspaceRoute />}>
+            <Route path="/workspace/:id" element={<WorkspaceLayout />}>
+              <Route index element={<HomeLayout />} />
+              <Route path="members" element={<MembersLayout />} />
+            </Route>
           </Route>
         </Route>
 
