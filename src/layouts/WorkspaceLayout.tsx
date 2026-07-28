@@ -1,5 +1,9 @@
 import { Outlet, useParams } from "react-router-dom";
-import { useFindOneWorkspaceQuery } from "../hooks/workspaces/queries/use-workspace.queries";
+import {
+  useFindOneWorkspaceQuery,
+  useFindUserWorkspaceMembershipQuery,
+} from "../hooks/workspaces/queries/use-workspace.queries";
+import { WorkspaceAccessDenied } from "../pages/app/workspace/components/AccessDenied";
 import { PageLoader } from "../pages/app/workspace/components/PageLoader";
 import { WorkspaceSidebar } from "../pages/app/workspace/components/WorkspaceSidebar";
 import type { AuthUserData } from "../services/auth/auth.types";
@@ -10,11 +14,23 @@ type ProtectedRouteContext = {
 
 export const WorkspaceLayout = () => {
   const { id } = useParams();
+
+  const {
+    data: membership,
+    isLoading: isMembershipLoading,
+    error,
+  } = useFindUserWorkspaceMembershipQuery(id);
+
+  console.log("BREED:", membership);
   const { data: workspace, isLoading: isWorkspaceDataLoading } =
     useFindOneWorkspaceQuery(id);
 
-  if (isWorkspaceDataLoading) {
+  if (isWorkspaceDataLoading || isMembershipLoading) {
     return <PageLoader message="Trwa ładowanie kolekcji" />;
+  }
+
+  if (error) {
+    return <WorkspaceAccessDenied message="Nie masz dostępu do tej kolekcji" />;
   }
 
   return (

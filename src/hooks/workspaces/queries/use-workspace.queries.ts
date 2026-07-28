@@ -15,3 +15,12 @@ export const useFindOneWorkspaceQuery = (workspaceId?: string) => {
     enabled: !!workspaceId,
   });
 };
+
+export const useFindUserWorkspaceMembershipQuery = (workspaceId?: string) => {
+  return useQuery({
+    queryKey: ["workspace-membership", workspaceId],
+    queryFn: () =>
+      workspaceService.findUserWorkspaceMembership(workspaceId as string),
+    enabled: !!workspaceId,
+  });
+};
