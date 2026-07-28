@@ -63,7 +63,7 @@ export function ConfirmDialog({
           >
             {title || "Czy na pewno chcesz kontynuować?"}
           </AlertDialogTitle>
-          <AlertDialogDescription className="pt-1.5 pb-0.5">
+          <AlertDialogDescription className="pt-2 pb-1 px-0.5">
             {children}
           </AlertDialogDescription>
         </AlertDialogHeader>

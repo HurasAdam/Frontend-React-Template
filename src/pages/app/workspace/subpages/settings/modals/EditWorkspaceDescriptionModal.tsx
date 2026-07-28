@@ -1,15 +1,13 @@
-import { FolderPen } from "lucide-react";
+import { FolderPen, Save } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
+import { Button } from "../../../../../../components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "../../../../../../components/ui/dialog";
-
-import { Button } from "../../../../../../components/ui/button";
 import { Textarea } from "../../../../../../components/ui/textarea";
 
 type Props = {
@@ -20,6 +18,7 @@ type Props = {
     id: string;
     description: string;
   };
+  onSave: (data: { description: string }) => void;
 };
 
 type FormData = {
@@ -30,6 +29,7 @@ export const EditWorkspaceDescriptionModal = ({
   isOpen,
   onClose,
   workspace,
+  onSave,
 }: Props) => {
   const { register, handleSubmit } = useForm<FormData>({
     defaultValues: {
@@ -38,10 +38,7 @@ export const EditWorkspaceDescriptionModal = ({
   });
 
   const onSubmit = (data: FormData) => {
-    console.log("UPDATE DESCRIPTION", {
-      id: workspace.id,
-      description: data.description,
-    });
+    onSave(data);
 
     toast.success("Opis kolekcji został zaktualizowany");
 
@@ -183,7 +180,9 @@ export const EditWorkspaceDescriptionModal = ({
               Anuluj
             </Button>
 
-            <Button type="submit">Zapisz zmiany</Button>
+            <Button type="submit">
+              <Save /> Zapisz
+            </Button>
           </div>
         </form>
       </DialogContent>

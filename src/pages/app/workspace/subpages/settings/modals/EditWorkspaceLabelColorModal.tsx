@@ -1,4 +1,4 @@
-import { Check, FolderPen } from "lucide-react";
+import { Check, FolderPen, Save } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -38,6 +38,7 @@ type Props = {
     id: string;
     labelColor: string;
   };
+  onSave: (data: { labelColor: string }) => void;
 };
 
 type FormData = {
@@ -48,8 +49,14 @@ export const EditWorkspaceLabelColorModal = ({
   isOpen,
   onClose,
   workspace,
+  onSave,
 }: Props) => {
-  const { handleSubmit, setValue, watch } = useForm<FormData>({
+  const {
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { isDirty },
+  } = useForm<FormData>({
     defaultValues: {
       labelColor: workspace.labelColor,
     },
@@ -58,11 +65,7 @@ export const EditWorkspaceLabelColorModal = ({
   const selectedColor = watch("labelColor");
 
   const onSubmit = (data: FormData) => {
-    console.log("UPDATE COLOR", {
-      id: workspace.id,
-      labelColor: data.labelColor,
-    });
-
+    onSave(data);
     toast.success("Kolor kolekcji został zaktualizowany");
 
     onClose();
@@ -236,7 +239,10 @@ export const EditWorkspaceLabelColorModal = ({
               Anuluj
             </Button>
 
-            <Button type="submit">Zapisz zmiany</Button>
+            <Button type="submit">
+              <Save />
+              Zapisz
+            </Button>
           </div>
         </form>
       </DialogContent>

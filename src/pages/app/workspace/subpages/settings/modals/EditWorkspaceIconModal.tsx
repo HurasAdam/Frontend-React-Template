@@ -20,6 +20,7 @@ type Props = {
     id: string;
     iconKey: string;
   };
+  onSave: (data: { iconKey: string }) => Promise<unknown>;
 };
 
 type FormData = {
@@ -30,6 +31,7 @@ export const EditWorkspaceIconModal = ({
   isOpen,
   onClose,
   workspace,
+  onSave,
 }: Props) => {
   const { handleSubmit, setValue, watch } = useForm<FormData>({
     defaultValues: {
@@ -39,15 +41,18 @@ export const EditWorkspaceIconModal = ({
 
   const selectedIcon = watch("iconKey");
 
-  const onSubmit = (data: FormData) => {
-    console.log("UPDATE ICON", {
-      id: workspace.id,
-      iconKey: data.iconKey,
-    });
-
-    toast.success("Ikona kolekcji została zaktualizowana");
-
-    onClose();
+  const onSubmit = async (data: FormData) => {
+    try {
+      await onSave(data);
+      toast.success("Ikona kolekcji została zaktualizowana", {
+        position: "top-right",
+      });
+      onClose();
+    } catch {
+      toast.error("Wystąpił błąd, zmiany nie zostały zapisane", {
+        position: "bottom-right",
+      });
+    }
   };
 
   const CurrentIcon = workspaceIconOptions.find(

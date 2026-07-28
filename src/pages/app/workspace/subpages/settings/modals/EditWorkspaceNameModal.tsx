@@ -1,4 +1,4 @@
-import { FolderPen } from "lucide-react";
+import { FolderPen, Save } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -20,6 +20,8 @@ type Props = {
     id: string;
     name: string;
   };
+
+  onSave: (data: { name: string }) => void;
 };
 
 type FormData = {
@@ -30,8 +32,13 @@ export const EditWorkspaceNameModal = ({
   isOpen,
   onClose,
   workspace,
+  onSave,
 }: Props) => {
-  const { register, handleSubmit } = useForm<FormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { isDirty },
+  } = useForm<FormData>({
     defaultValues: {
       name: workspace.name,
     },
@@ -42,11 +49,7 @@ export const EditWorkspaceNameModal = ({
       toast.error("Nazwa kolekcji nie może być pusta");
       return;
     }
-
-    console.log("UPDATE NAME", {
-      id: workspace.id,
-      name: data.name,
-    });
+    onSave(data);
 
     onClose();
   };
@@ -171,7 +174,9 @@ export const EditWorkspaceNameModal = ({
               Anuluj
             </Button>
 
-            <Button type="submit">Zapisz zmiany</Button>
+            <Button type="submit" disabled={!isDirty}>
+              <Save /> Zapisz
+            </Button>
           </div>
         </form>
       </DialogContent>

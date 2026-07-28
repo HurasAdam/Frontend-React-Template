@@ -6,3 +6,15 @@ export const useAddWorkspaceMutation = () => {
     mutationFn: (payload) => workspaceService.add(payload),
   });
 };
+
+export const useUpdateWorkspaceMutation = () => {
+  return useMutation({
+    mutationFn: ({
+      workspaceId,
+      payload,
+    }: {
+      workspaceId: string;
+      payload: unknown;
+    }) => workspaceService.updateOne(workspaceId, payload),
+  });
+};

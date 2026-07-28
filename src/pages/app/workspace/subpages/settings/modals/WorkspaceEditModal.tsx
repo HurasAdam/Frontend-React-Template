@@ -1,3 +1,5 @@
+import queryClient from "../../../../../../config/query.config";
+import { useUpdateWorkspaceMutation } from "../../../../../../hooks/workspaces/mutations/use-workspace.mutations";
 import type { EditModalType } from "../hooks/useEditModal";
 import type { IWorkspaceInfo } from "../view/Settings";
 import { EditWorkspaceDescriptionModal } from "./EditWorkspaceDescriptionModal";
@@ -12,14 +14,33 @@ interface Props {
   workspace: IWorkspaceInfo;
 }
 
+export type UpdateWorkspaceData = Partial<
+  Pick<IWorkspaceInfo, "name" | "description" | "iconKey" | "labelColor">
+>;
+
 export const WorkspaceEditModal = ({
   type,
   isOpen,
   onClose,
   workspace,
 }: Props) => {
+  const { mutateAsync: updateWorkspace } = useUpdateWorkspaceMutation();
+
+  const onSave = (data: UpdateWorkspaceData) => {
+    return updateWorkspace(
+      { workspaceId: workspace.id, payload: data },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ["workspace", workspace.id],
+          });
+        },
+      },
+    );
+  };
+
   if (!type) return null;
-  console.log("W", workspace);
+
   switch (type) {
     case "name":
       return (
@@ -27,6 +48,7 @@ export const WorkspaceEditModal = ({
           isOpen={isOpen}
           onClose={onClose}
           workspace={workspace}
+          onSave={onSave}
         />
       );
 
@@ -36,6 +58,7 @@ export const WorkspaceEditModal = ({
           isOpen={isOpen}
           onClose={onClose}
           workspace={workspace}
+          onSave={onSave}
         />
       );
 
@@ -45,6 +68,7 @@ export const WorkspaceEditModal = ({
           isOpen={isOpen}
           onClose={onClose}
           workspace={workspace}
+          onSave={onSave}
         />
       );
 
@@ -54,6 +78,7 @@ export const WorkspaceEditModal = ({
           isOpen={isOpen}
           onClose={onClose}
           workspace={workspace}
+          onSave={onSave}
         />
       );
   }
