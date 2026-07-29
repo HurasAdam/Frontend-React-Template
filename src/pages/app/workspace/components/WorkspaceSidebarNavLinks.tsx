@@ -11,7 +11,7 @@ export const WorkspaceSidebarNavLinks = ({
 }: WorkspaceSidebarNavLinksProps) => {
   const links = [
     { to: `/workspace/${workspaceId}`, icon: LayoutGrid },
-    { to: `/workspace/${workspaceId}/manage-folders`, icon: Folders },
+    { to: `/workspace/${workspaceId}/folders`, icon: Folders },
     { to: `/workspace/${workspaceId}/members`, icon: Users },
     { to: `/workspace/${workspaceId}/settings`, icon: Settings },
   ];

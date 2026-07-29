@@ -4,7 +4,7 @@ import { ConfirmDialog } from "../../../../../../components/shared/ConfirmDialog
 import { useConfirmDialog } from "../../../../../../components/shared/hooks/useConfirmDialog";
 import BasicSettings from "../components/BasicSettings";
 import DangerZone from "../components/DangerZone";
-import Header from "../components/Header";
+import PageHeader from "../components/PageHeader";
 import { useEditModal } from "../hooks/useEditModal";
 import { WorkspaceEditModal } from "../modals/WorkspaceEditModal";
 
@@ -51,9 +51,9 @@ export const Settings = () => {
 
   return (
     <div>
-      <Header
+      <PageHeader
         title="Ustawienia kolekcji"
-        description="Zarządzaj nazwą, wyglądem oraz informacjami kolekcji"
+        description="Zarządzaj ustawieniami kolekcji"
         icon={SettingsIcon}
       />
 

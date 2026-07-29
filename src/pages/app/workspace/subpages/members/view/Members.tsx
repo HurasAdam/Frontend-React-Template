@@ -1,8 +1,9 @@
+import { Plus, Users } from "lucide-react";
 import { useOutletContext, useParams } from "react-router-dom";
-import { Separator } from "../../../../../../components/ui/separator";
+import { Button } from "../../../../../../components/ui/button";
 import { useFindMembersByWorkspaceQuery } from "../../../../../../hooks/workspace-members/queries/use-workspace-members.queries";
+import PageHeader from "../../settings/components/PageHeader";
 import WorkspaceInviteLinkSection from "../components/InviteCodeSection";
-import { MembersHeader } from "../components/MembersHeader";
 import { MembersSection } from "../components/MembersSection";
 
 export const Members = () => {
@@ -14,8 +15,18 @@ export const Members = () => {
 
   return (
     <>
-      <MembersHeader permissions={permissions} />
-      <Separator />
+      <PageHeader
+        title="Użytkownicy"
+        description="Zarządzaj użytkownikami kolekcji."
+        icon={Users}
+        actions={
+          <Button onClick={() => {}}>
+            <Plus className="h-4 w-4" />
+            Dodaj użytkownika
+          </Button>
+        }
+      />
+
       {/* INVITE CODE SECTION */}
 
       {workspace && (
