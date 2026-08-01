@@ -1,16 +1,13 @@
 import { FolderPen } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-
+import { Button } from "../../../../../../components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "../../../../../../components/ui/dialog";
-
-import { Button } from "../../../../../../components/ui/button";
 import { Input } from "../../../../../../components/ui/input";
 import { Textarea } from "../../../../../../components/ui/textarea";
 
@@ -21,6 +18,7 @@ type FormData = {
 
 type Props = {
   isOpen: boolean;
+  isPending: boolean;
   onClose: () => void;
 
   folder: {
@@ -34,6 +32,7 @@ type Props = {
 
 export const EditWorkspaceFolderModal = ({
   isOpen,
+  isPending,
   onClose,
   folder,
   onSave,
@@ -53,19 +52,8 @@ export const EditWorkspaceFolderModal = ({
   }, [folder, reset]);
 
   const onSubmit = async (data: FormData) => {
-    try {
-      await onSave(data);
-
-      toast.success("Folder został zaktualizowany", {
-        position: "top-right",
-      });
-
-      onClose();
-    } catch {
-      toast.error("Nie udało się zapisać zmian", {
-        position: "bottom-right",
-      });
-    }
+    await onSave(data);
+    reset();
   };
 
   return (
@@ -93,7 +81,7 @@ export const EditWorkspaceFolderModal = ({
 
               <div className="space-y-2">
                 <DialogTitle className="text-[26px] font-semibold tracking-[-0.03em]">
-                  Edytuj folder
+                  📝 Edytuj folder
                 </DialogTitle>
 
                 <p className="max-w-md text-[14px] leading-6 text-muted-foreground">
@@ -132,7 +120,7 @@ export const EditWorkspaceFolderModal = ({
               Anuluj
             </Button>
 
-            <Button type="submit" size="lg">
+            <Button disabled={isPending} type="submit" size="lg">
               Zapisz zmiany
             </Button>
           </div>

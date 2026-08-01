@@ -50,7 +50,7 @@ export const EditWorkspaceIconModal = ({
       onClose();
     } catch {
       toast.error("Wystąpił błąd, zmiany nie zostały zapisane", {
-        position: "bottom-right",
+        position: "top-right",
       });
     }
   };

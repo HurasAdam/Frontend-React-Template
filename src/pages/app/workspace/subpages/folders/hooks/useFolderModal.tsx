@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export type FolderModalType = "add" | "edit" | null;
+export type FolderModalType = "add" | "edit" | "delete" | null;
 
 export type IFolderInfo = {
   id: string;
@@ -22,6 +22,11 @@ export const useFolderModal = () => {
     setType("edit");
   };
 
+  const openDelete = (folder: IFolderInfo) => {
+    setFolder(folder);
+    setType("delete");
+  };
+
   const close = () => {
     setFolder(null);
     setType(null);
@@ -33,6 +38,7 @@ export const useFolderModal = () => {
     isOpen: type !== null,
     openAdd,
     openEdit,
+    openDelete,
     close,
   };
 };

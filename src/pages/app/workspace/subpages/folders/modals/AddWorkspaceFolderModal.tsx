@@ -1,52 +1,39 @@
 import { FolderPlus } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-
+import { Button } from "../../../../../../components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "../../../../../../components/ui/dialog";
-
-import { Button } from "../../../../../../components/ui/button";
 import { Input } from "../../../../../../components/ui/input";
 import { Textarea } from "../../../../../../components/ui/textarea";
+import type { IFolderFormData } from "../../../../../../hooks/workspace-folders/mutations/types/workspace-folders.mutation.types";
 
 type Props = {
   isOpen: boolean;
+  isPending: boolean;
   onClose: () => void;
-  onSave: (data: FormData) => Promise<unknown>;
+  onSave: (data: IFolderFormData) => Promise<unknown>;
 };
 
-export type WorkspaceFolderFormData = {
-  name: string;
-  description: string;
-};
-
-export const AddWorkspaceFolderModal = ({ isOpen, onClose, onSave }: Props) => {
-  const { register, handleSubmit, reset } = useForm<WorkspaceFolderFormData>({
+export const AddWorkspaceFolderModal = ({
+  isOpen,
+  isPending,
+  onClose,
+  onSave,
+}: Props) => {
+  const { register, handleSubmit, reset } = useForm<IFolderFormData>({
     defaultValues: {
       name: "",
       description: "",
     },
   });
 
-  const onSubmit = async (data: FormData) => {
-    try {
-      await onSave(data);
-
-      toast.success("Folder został utworzony", {
-        position: "top-right",
-      });
-
-      reset();
-      onClose();
-    } catch {
-      toast.error("Nie udało się utworzyć folderu", {
-        position: "bottom-right",
-      });
-    }
+  const onSubmit = async (data: IFolderFormData) => {
+    await onSave(data);
+    reset();
   };
 
   return (
@@ -114,7 +101,7 @@ export const AddWorkspaceFolderModal = ({ isOpen, onClose, onSave }: Props) => {
               Anuluj
             </Button>
 
-            <Button type="submit" size="lg">
+            <Button disabled={isPending} type="submit" size="lg">
               Dodaj folder
             </Button>
           </div>
