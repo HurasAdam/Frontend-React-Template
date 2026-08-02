@@ -22,9 +22,11 @@ import { NewArticleLayout } from "../../pages/app/newArticle/view/NewArticleLayo
 import { NewWorkspaceLayout } from "../../pages/app/newWorkspace/view/NewWorkspaceLayout";
 import { RegisterActivityLayout } from "../../pages/app/register-activity/view/RegisterActivityLayout";
 import { SettingsPage } from "../../pages/app/settings/view/SettingsPage";
+import { FolderLayout } from "../../pages/app/workspace/subpages/folder/view/FolderLayout";
 import { FoldersLayout } from "../../pages/app/workspace/subpages/folders/view/FoldersLayout";
 import { HomeLayout } from "../../pages/app/workspace/subpages/home/view/HomeLayout";
 import { MembersLayout } from "../../pages/app/workspace/subpages/members/view/MembersLayout";
+import { NewWorkspaceArticleLayout } from "../../pages/app/workspace/subpages/new-article/view/NewWorkspaceArticleLayout";
 import { SettingsLayout } from "../../pages/app/workspace/subpages/settings/view/SettingsLayout";
 import LoginPage from "../../pages/shared/auth/login/view/Login.page";
 import { AdminRoute } from "../auth/admin.route";
@@ -61,8 +63,13 @@ export const AppRoutes = () => {
           <Route element={<WorkspaceRoute />}>
             <Route path="/workspace/:id" element={<WorkspaceLayout />}>
               <Route index element={<HomeLayout />} />
+              <Route
+                path="new-article"
+                element={<NewWorkspaceArticleLayout />}
+              />
               <Route path="members" element={<MembersLayout />} />
               <Route path="folders" element={<FoldersLayout />} />
+              <Route path="folders/:folderId" element={<FolderLayout />} />
               <Route path="settings" element={<SettingsLayout />} />
             </Route>
           </Route>

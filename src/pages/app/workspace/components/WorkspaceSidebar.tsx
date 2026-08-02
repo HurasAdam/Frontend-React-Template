@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowBigLeft,
   ChevronDown,
-  Folder,
+  FolderClosed,
   FolderOpen,
   Lock,
   Plus,
@@ -40,7 +40,7 @@ interface WorkspaceSidebarProps {
   isLoading: boolean;
   workspaceId: string;
   folders: {
-    _id: string;
+    id: string;
     workspaceId: string;
     name: string;
     createdBy: string;
@@ -163,9 +163,9 @@ export const WorkspaceSidebar = ({
             <Button
               size="icon"
               variant="secondary"
-              disabled={!permissions?.addArticle}
+              // disabled={!permissions?.addArticle}
               className="w-10 h-10 ml-1 p-0 group hover:bg-primary  rounded-lg   transition-all"
-              onClick={permissions?.addArticle ? onOpenNewArticle : undefined}
+              onClick={onOpenNewArticle}
             >
               <Plus
                 size={20}
@@ -191,97 +191,109 @@ export const WorkspaceSidebar = ({
         {/* RIGHT FOLDERS SIDEBAR */}
         <div className="w-[274px] min-w-[260px] max-w-[300px] backdrop-blur-sm flex flex-col min-h-0  bg-sidebar">
           {/* HEADER */}
-          <div className="flex items-center justify-between px-4 py-2  border-b border-border/60">
-            <h3 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+          {/* HEADER */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border/60">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
               Foldery
-            </h3>
+            </span>
 
             {permissions?.addFolder ? (
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-7 w-7"
+                className="size-6 opacity-70 hover:opacity-100"
                 onClick={onAddFolder}
               >
-                <Plus size={16} />
+                <Plus size={14} />
               </Button>
             ) : (
-              <Lock className="w-4 h-4 text-muted-foreground opacity-60" />
+              <Lock className="size-4 text-muted-foreground opacity-60" />
             )}
           </div>
 
           {/* LIST */}
-          <nav className="flex-1 overflow-y-auto px-2 pt-2 pb-14 space-y-1 scrollbar-custom">
-            {folders.length > 0 ? (
-              folders.map((folder) => (
-                <NavLink
-                  key={folder._id}
-                  to={`/workspace/${workspace.id}/folders/${folder._id}`}
-                  className={({ isActive }) =>
-                    cn(
-                      "group relative flex items-center justify-between gap-2.5 px-3 py-1 rounded-xl text-sm transition-all duration-200 ease-out",
-                      isActive
-                        ? "bg-primary/20 text-primary font-medium"
-                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground hover:shadow-sm",
-                    )
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      {isActive && (
-                        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] bg-primary rounded-r" />
+          <nav className="flex-1 overflow-y-auto px-3 py-2 pb-14 space-y-0.5">
+            {folders.map((folder) => (
+              <NavLink
+                key={folder.id}
+                to={`/workspace/${workspace.id}/folders/${folder.id}`}
+                className={({ isActive }) =>
+                  cn(
+                    "group relative flex items-center justify-between",
+                    "h-9 px-2.5 rounded-lg",
+                    "transition-all duration-150",
+                    isActive
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                  )
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    {/* active indicator */}
+                    {isActive && (
+                      <span
+                        className="
+                absolute left-0
+                h-5 w-0.5
+                rounded-r-full
+                bg-primary
+              "
+                      />
+                    )}
+
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      {isActive ? (
+                        <FolderOpen
+                          size={15}
+                          className="shrink-0 text-primary transition-colors"
+                        />
+                      ) : (
+                        <FolderClosed
+                          size={15}
+                          className="
+                  shrink-0
+                  text-muted-foreground
+                  group-hover:text-foreground
+                  transition-colors
+                "
+                        />
                       )}
 
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div
-                          className={cn(
-                            "flex items-center justify-center w-5.5 h-5.5 rounded-md transition-colors",
-                            isActive
-                              ? "bg-primary/15 text-primary"
-                              : "bg-muted/60 text-muted-foreground/80 group-hover:bg-primary/10 group-hover:text-primary",
-                          )}
-                        >
-                          {isActive ? (
-                            <FolderOpen size={14} />
-                          ) : (
-                            <Folder
-                              size={14}
-                              className="text-muted-foreground/70"
-                            />
-                          )}
-                        </div>
+                      <span
+                        className="
+                truncate
+                text-sm
+                font-medium
+                tracking-tight
+              "
+                      >
+                        {folder.name}
+                      </span>
+                    </div>
 
-                        <span className="truncate">{folder.name}</span>
-                      </div>
-
-                      {folder.articlesCount > 0 && (
-                        <span className="text-[11px] font-medium text-muted-foreground bg-muted/70 px-1.5 py-0.5 rounded-md">
-                          {folder.articlesCount}
-                        </span>
-                      )}
-                    </>
-                  )}
-                </NavLink>
-              ))
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full text-center px-4 py-8 text-muted-foreground space-y-2">
-                <Folder className="w-9 h-9 text-muted-foreground/50 " />
-                <span className="text-sm font-semibold">Brak folderów</span>
-                <span className="text-xs text-muted-foreground/70">
-                  Dodaj pierwszy folder i rozpocznij organizację artykułów.
-                </span>
-                {permissions?.addFolder && (
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="mt-2"
-                    onClick={onAddFolder}
-                  >
-                    + Dodaj folder
-                  </Button>
+                    {folder.articlesCount > 0 && (
+                      <span
+                        className="
+                ml-2
+                rounded-md
+                bg-muted
+                px-1.5
+                py-0.5
+                text-[11px]
+                tabular-nums
+                text-muted-foreground
+                transition-colors
+                group-hover:bg-background
+              "
+                      >
+                        {folder.articlesCount}
+                      </span>
+                    )}
+                  </>
                 )}
-              </div>
-            )}
+              </NavLink>
+            ))}
           </nav>
         </div>
       </div>

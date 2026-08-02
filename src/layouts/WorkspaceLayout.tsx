@@ -1,4 +1,5 @@
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { useFindAllFoldersByWorkspaceQuery } from "../hooks/workspace-folders/queries/use-workspace-folders.queries";
 import {
   useFindOneWorkspaceQuery,
   useFindUserWorkspaceMembershipQuery,
@@ -14,16 +15,21 @@ type ProtectedRouteContext = {
 
 export const WorkspaceLayout = () => {
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const {
     data: membership,
     isLoading: isMembershipLoading,
     error,
   } = useFindUserWorkspaceMembershipQuery(id);
 
-  console.log("BREED:", membership);
   const { data: workspace, isLoading: isWorkspaceDataLoading } =
     useFindOneWorkspaceQuery(id);
+
+  const { data: folders = [] } = useFindAllFoldersByWorkspaceQuery(id);
+
+  const handleNewArticle = () => {
+    navigate(`/workspace/${id}/new-article`);
+  };
 
   if (isWorkspaceDataLoading || isMembershipLoading) {
     return <PageLoader message="Trwa ładowanie kolekcji" />;
@@ -36,11 +42,16 @@ export const WorkspaceLayout = () => {
   return (
     <div className="flex flex-col  h-screen">
       <div className=" flex w-full h-screen">
-        <WorkspaceSidebar workspace={workspace} workspaces={[]} folders={[]} />
+        <WorkspaceSidebar
+          onOpenNewArticle={handleNewArticle}
+          workspace={workspace}
+          workspaces={[]}
+          folders={folders}
+        />
         <div className="flex flex-col flex-1">
           <main className="flex-1 overflow-y-auto h-full w-full  scrollbar-custom bg-background">
             <div className=" w-full h-full">
-              <Outlet context={{ workspace }} />
+              <Outlet context={{ workspace, folders }} />
             </div>
           </main>
         </div>
