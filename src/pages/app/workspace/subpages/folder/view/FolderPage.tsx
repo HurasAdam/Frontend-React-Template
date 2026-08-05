@@ -1,3 +1,6 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   FolderOpen,
   MoreHorizontal,
@@ -5,40 +8,30 @@ import {
   Search,
   SlidersHorizontal,
 } from "lucide-react";
-
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-
-const mockArticles = [
-  {
-    id: "1",
-    title: "Resetowanie hasła użytkownika",
-    label: { name: "Konta", color: "#6366f1" },
-  },
-  {
-    id: "2",
-    title: "Konfiguracja aplikacji mobilnej",
-    label: { name: "Mobile", color: "#22c55e" },
-  },
-  {
-    id: "3",
-    title: "Obsługa zgłoszeń klientów",
-    label: { name: "Support", color: "#f97316" },
-  },
-  {
-    id: "4",
-    title: "Instalacja aplikacji na nowym komputerze",
-    label: { name: "Desktop", color: "#06b6d4" },
-  },
-  {
-    id: "5",
-    title: "Dodawanie nowego użytkownika",
-    label: { name: "Administrator", color: "#ef4444" },
-  },
-];
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useFindWorkspaceArticlesByFolderQuery } from "../../../../../../hooks/workspace-articles/queries/use-workspace-articles.queries";
+import { ARTICLE_MARKERS } from "../../new-article/forms/NewWorkspaceArticleForm";
 
 export function FolderPage() {
+  const navigate = useNavigate();
+
+  const { folderId } = useParams();
+  const { workspace } = useOutletContext();
+  const { data: articles = [] } = useFindWorkspaceArticlesByFolderQuery(
+    workspace.id,
+    folderId,
+  );
+
+  const getMarkerColor = (marker: string | null) => {
+    return (
+      ARTICLE_MARKERS.find((item) => item.value === marker)?.color ?? "bg-muted"
+    );
+  };
+
+  const handleOpenArticle = (articleId: string) => {
+    navigate(`/workspace/${workspace.id}/articles/${articleId}`);
+  };
+
   return (
     <div className="space-y-6">
       {/* HEADER */}
@@ -122,8 +115,9 @@ export function FolderPage() {
           bg-card
         "
       >
-        {mockArticles.map((article) => (
+        {articles.map((article) => (
           <button
+            onClick={() => handleOpenArticle(article.id)}
             key={article.id}
             className="
               group
@@ -144,10 +138,11 @@ export function FolderPage() {
           >
             {/* LABEL COLOR */}
             <span
-              className="size-2.5 rounded-full"
-              style={{
-                backgroundColor: article.label.color,
-              }}
+              className={`
+    size-2.5
+    rounded-full
+    ${getMarkerColor(article.marker)}
+  `}
             />
 
             {/* TITLE */}

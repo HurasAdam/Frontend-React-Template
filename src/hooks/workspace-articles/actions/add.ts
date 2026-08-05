@@ -15,7 +15,6 @@ export const useAddWorkspaceArticle = () => {
     payload: AddWorkspaceArticleFormData;
     workspaceId: string;
   }) => {
-    console.log("BB:", payload);
     await mutateAsync({ workspaceId, payload });
 
     await queryClient.invalidateQueries({

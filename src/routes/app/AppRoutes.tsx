@@ -22,6 +22,7 @@ import { NewArticleLayout } from "../../pages/app/newArticle/view/NewArticleLayo
 import { NewWorkspaceLayout } from "../../pages/app/newWorkspace/view/NewWorkspaceLayout";
 import { RegisterActivityLayout } from "../../pages/app/register-activity/view/RegisterActivityLayout";
 import { SettingsPage } from "../../pages/app/settings/view/SettingsPage";
+import WorkspaceArticleLayout from "../../pages/app/workspace/subpages/article/view/WorkspaceArticleLayout";
 import { FolderLayout } from "../../pages/app/workspace/subpages/folder/view/FolderLayout";
 import { FoldersLayout } from "../../pages/app/workspace/subpages/folders/view/FoldersLayout";
 import { HomeLayout } from "../../pages/app/workspace/subpages/home/view/HomeLayout";
@@ -70,6 +71,10 @@ export const AppRoutes = () => {
               <Route path="members" element={<MembersLayout />} />
               <Route path="folders" element={<FoldersLayout />} />
               <Route path="folders/:folderId" element={<FolderLayout />} />
+              <Route
+                path="articles/:articleId"
+                element={<WorkspaceArticleLayout />}
+              />
               <Route path="settings" element={<SettingsLayout />} />
             </Route>
           </Route>

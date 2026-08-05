@@ -22,7 +22,7 @@ interface WorkspaceArticleFormProps {
   folders: unknown[];
 }
 
-const ARTICLE_MARKERS = [
+export const ARTICLE_MARKERS = [
   { value: "red", label: "Czerwony", color: "bg-red-500" },
   { value: "yellow", label: "Żółty", color: "bg-yellow-500" },
   { value: "green", label: "Zielony", color: "bg-green-500" },
