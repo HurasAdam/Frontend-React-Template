@@ -1,72 +1,91 @@
+"use client";
+
 import { useMemo, useState } from "react";
-import type { ILink } from "../../../../features/usefull-links/hooks/useUsefullLinkModal";
+
+import { Card, CardContent } from "@/components/ui/card";
+
 import { useFindUsefullLinksWithCategoryQuery } from "../../../../hooks/usefullLinks/queries/usefullLinks.queries";
-import type { ILinkCategory } from "../../../../services/usefullLinks/usefullLink.types";
 import { UsefulLinksCategorySection } from "../components/UsefulLinksCategorySection";
-import { UsefulLinksEmptyState } from "../components/UsefulLinksEmptyState";
 import { UsefulLinksHeader } from "../components/UsefulLinksHeader";
 import { UsefulLinksSearchBar } from "../components/UsefulLinksSearchBar";
 
-interface Props {
-  openAddLink: () => void;
-  openAddCategory: () => void;
-  openLinkInfo: (link: ILink) => void;
-}
-
-export const UsefulLinksPage = ({
+export function UsefullLinksPage({
   openAddLink,
   openLinkInfo,
   openAddCategory,
-}: Props) => {
-  const { data = [] } = useFindUsefullLinksWithCategoryQuery();
+}) {
+  const { data = [], isLoading } = useFindUsefullLinksWithCategoryQuery();
+
   const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const categories = useMemo(() => {
+    const map = new Map();
+
+    data.forEach((link) => {
+      map.set(link.category.id, link.category);
+    });
+
+    return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+  }, [data]);
 
   const filtered = useMemo(() => {
-    return data.filter(
-      (link) =>
-        link.name.toLowerCase().includes(search.toLowerCase()) ||
-        link.url.toLowerCase().includes(search.toLowerCase()),
-    );
-  }, [data, search]);
+    let result = [...data];
 
-  const categories: ILinkCategory[] = useMemo(() => {
-    const unique = filtered.flatMap((l) => (l.category ? [l.category] : []));
+    if (search.trim()) {
+      const q = search.toLowerCase();
 
-    return unique
-      .filter((cat, i, self) => self.findIndex((c) => c.id === cat.id) === i)
-      .sort((a, b) => a.order - b.order);
-  }, [filtered]);
+      result = result.filter(
+        (link) =>
+          link.name.toLowerCase().includes(q) ||
+          link.description.toLowerCase().includes(q),
+      );
+    }
 
-  return (
-    <div className="min-h-screen bg-background">
-      <div className="">
-        <UsefulLinksHeader onAddLink={openAddLink} />
+    if (selectedCategory !== "all") {
+      result = result.filter((link) => link.category.id === selectedCategory);
+    }
 
-        <UsefulLinksSearchBar
-          onAddLink={openAddLink}
-          onAddCategory={openAddCategory}
-          value={search}
-          onChange={(value) => setSearch(value)}
-        />
+    return result;
+  }, [data, search, selectedCategory]);
 
-        <div className="space-y-10">
-          {categories.map((category) => {
-            const links = filtered.filter((link) => {
-              return link.category?.id === category.id;
-            });
+  if (isLoading) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="h-8 w-64 rounded bg-muted" />
 
-            return (
-              <UsefulLinksCategorySection
-                key={category.id}
-                category={category}
-                links={links}
-                openLinkInfo={openLinkInfo}
-              />
-            );
-          })}
-          {!filtered.length && <UsefulLinksEmptyState />}
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Card key={index}>
+              <CardContent className="h-36" />
+            </Card>
+          ))}
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      {/* Header */}
+      <UsefulLinksHeader
+        openAddLink={openAddLink}
+        openAddCategory={openAddCategory}
+      />
+      <UsefulLinksSearchBar
+        search={search}
+        onSearchChange={setSearch}
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+      />
+
+      <UsefulLinksCategorySection
+        links={filtered}
+        hasLinks={data.length > 0}
+        openLinkInfo={openLinkInfo}
+        openAddLink={openAddLink}
+      />
     </div>
   );
-};
+}

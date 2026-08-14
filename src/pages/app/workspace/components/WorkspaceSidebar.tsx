@@ -158,7 +158,7 @@ export const WorkspaceSidebar = ({
 
       <div className="flex flex-1 min-h-0  ">
         {/* LEFT ICON SIDEBAR */}
-        <div className="w-16 border-r bg-card/95 flex flex-col justify-between pt-2.5">
+        <div className="w-16 border-r  flex flex-col justify-between pt-2.5">
           <div className="flex flex-col gap-3 px-2 mt-2">
             <Button
               size="icon"

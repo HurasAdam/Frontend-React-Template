@@ -6,8 +6,21 @@ import {
 } from "../hooks/workspaces/queries/use-workspace.queries";
 import { WorkspaceAccessDenied } from "../pages/app/workspace/components/AccessDenied";
 import { PageLoader } from "../pages/app/workspace/components/PageLoader";
-import { WorkspaceSidebar } from "../pages/app/workspace/components/WorkspaceSidebar";
 import type { AuthUserData } from "../services/auth/auth.types";
+
+import {
+  BarChart3,
+  BookOpen,
+  FolderOpen,
+  HelpCircle,
+  LayoutDashboard,
+  Link as LinkIcon,
+  MessagesSquare,
+  Star,
+  Wrench,
+} from "lucide-react";
+import { Sidebar } from "../components/sidebar/workspace-sidebar";
+import { TopBar } from "../components/topbar/workspace-topbar";
 
 type ProtectedRouteContext = {
   authData: AuthUserData;
@@ -40,22 +53,43 @@ export const WorkspaceLayout = () => {
   }
 
   return (
-    <div className="flex flex-col  h-screen">
-      <div className=" flex w-full h-screen">
-        <WorkspaceSidebar
-          onOpenNewArticle={handleNewArticle}
-          workspace={workspace}
-          workspaces={[]}
-          folders={folders}
-        />
-        <div className="flex flex-col flex-1">
-          <main className="flex-1 overflow-y-auto h-full w-full  scrollbar-custom bg-background">
-            <div className=" w-full h-full">
-              <Outlet context={{ workspace, folders }} />
-            </div>
-          </main>
+    <div className="min-h-screen bg-background">
+      <Sidebar workspace={workspace} folders={folders} />
+
+      <TopBar
+        workspace={workspace}
+        view={{ kind: "members" }}
+        onNewArticle={() => {}}
+        onOpenSettings={() => {}}
+        onOpenMembers={() => {}}
+        onOpenFolders={() => {}}
+        onBackToBase={() => {}}
+        onToggleMobileSidebar={() => {}}
+      />
+
+      {/* Main content */}
+      <main className="lg:pl-[280px]">
+        <div className="mx-auto">
+          <Outlet context={{ workspace, folders }} />
         </div>
-      </div>
+      </main>
     </div>
   );
+};
+
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  LayoutDashboard,
+  BookOpen,
+  HelpCircle,
+  MessagesSquare,
+  BarChart3,
+  Star,
+  Link: LinkIcon,
+  Wrench,
+  FolderOpen,
+};
+
+type SidebarProps = {
+  open: boolean;
+  onClose: () => void;
 };

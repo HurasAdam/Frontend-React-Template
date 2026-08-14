@@ -21,6 +21,7 @@ import { UsefulLinksLayout } from "../../pages/app/important-links/views/UsefulL
 import { NewArticleLayout } from "../../pages/app/newArticle/view/NewArticleLayout";
 import { NewWorkspaceLayout } from "../../pages/app/newWorkspace/view/NewWorkspaceLayout";
 import { RegisterActivityLayout } from "../../pages/app/register-activity/view/RegisterActivityLayout";
+import { SettingsLayout as AppSettingsLayout } from "../../pages/app/settings/view/SettingsLayout";
 import { SettingsPage } from "../../pages/app/settings/view/SettingsPage";
 import WorkspaceArticleLayout from "../../pages/app/workspace/subpages/article/view/WorkspaceArticleLayout";
 import { FolderLayout } from "../../pages/app/workspace/subpages/folder/view/FolderLayout";
@@ -29,6 +30,7 @@ import { HomeLayout } from "../../pages/app/workspace/subpages/home/view/HomeLay
 import { MembersLayout } from "../../pages/app/workspace/subpages/members/view/MembersLayout";
 import { NewWorkspaceArticleLayout } from "../../pages/app/workspace/subpages/new-article/view/NewWorkspaceArticleLayout";
 import { SettingsLayout } from "../../pages/app/workspace/subpages/settings/view/SettingsLayout";
+import AdminLoginPage from "../../pages/shared/auth/admin-login/view/AdminLogin.page";
 import LoginPage from "../../pages/shared/auth/login/view/Login.page";
 import { AdminRoute } from "../auth/admin.route";
 import { AuthRoute } from "../auth/auth.route";
@@ -42,6 +44,7 @@ export const AppRoutes = () => {
         {/* PUBLIC */}
         <Route element={<AuthRoute />}>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="admin/login" element={<AdminLoginPage />} />
         </Route>
 
         {/* PROTECTED APP */}
@@ -56,7 +59,7 @@ export const AppRoutes = () => {
               path="/register-activity"
               element={<RegisterActivityLayout />}
             />
-            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/settings" element={<AppSettingsLayout />} />
           </Route>
         </Route>
 

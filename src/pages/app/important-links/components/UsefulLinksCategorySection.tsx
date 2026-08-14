@@ -1,122 +1,140 @@
-import { Eye, MoreVertical, Pencil, Star, Trash2 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "../../../../components/ui/dropdown-menu";
-import type {
-  ILink,
-  ILinkCategory,
-} from "../../../../services/usefullLinks/usefullLink.types";
+import { ExternalLink, Info, Link as LinkIcon, Star } from "lucide-react";
+
+import { Badge } from "../../../../components/ui/badge";
+import { Button } from "../../../../components/ui/button";
+import { Card, CardContent } from "../../../../components/ui/card";
+import type { ILink } from "../../../../services/usefullLinks/usefullLink.types";
+import { EmptyState } from "../../../shared/common/EmptyState";
 
 interface Props {
-  category: ILinkCategory;
-
   links: ILink[];
-
+  hasLinks: boolean;
   openLinkInfo: (link: ILink) => void;
+  openAddLink: () => void;
 }
 
 export const UsefulLinksCategorySection = ({
   links,
-  category,
+  hasLinks,
   openLinkInfo,
+  openAddLink,
 }: Props) => {
-  return (
-    <section>
-      <h2 className="mb-3 text-xs uppercase tracking-wider text-muted-foreground">
-        {category.name}
-      </h2>
+  if (!hasLinks) {
+    return (
+      <EmptyState
+        icon={LinkIcon}
+        title="Nie dodano jeszcze żadnych linków"
+        description="Dodaj skróty do zasobów i treści, z których często korzystasz"
+        actionLabel="Dodaj link"
+        onAction={openAddLink}
+      />
+    );
+  }
 
-      <div className="overflow-hidden  rounded-xl border bg-card">
-        {links.map((link, index) => (
-          <div key={link.id}>
-            <LinkRow link={link} openLinkInfo={openLinkInfo} />
-
-            {index !== links.length - 1 && (
-              <div className="mx-5 h-px bg-border/80" />
-            )}
+  if (links.length === 0) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center gap-3 py-16">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted">
+            <LinkIcon className="h-7 w-7 text-muted-foreground" />
           </div>
-        ))}
-      </div>
-    </section>
+
+          <p className="text-sm font-medium">
+            Brak linków spełniających kryteria
+          </p>
+
+          <p className="max-w-sm text-center text-xs text-muted-foreground">
+            Spróbuj zmienić wyszukiwaną frazę lub wybrać inną kategorię.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+      {links.map((link) => (
+        <LinkCard key={link.id} link={link} openLinkInfo={openLinkInfo} />
+      ))}
+    </div>
   );
 };
 
-const LinkRow = ({
-  link,
-  openLinkInfo,
-}: {
+interface LinkCardProps {
   link: ILink;
   openLinkInfo: (link: ILink) => void;
-}) => {
-  return (
-    <div className="group flex items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors">
-      <a
-        href={link.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex min-w-0 flex-1 items-center gap-4"
-      >
-        <div className="flex w-5 justify-center">
-          {link.isFeatured ? (
-            <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-          ) : (
-            <div className="h-4 w-4 opacity-0" />
-          )}
-        </div>
+}
 
-        {/* TEXT */}
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-medium">{link.name}</div>
-          <div className="truncate text-xs text-muted-foreground">
-            {link.url}
+const LinkCard = ({ link, openLinkInfo }: LinkCardProps) => {
+  const handleOpenLink = () => {
+    window.open(normalizeUrl(link.url), "_blank", "noopener,noreferrer");
+  };
+
+  return (
+    <Card
+      onClick={handleOpenLink}
+      className="group relative cursor-pointer transition-all hover:border-primary/30 hover:shadow-md"
+    >
+      {link.isFeatured && (
+        <Star
+          className="absolute right-3 top-3 h-3.5 w-3.5 fill-primary/45 text-primary/60"
+          aria-label="Wyróżniony link"
+        />
+      )}
+
+      <CardContent className="p-5">
+        <div className="flex items-start gap-3">
+          {/* Link icon */}
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+            <LinkIcon className="h-5 w-5 text-primary" />
+          </div>
+
+          <div className="min-w-0 flex-1">
+            {/* Title */}
+            <div className="flex items-start justify-between gap-2 pr-5">
+              <h3 className="line-clamp-1 text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+                {link.name}
+              </h3>
+
+              <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+            </div>
+
+            {/* Description */}
+            <p className="mt-1.5 line-clamp-2 text-xs text-muted-foreground">
+              {link.description || "Brak opisu"}
+            </p>
+
+            {/* Footer */}
+            <div className="mt-3 flex items-center justify-between gap-2 border-t border-border pt-3">
+              <Badge variant="outline" className="text-[10px]">
+                {link.category.name}
+              </Badge>
+
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  openLinkInfo(link);
+                }}
+                className="h-auto gap-1 p-0 text-xs text-muted-foreground hover:text-primary"
+              >
+                Szczegóły
+                <Info className="h-3.5 w-3.5" />
+              </Button>
+            </div>
           </div>
         </div>
-      </a>
-
-      {/* ACTIONS */}
-      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="opacity-0 group-hover:opacity-100 transition p-2 rounded-lg hover:bg-muted">
-              <MoreVertical size={16} />
-            </button>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent className="w-56" align="end">
-            <DropdownMenuLabel className="text-xs border-b pb-2  text-muted-foreground">
-              Dostępne opcje :
-            </DropdownMenuLabel>
-
-            <DropdownMenuGroup className="space-y-0.5">
-              <DropdownMenuItem
-                onClick={() => openLinkInfo(link)}
-                className="flex items-center gap-3 py-2 cursor-pointer"
-              >
-                <Eye className="w-4 h-4 opacity-70" />
-                <span>Szczegóły</span>
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                onClick={() => {}}
-                className="flex items-center gap-3 py-2 cursor-pointer"
-              >
-                <Pencil className="w-4 h-4 opacity-70" />
-                <span>Edytuj</span>
-              </DropdownMenuItem>
-
-              <DropdownMenuItem className="flex items-center gap-3 py-2 text-red-500 cursor-pointer">
-                <Trash2 className="w-4 h-4 opacity-70" />
-                <span>Usuń</span>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
+};
+
+const normalizeUrl = (url: string) => {
+  if (/^https?:\/\//i.test(url)) {
+    return url;
+  }
+
+  return `https://${url}`;
 };

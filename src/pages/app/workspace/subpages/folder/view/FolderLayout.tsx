@@ -3,8 +3,8 @@ import { FolderPage } from "./FolderPage";
 
 export const FolderLayout = () => {
   return (
-    <PageContainer variant="default">
-      <div className="space-y-8 py-10">
+    <PageContainer variant="wide">
+      <div className="px-4 py-6 lg:px-8 lg:py-8">
         <FolderPage />
       </div>
     </PageContainer>

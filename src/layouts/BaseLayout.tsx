@@ -51,7 +51,7 @@ export const BaseLayout = () => {
               </BreadcrumbList>
             </Breadcrumb>
           </header>
-          <div className="flex flex-1 flex-col gap-6 px-10 py-6">
+          <div className="flex flex-1 flex-col gap-6 px-10 ">
             <Outlet context={{ authData }} />
           </div>
         </SidebarInset>
