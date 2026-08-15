@@ -58,10 +58,7 @@ const data = {
 
   actions: [
     { title: "Nowy artykuł", url: "/articles/new", icon: <Plus /> },
-    { title: "Nowa kategoria", url: "/categories/new", icon: <Layers2 /> },
-    { title: "Dodaj link", url: "/links/new", icon: <Link /> },
-    { title: "Import danych", url: "/import", icon: <Network /> },
-    { title: "Zgłoszenie", url: "/feedback/new", icon: <MailQuestionMark /> },
+    { title: "Odnotuj temat", url: "/categories/new", icon: <Layers2 /> },
   ],
 
   navMain: [

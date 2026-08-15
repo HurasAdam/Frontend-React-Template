@@ -4,7 +4,9 @@ import { RegisterActivityPage } from "./RegisterActivityPage";
 export const RegisterActivityLayout = () => {
   return (
     <PageContainer variant="wide">
-      <RegisterActivityPage />
+      <div className="px-4 py-6 lg:px-8 lg:py-8">
+        <RegisterActivityPage />
+      </div>
     </PageContainer>
   );
 };
