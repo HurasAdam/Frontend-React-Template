@@ -4,7 +4,7 @@ import { z } from "zod";
 export const addWorkspaceArticleSchema = z.object({
   title: z.string().min(1),
   folderId: z.string().min(1),
-  marker: z.string().optional(),
+  label: z.string().optional(),
 
   responseVariant: z.object({
     variantName: z.string().min(1),

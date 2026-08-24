@@ -9,7 +9,6 @@ import {
   addWorkspaceArticleSchema,
   type AddWorkspaceArticleFormData,
 } from "../../../../../../validation/workspace-article/add";
-import CreateArticleHeader from "../components/PageHeader";
 import { WorkspaceArticleForm } from "../forms/NewWorkspaceArticleForm";
 
 type OutletContext = {
@@ -29,7 +28,7 @@ export const NewWorkspaceArticlePage = () => {
     resolver: zodResolver(addWorkspaceArticleSchema),
     defaultValues: {
       folderId: "",
-      marker: undefined,
+      label: undefined,
       title: "",
       responseVariant: {
         variantName: "Wersja 1",
@@ -54,7 +53,7 @@ export const NewWorkspaceArticlePage = () => {
     <FormProvider {...form}>
       <div className="min-h-screen bg-background">
         <div className="mx-auto flex w-full  flex-col gap-10 ">
-          <CreateArticleHeader />
+          {/* <CreateArticleHeader /> */}
 
           <WorkspaceArticleForm folders={folders} />
         </div>

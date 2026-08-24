@@ -1,4 +1,4 @@
-import { FileText, Folder, Pencil, Trash2 } from "lucide-react";
+import { FileText, Folder, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "../../../../../../components/ui/button";
 
@@ -14,6 +14,7 @@ interface Props {
   folders: Folder[];
   onEdit: (folder: Folder) => void;
   onDelete: (folder: Folder) => void;
+  onAdd: () => void;
 }
 
 const FOLDER_COLORS: Record<
@@ -72,29 +73,60 @@ export default function FolderListSection({
   folders,
   onEdit,
   onDelete,
+  onAdd,
 }: Props) {
-  if (folders.length === 0) {
-    return (
-      <div className="rounded-xl border bg-card">
-        <div className="flex flex-col items-center justify-center gap-3 py-16">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted">
-            <Folder className="h-7 w-7 text-muted-foreground" />
-          </div>
-
-          <div className="text-center">
-            <p className="text-sm font-semibold">Brak folderów</p>
-
-            <p className="mt-1 text-sm text-muted-foreground">
-              Utwórz pierwszy folder, aby uporządkować artykuły.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+      {/* Add folder */}
+      <button
+        type="button"
+        onClick={onAdd}
+        className="
+          group
+          flex
+          min-h-[180px]
+          flex-col
+          items-center
+          justify-center
+          gap-3
+          rounded-2xl
+          border-2
+          border-dashed
+          border-border
+          bg-primary/5
+          p-8
+          transition-all
+          duration-200
+          hover:border-primary
+          hover:bg-primary/5
+          focus-visible:outline-none
+          focus-visible:ring-2
+          focus-visible:ring-ring/50
+        "
+      >
+        <div
+          className="
+            flex
+            size-12
+            items-center
+            justify-center
+            rounded-xl
+            bg-primary/10
+            transition-colors
+            group-hover:bg-primary/20
+          "
+        >
+          <Plus className="size-6 text-primary" />
+        </div>
+
+        <span className="font-medium text-foreground">Dodaj folder</span>
+
+        <span className="text-center text-sm text-muted-foreground">
+          Utwórz folder, aby uporządkować artykuły.
+        </span>
+      </button>
+
+      {/* Folders */}
       {folders.map((folder) => {
         const color = getFolderColor(folder.color);
 
@@ -194,12 +226,10 @@ export default function FolderListSection({
                     </div>
                   </div>
 
-                  {/* Description */}
                   <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
                     {folder.description || "Brak opisu folderu"}
                   </p>
 
-                  {/* Meta */}
                   <div className="mt-4 flex items-center gap-2 border-t border-border pt-3">
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <FileText className="h-3.5 w-3.5" />

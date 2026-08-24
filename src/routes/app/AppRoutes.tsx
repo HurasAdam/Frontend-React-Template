@@ -67,16 +67,17 @@ export const AppRoutes = () => {
           <Route element={<WorkspaceRoute />}>
             <Route path="/workspace/:id" element={<WorkspaceLayout />}>
               <Route index element={<HomeLayout />} />
-              <Route
-                path="new-article"
-                element={<NewWorkspaceArticleLayout />}
-              />
+
               <Route path="members" element={<MembersLayout />} />
               <Route path="folders" element={<FoldersLayout />} />
               <Route path="folders/:folderId" element={<FolderLayout />} />
               <Route
                 path="articles/:articleId"
                 element={<WorkspaceArticleLayout />}
+              />
+              <Route
+                path="articles/new"
+                element={<NewWorkspaceArticleLayout />}
               />
               <Route path="settings" element={<SettingsLayout />} />
             </Route>

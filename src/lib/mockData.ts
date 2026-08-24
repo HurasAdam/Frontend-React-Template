@@ -26,6 +26,38 @@ export type ArticleVersion = {
   isLatest: boolean;
 };
 
+export type LabelColorKey =
+  | "blue"
+  | "green"
+  | "amber"
+  | "rose"
+  | "teal"
+  | "orange"
+  | "slate"
+  | "cyan";
+
+export const labelColorz: Record<
+  LabelColorKey,
+  { bg: string; text: string; dot: string }
+> = {
+  blue: { bg: "bg-blue-100", text: "text-blue-700", dot: "bg-blue-500" },
+  green: {
+    bg: "bg-emerald-100",
+    text: "text-emerald-700",
+    dot: "bg-emerald-500",
+  },
+  amber: { bg: "bg-amber-100", text: "text-amber-700", dot: "bg-amber-500" },
+  rose: { bg: "bg-rose-100", text: "text-rose-700", dot: "bg-rose-500" },
+  teal: { bg: "bg-teal-100", text: "text-teal-700", dot: "bg-teal-500" },
+  orange: {
+    bg: "bg-orange-100",
+    text: "text-orange-700",
+    dot: "bg-orange-500",
+  },
+  slate: { bg: "bg-slate-100", text: "text-slate-700", dot: "bg-slate-500" },
+  cyan: { bg: "bg-cyan-100", text: "text-cyan-700", dot: "bg-cyan-500" },
+};
+
 export type Article = {
   id: string;
   folderId: string;
@@ -42,6 +74,13 @@ export type Article = {
   employeeNoteAuthor?: string;
   employeeNoteInitials?: string;
   employeeNoteDate?: string;
+};
+
+export type Label = {
+  id: string;
+  name: string;
+  color: LabelColorKey;
+  articleCount: number;
 };
 
 export type Member = {
@@ -598,3 +637,104 @@ export const conversationTopics: ConversationTopic[] = [
 export function getArticleById(id: string): Article | undefined {
   return articles.find((a) => a.id === id);
 }
+
+export type ArticleVariant = {
+  id: string;
+  variantName: string;
+  variantContent: string;
+  order: number;
+};
+
+export type KnowledgeArticle = {
+  id: string;
+  title: string;
+  marker: string | null;
+  folder: { id: string; name: string };
+  workspace: { id: string; name: string; labelColor: string; iconKey: string };
+  author: { name: string; initials: string; role: string };
+  variants: ArticleVariant[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const labels: Label[] = [
+  { id: "important", name: "Ważne", color: "rose", articleCount: 9 },
+  { id: "draft", name: "Wersja robocza", color: "slate", articleCount: 4 },
+  { id: "reviewed", name: "Zweryfikowane", color: "green", articleCount: 27 },
+  { id: "internal", name: "Wewnętrzne", color: "amber", articleCount: 11 },
+  { id: "public", name: "Publiczne", color: "blue", articleCount: 18 },
+  { id: "legal", name: "Prawne", color: "cyan", articleCount: 6 },
+];
+
+export const mockArticle: KnowledgeArticle = {
+  id: "6a7b882fa252e417c5fd76ac",
+  title:
+    "Nie pamiętam hasła — procedura odzyskiwania dostępu do konta w module logowania",
+  marker: null,
+  folder: { id: "6a7a3f5160feff82a6b415bd", name: "Mobilne dodatki" },
+  workspace: {
+    id: "6a665947cac399066953f103",
+    name: "Logowanie",
+    labelColor: "#EF4444",
+    iconKey: "Rocket",
+  },
+  author: {
+    name: "Anna Kowalska",
+    initials: "AK",
+    role: "Specjalista pomocy technicznej",
+  },
+  createdAt: "2026-08-11T20:38:07.450Z",
+  updatedAt: "2026-08-19T09:12:44.000Z",
+  variants: [
+    {
+      id: "6a7b882fa252e417c5fd76ae",
+      variantName: "Wersja 1",
+      order: 0,
+      variantContent: `Szanowna Pani,
+
+dziękuję za przesłanie wiadomości.
+
+W nawiązaniu do przesłanej wiadomości pozwoliłem sobie przetestować opisaną sytuację w środowisku testowym jednakże nie zauważyłem podobnej nieprawidłowości - Usunięcie wpisów z planu lekcji w module ZŚK jest możliwe, natomiast wpisy usunięciu nie są już widoczne w planie zajęć.
+
+W tym przypadku prawdopodobnie problem występuje po stronie Pani przeglądarki internetowej. W tej sytuacji proszę o wyczyszczenie plików cookies oraz pamięci podręcznej przeglądarki (w przypadku przeglądarki Firefox i Google Chrome można to zrobić wybierając kombinację klawiszy Ctrl + Shift + Delete).
+
+Jeżeli wykonanie tej czynności nie przyniosłoby efektu, proszę spróbować zmienić przeglądarkę na inną niż aktualnie używana np. jedną z wcześniej wymienionych oraz zalogować się do aplikacji w nowym oknie w trybie prywatnym (w przypadku przeglądarki Firefox można je otworzyć wybierając kombinację klawiszy Ctrl + Shift + P).
+
+Dodatkowo w poniżej w linku zamieszczam instrukcję dotyczącą czyszczenia danych tymczasowych dla przeglądarki:
+
+Google Chrome - https://support.google.com/accounts/answer/32050?hl=pl&co=GENIE.Platform%3DDesktop
+Firefox - https://help.webex.com/pl-pl/article/WBX38898/Wyczy%C5%9B%C4%87-pami%C4%99%C4%87-podr%C4%99czn%C4%85-i-pliki-cookie-w-przegl%C4%85darce-Mozilla-Firefox
+Opera - https://help.opera.com/pl/latest/security-and-privacy/
+
+Proszę również upewnić się, że korzystają Państwo z najnowszej wersji przeglądarki.
+
+W przypadku dodatkowych pytań pozostaję do dyspozycji.`,
+    },
+    {
+      id: "6a7b882fa252e417c5fd76af",
+      variantName: "Wersja 2 — skrócona",
+      order: 1,
+      variantContent: `Dzień dobry,
+
+dziękuję za zgłoszenie.
+
+Aby odzyskać dostęp do konta, proszę skorzystać z opcji „Nie pamiętam hasła" dostępnej na ekranie logowania. Na adres e-mail przypisany do konta zostanie wysłana wiadomość z linkiem do ustawienia nowego hasła (link jest aktywny przez 30 minut).
+
+Jeżeli wiadomość nie dotarła, proszę sprawdzić folder SPAM oraz upewnić się, że adres e-mail jest poprawnie przypisany do konta.
+
+W przypadku dodatkowych pytań pozostaję do dyspozycji.`,
+    },
+    {
+      id: "6a7b882fa252e417c5fd76b0",
+      variantName: "Wersja 3 — eskalacja",
+      order: 2,
+      variantContent: `Dzień dobry,
+
+potwierdzam przyjęcie zgłoszenia dotyczącego problemu z logowaniem.
+
+Zgłoszenie zostało przekazane do zespołu technicznego w celu weryfikacji konfiguracji konta. O wyniku analizy poinformuję Państwa niezwłocznie po otrzymaniu informacji zwrotnej, nie później niż w ciągu 2 dni roboczych.
+
+Przepraszam za utrudnienia i dziękuję za cierpliwość.`,
+    },
+  ],
+};

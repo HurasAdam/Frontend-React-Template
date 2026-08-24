@@ -20,7 +20,6 @@ import {
   Wrench,
 } from "lucide-react";
 import { Sidebar } from "../components/sidebar/workspace-sidebar";
-import { TopBar } from "../components/topbar/workspace-topbar";
 
 type ProtectedRouteContext = {
   authData: AuthUserData;
@@ -56,7 +55,7 @@ export const WorkspaceLayout = () => {
     <div className="min-h-screen bg-background">
       <Sidebar workspace={workspace} folders={folders} />
 
-      <TopBar
+      {/* <TopBar
         workspace={workspace}
         view={{ kind: "members" }}
         onNewArticle={() => {}}
@@ -65,7 +64,7 @@ export const WorkspaceLayout = () => {
         onOpenFolders={() => {}}
         onBackToBase={() => {}}
         onToggleMobileSidebar={() => {}}
-      />
+      /> */}
 
       {/* Main content */}
       <main className="lg:pl-[280px]">

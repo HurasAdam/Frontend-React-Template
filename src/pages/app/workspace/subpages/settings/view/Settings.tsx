@@ -1,10 +1,8 @@
-import { SettingsIcon } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { ConfirmDialog } from "../../../../../../components/shared/ConfirmDialog";
 import { useConfirmDialog } from "../../../../../../components/shared/hooks/useConfirmDialog";
 import BasicSettings from "../components/BasicSettings";
 import DangerZone from "../components/DangerZone";
-import PageHeader from "../components/PageHeader";
 import { useEditModal } from "../hooks/useEditModal";
 import { WorkspaceEditModal } from "../modals/WorkspaceEditModal";
 
@@ -16,7 +14,7 @@ export interface IWorkspaceInfo {
   iconKey: string;
 }
 
-type WorkspaceContext = {
+export type WorkspaceContext = {
   workspace: IWorkspaceInfo;
 };
 
@@ -51,12 +49,6 @@ export const Settings = () => {
 
   return (
     <div>
-      <PageHeader
-        title="Ustawienia kolekcji"
-        description="Zarządzaj ustawieniami kolekcji"
-        icon={SettingsIcon}
-      />
-
       <BasicSettings workspace={workspace} onEdit={editModal.open} />
 
       <DangerZone workspace={workspace} onDelete={onDelete} />

@@ -1,4 +1,4 @@
-import { FileText, FolderKanban, Type } from "lucide-react";
+import { FileText, FolderKanban, Star, TrendingUp, Type } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
 import {
@@ -22,11 +22,23 @@ interface WorkspaceArticleFormProps {
   folders: unknown[];
 }
 
-export const ARTICLE_MARKERS = [
-  { value: "red", label: "Czerwony", color: "bg-red-500" },
-  { value: "yellow", label: "Żółty", color: "bg-yellow-500" },
-  { value: "green", label: "Zielony", color: "bg-green-500" },
-  { value: "blue", label: "Niebieski", color: "bg-blue-500" },
+export const ARTICLE_LABELS = [
+  {
+    value: "important",
+    label: "Ważne",
+    description: "Wyróżnij artykuł jako ważny",
+    icon: Star,
+    bg: "bg-amber-100",
+    text: "text-amber-700",
+  },
+  {
+    value: "popular",
+    label: "Popularne",
+    description: "Artykuł często wykorzystywany",
+    icon: TrendingUp,
+    bg: "bg-emerald-100",
+    text: "text-emerald-700",
+  },
 ];
 
 export const WorkspaceArticleForm = ({
@@ -35,7 +47,7 @@ export const WorkspaceArticleForm = ({
   const form = useFormContext();
 
   return (
-    <div className="w-full mx-auto space-y-10">
+    <div className="mx-auto w-full space-y-10">
       {/* TITLE */}
 
       <Card>
@@ -76,8 +88,10 @@ export const WorkspaceArticleForm = ({
         <Section
           icon={<FolderKanban size={16} />}
           title="Konfiguracja"
-          description="Ustaw lokalizację i oznaczenie artykułu"
+          description="Ustaw lokalizację i etykietę artykułu"
         />
+
+        {/* FOLDER */}
 
         <Row
           title="Folder docelowy"
@@ -98,8 +112,8 @@ export const WorkspaceArticleForm = ({
                     <SelectContent className="px-1 py-1.5">
                       {folders.map((folder: any) => (
                         <SelectItem key={folder.id} value={folder.id}>
-                          <div className="flex  items-center gap-2">
-                            <div>📁</div>
+                          <div className="flex items-center gap-2">
+                            <span>📁</span>
                             {folder.name}
                           </div>
                         </SelectItem>
@@ -116,13 +130,15 @@ export const WorkspaceArticleForm = ({
 
         <Divider />
 
+        {/* LABEL */}
+
         <Row
-          title="Marker"
-          description="Kolorowe oznaczenie artykułu"
+          title="Etykieta"
+          description="Wyróżnij artykuł za pomocą etykiety"
           right={
             <FormField
               control={form.control}
-              name="marker"
+              name="label"
               render={({ field }) => (
                 <FormItem className="w-[260px]">
                   <Select
@@ -133,29 +149,50 @@ export const WorkspaceArticleForm = ({
                   >
                     <FormControl>
                       <SelectTrigger className="w-60">
-                        <SelectValue placeholder="Brak oznaczenia" />
+                        <SelectValue placeholder="Brak etykiety" />
                       </SelectTrigger>
                     </FormControl>
 
-                    <SelectContent>
-                      <SelectItem value="none">Brak</SelectItem>
+                    <SelectContent className="px-1 py-1.5">
+                      {/* NONE */}
 
-                      {ARTICLE_MARKERS.map((marker) => (
-                        <SelectItem key={marker.value} value={marker.value}>
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={`
-                                h-3
-                                w-3
-                                rounded-full
-                                ${marker.color}
-                              `}
-                            />
-
-                            {marker.label}
+                      <SelectItem value="none">
+                        <div className="flex items-center gap-2">
+                          <div className="flex size-6 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                            <FileText className="size-3.5" />
                           </div>
-                        </SelectItem>
-                      ))}
+
+                          <span>Brak etykiety</span>
+                        </div>
+                      </SelectItem>
+
+                      {/* LABELS */}
+
+                      {ARTICLE_LABELS.map((label) => {
+                        const Icon = label.icon;
+
+                        return (
+                          <SelectItem key={label.value} value={label.value}>
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`
+                                  flex
+                                  size-6
+                                  items-center
+                                  justify-center
+                                  rounded-md
+                                  ${label.bg}
+                                  ${label.text}
+                                `}
+                              >
+                                <Icon className="size-3.5" />
+                              </div>
+
+                              <span>{label.label}</span>
+                            </div>
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
 
@@ -261,8 +298,8 @@ const Row = ({
       <p className="mt-1 text-xs text-muted-foreground">{description}</p>
     </div>
 
-    <div className="w-[40%] flex justify-end">{right}</div>
+    <div className="flex w-[40%] justify-end">{right}</div>
   </div>
 );
 
-const Divider = () => <div className="h-px bg-border mx-6" />;
+const Divider = () => <div className="mx-6 h-px bg-border" />;

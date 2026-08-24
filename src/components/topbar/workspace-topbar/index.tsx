@@ -1,189 +1,222 @@
-import { articles, folders } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
-import {
-  Bell,
-  ChevronRight,
-  FileText,
-  FolderOpen,
-  LayoutDashboard,
-  Plus,
-  Settings,
-  Users,
-} from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Menu, Settings, type LucideIcon } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 
-type View =
-  | { kind: "articles"; folderId: string }
-  | { kind: "dashboard" }
-  | { kind: "settings" }
-  | { kind: "members" }
-  | { kind: "folders" }
-  | { kind: "article-detail"; articleId: string };
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+
+import {
+  PageContainer,
+  type PageContainerVariant,
+} from "../../shared/PageContainer";
+
+type BreadcrumbItemData = {
+  label: string;
+  href?: string;
+  icon?: LucideIcon;
+  iconClassName?: string;
+};
 
 type TopBarProps = {
-  view: View;
-  onNewArticle: () => void;
-  onOpenSettings: () => void;
-  onOpenMembers: () => void;
-  onOpenFolders: () => void;
-  onBackToBase: () => void;
-  onToggleMobileSidebar: () => void;
+  breadcrumbs: BreadcrumbItemData[];
+
+  rootBreadcrumb?: BreadcrumbItemData;
+
+  onBack?: () => void;
+  onToggleMobileSidebar?: () => void;
+  workspaceId?: string;
+  containerVariant?: PageContainerVariant;
 };
 
 export function TopBar({
-  workspace,
-  view,
-  onNewArticle,
-  onOpenSettings,
-  onOpenMembers,
-  onOpenFolders,
-  onBackToBase,
+  breadcrumbs,
+  rootBreadcrumb,
+  onBack,
   onToggleMobileSidebar,
+  workspaceId,
+  containerVariant = "default",
 }: TopBarProps) {
-  const activeFolder =
-    view.kind === "articles"
-      ? folders.find((f) => f.id === view.folderId)
-      : null;
-
-  const activeArticle =
-    view.kind === "article-detail"
-      ? articles.find((article) => article.id === view.articleId)
-      : null;
-
-  const viewLabel: Record<View["kind"], string> = {
-    articles: activeFolder?.name ?? "Artykuły",
-    dashboard: "Panel główny",
-    settings: "Ustawienia",
-    members: "Członkowie",
-    folders: "Foldery",
-    "article-detail": activeArticle?.title ?? "Artykuł",
-  };
-
-  const viewIcon: Record<
-    View["kind"],
-    React.ComponentType<{ className?: string }>
-  > = {
-    articles: FileText,
-    dashboard: LayoutDashboard,
-    settings: Settings,
-    members: Users,
-    folders: FolderOpen,
-    "article-detail": FileText,
-  };
-
-  const ViewIcon = viewIcon[view.kind];
-
   const navigate = useNavigate();
 
+  const allBreadcrumbs = rootBreadcrumb
+    ? [rootBreadcrumb, ...breadcrumbs]
+    : breadcrumbs;
+
   return (
-    <div className="sticky top-0 z-30 h-16 border-b border-border bg-card/80 backdrop-blur-md">
-      <div className="flex h-full items-center justify-between px-4 lg:px-8 lg:pl-[312px]">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm">
-          <button
-            onClick={onToggleMobileSidebar}
-            className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent lg:hidden"
-          >
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
-          <div className="hidden items-center gap-2 sm:flex">
-            <div className="flex items-center gap-1.5 text-muted-foreground">
+    <header className="sticky top-0 z-30 w-full border-b border-border bg-card/95 backdrop-blur-md">
+      <PageContainer variant={containerVariant}>
+        <div className="flex min-h-[76px] items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
+          {/* Left */}
+          <div className="flex min-w-0 flex-1 items-center gap-3.5">
+            {onToggleMobileSidebar && (
               <button
-                onClick={onBackToBase}
-                className="hidden items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground md:flex"
+                type="button"
+                onClick={onToggleMobileSidebar}
+                className={cn(
+                  "flex size-9 shrink-0 items-center justify-center rounded-lg",
+                  "border border-border bg-background",
+                  "text-muted-foreground transition-colors",
+                  "hover:bg-accent hover:text-foreground",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+                  "lg:hidden",
+                )}
+                aria-label="Otwórz menu"
               >
-                <ChevronRight className="h-4 w-4 rotate-180" />
-                Wróć
+                <Menu className="size-4" />
               </button>
+            )}
+
+            {onBack && (
+              <>
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className={cn(
+                    "group flex size-9 shrink-0 items-center justify-center rounded-lg",
+                    "border border-border bg-background",
+                    "text-muted-foreground transition-colors",
+                    "hover:bg-accent hover:text-foreground",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+                  )}
+                  aria-label="Wróć"
+                  title="Wróć"
+                >
+                  <ArrowLeft className="size-4 transition-transform duration-150 group-hover:-translate-x-0.5" />
+                </button>
+
+                <div className="h-5 w-px shrink-0 bg-border" />
+              </>
+            )}
+
+            {/* Breadcrumbs */}
+            <div className="min-w-0 flex-1 overflow-hidden">
+              <Breadcrumb>
+                <BreadcrumbList className="min-w-0 flex-nowrap">
+                  {allBreadcrumbs.map((breadcrumb, index) => {
+                    const isLast = index === allBreadcrumbs.length - 1;
+                    const Icon = breadcrumb.icon;
+
+                    return (
+                      <div
+                        key={`${breadcrumb.label}-${index}`}
+                        className="flex min-w-0 items-center"
+                      >
+                        {index > 0 && (
+                          <BreadcrumbSeparator className="mx-1.5 shrink-0">
+                            <span
+                              aria-hidden="true"
+                              className="block size-1 rounded-full bg-muted-foreground/50"
+                            />
+                          </BreadcrumbSeparator>
+                        )}
+
+                        <BreadcrumbItem
+                          className={cn(
+                            "min-w-0",
+                            isLast && "flex-1 overflow-hidden",
+                          )}
+                        >
+                          {breadcrumb.href && !isLast ? (
+                            <BreadcrumbLink asChild>
+                              <Link
+                                to={breadcrumb.href}
+                                className={cn(
+                                  "flex max-w-[220px] items-center gap-1.5 truncate",
+                                  "sm:max-w-[300px] lg:max-w-[360px]",
+                                )}
+                              >
+                                {Icon && (
+                                  <Icon
+                                    className={cn(
+                                      "size-3.5 shrink-0",
+                                      breadcrumb.iconClassName ??
+                                        "text-muted-foreground",
+                                    )}
+                                  />
+                                )}
+
+                                <span className="truncate">
+                                  {breadcrumb.label}
+                                </span>
+                              </Link>
+                            </BreadcrumbLink>
+                          ) : (
+                            <BreadcrumbPage
+                              className={cn(
+                                "flex min-w-0 items-center gap-1.5",
+                                "max-w-[280px] truncate",
+                                "sm:max-w-[420px]",
+                                "lg:max-w-[600px]",
+                                "font-medium",
+                              )}
+                              title={breadcrumb.label}
+                            >
+                              {Icon && (
+                                <Icon
+                                  className={cn(
+                                    "size-3.5 shrink-0",
+                                    breadcrumb.iconClassName ??
+                                      "text-muted-foreground",
+                                  )}
+                                />
+                              )}
+
+                              <span className="min-w-0 truncate">
+                                {breadcrumb.label}
+                              </span>
+                            </BreadcrumbPage>
+                          )}
+                        </BreadcrumbItem>
+                      </div>
+                    );
+                  })}
+                </BreadcrumbList>
+              </Breadcrumb>
             </div>
           </div>
-          <span className="font-medium text-foreground sm:hidden">
-            {viewLabel[view.kind]}
-          </span>
+
+          {/* Right */}
+          <div className="flex shrink-0 items-center gap-3">
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className={cn(
+                "inline-flex h-9 items-center justify-center rounded-md px-3",
+                "border border-border bg-background",
+                "text-sm font-medium text-muted-foreground",
+                "shadow-sm transition-colors",
+                "hover:bg-accent hover:text-foreground",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+              )}
+            >
+              Powrót do BW
+            </button>
+
+            <div className="mx-1 h-5 w-px bg-border" />
+
+            <button
+              onClick={() => navigate(`/workspace/${workspaceId}/settings`)}
+              type="button"
+              className={cn(
+                "flex size-9 items-center justify-center rounded-md",
+                "text-muted-foreground transition-colors",
+                "hover:bg-accent hover:text-foreground",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+              )}
+              aria-label="Ustawienia"
+              title="Ustawienia"
+            >
+              <Settings className="size-4" />
+            </button>
+          </div>
         </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-1.5">
-          {/* <button
-            onClick={onBackToBase}
-            className="hidden items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground md:flex"
-          >
-            <ChevronRight className="h-4 w-4 rotate-180" />
-            Baza wiedzy
-          </button> */}
-          <button
-            onClick={() => navigate(`/workspace/${workspace.id}/new-article`)}
-            className="hidden items-center gap-2 rounded-md bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow sm:flex"
-          >
-            <Plus className="h-4 w-4" />
-            Nowy artykuł
-          </button>
-          <button
-            onClick={onNewArticle}
-            className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 sm:hidden"
-          >
-            <Plus className="h-4 w-4" />
-          </button>
-
-          <div className="mx-1 h-6 w-px bg-border" />
-
-          <button
-            onClick={onOpenMembers}
-            className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent",
-              view.kind === "members"
-                ? "text-primary"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-            title="Członkowie kolekcji"
-          >
-            <Users className="h-4 w-4" />
-          </button>
-          <button
-            onClick={onOpenFolders}
-            className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent",
-              view.kind === "folders"
-                ? "text-primary"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-            title="Zarządzaj folderami"
-          >
-            <FolderOpen className="h-4 w-4" />
-          </button>
-          <button
-            onClick={onOpenSettings}
-            className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-md transition-colors hover:bg-accent",
-              view.kind === "settings"
-                ? "text-primary"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-            title="Ustawienia kolekcji"
-          >
-            <Settings className="h-4 w-4" />
-          </button>
-
-          <div className="mx-1 h-6 w-px bg-border" />
-
-          <button className="relative flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground">
-            <Bell className="h-4 w-4" />
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary ring-2 ring-card" />
-          </button>
-        </div>
-      </div>
-    </div>
+      </PageContainer>
+    </header>
   );
 }
