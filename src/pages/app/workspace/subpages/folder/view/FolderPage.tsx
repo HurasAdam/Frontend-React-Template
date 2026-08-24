@@ -135,10 +135,6 @@ function ArticleRow({
 }) {
   const isNew = isNewArticle(article.createdAt);
 
-  /*
-   * Nowe ma pierwszeństwo nad oznaczeniem Ważne.
-   * Po upływie 3 dni ponownie pokazujemy oznaczenie Ważne.
-   */
   const labelConfig = isNew
     ? newArticleConfig
     : article.label
@@ -228,6 +224,151 @@ function SearchBox({
   );
 }
 
+/**
+ * Osobna sekcja na same informacje o folderze:
+ * ikona + nazwa + typ + menu.
+ */
+function FolderHeader({ folder }: { folder: Folder }) {
+  return (
+    <aside className="rounded-xl border border-border bg-card">
+      <div className="px-5 py-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <div
+              className={cn(
+                "flex size-10 shrink-0 items-center justify-center rounded-lg",
+                "bg-muted text-muted-foreground",
+              )}
+            >
+              <Folder className="size-5" />
+            </div>
+
+            <div className="min-w-0">
+              <h2 className="truncate text-sm font-semibold text-foreground">
+                {folder.name}
+              </h2>
+
+              <p className="mt-0.5 text-xs text-muted-foreground">Folder</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className={cn(
+              "flex size-8 shrink-0 items-center justify-center rounded-lg",
+              "text-muted-foreground transition-colors",
+              "hover:bg-accent hover:text-foreground",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+            )}
+            aria-label="Opcje folderu"
+          >
+            <MoreHorizontal className="size-4" />
+          </button>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+/**
+ * Osobna sekcja z opisem i informacjami o folderze.
+ */
+function FolderDetails({
+  folder,
+  articleCount,
+}: {
+  folder: Folder;
+  articleCount: number;
+}) {
+  return (
+    <aside className="rounded-xl border border-border bg-card">
+      <div className="space-y-6 p-5">
+        <div>
+          <p className="text-xs font-medium text-muted-foreground">
+            Opis folderu
+          </p>
+
+          <p className="mt-1.5 text-sm leading-6 text-foreground">
+            {folder.description || "Brak opisu folderu."}
+          </p>
+        </div>
+
+        <div className="space-y-3.5">
+          <div className="flex items-start gap-2.5">
+            <FileText className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+
+            <div>
+              <p className="text-xs text-muted-foreground">Liczba szablonów</p>
+
+              <p className="mt-0.5 text-sm font-medium text-foreground">
+                {articleCount}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-2.5">
+            <CalendarDays className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+
+            <div>
+              <p className="text-xs text-muted-foreground">Utworzono</p>
+
+              <p className="mt-0.5 text-sm font-medium text-foreground">
+                {formatDate(folder.createdAt)}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function FolderHeaderSkeleton() {
+  return (
+    <aside className="rounded-xl border border-border bg-card">
+      <div className="px-5 py-4">
+        <div className="flex items-center gap-3">
+          <div className="size-10 animate-pulse rounded-lg bg-muted" />
+
+          <div className="min-w-0 flex-1 space-y-2">
+            <div className="h-4 w-2/3 animate-pulse rounded bg-muted" />
+            <div className="h-3 w-1/3 animate-pulse rounded bg-muted" />
+          </div>
+
+          <div className="size-8 animate-pulse rounded-lg bg-muted" />
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function FolderDetailsSkeleton() {
+  return (
+    <aside className="rounded-xl border border-border bg-card">
+      <div className="space-y-6 p-5">
+        <div className="space-y-2">
+          <div className="h-3 w-1/4 animate-pulse rounded bg-muted" />
+          <div className="h-4 w-full animate-pulse rounded bg-muted" />
+          <div className="h-4 w-4/5 animate-pulse rounded bg-muted" />
+          <div className="h-4 w-3/5 animate-pulse rounded bg-muted" />
+        </div>
+
+        <div className="space-y-3.5">
+          <div className="flex items-center gap-3">
+            <div className="size-4 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-1/2 animate-pulse rounded bg-muted" />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="size-4 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-1/2 animate-pulse rounded bg-muted" />
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
 function FilterBar({
   articles,
   selectedFilter,
@@ -276,7 +417,7 @@ function FilterBar({
         <h2 className="text-sm font-semibold text-foreground">Filtry</h2>
 
         <p className="mt-0.5 text-xs text-muted-foreground">
-          Filtruj szablony według oznaczenia
+          Filtruj wpisy według etykiety
         </p>
       </div>
 
@@ -312,128 +453,6 @@ function FilterBar({
             </span>
           </button>
         ))}
-      </div>
-    </aside>
-  );
-}
-
-function FolderInformation({
-  folder,
-  articleCount,
-}: {
-  folder: Folder;
-  articleCount: number;
-}) {
-  return (
-    <aside className="rounded-xl border border-border bg-card">
-      <div className="border-b border-border px-5 py-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <div
-              className={cn(
-                "flex size-10 shrink-0 items-center justify-center rounded-lg",
-                "bg-muted text-muted-foreground",
-              )}
-            >
-              <Folder className="size-5" />
-            </div>
-
-            <div className="min-w-0">
-              <h2 className="truncate text-sm font-semibold text-foreground">
-                {folder.name}
-              </h2>
-
-              <p className="mt-0.5 text-xs text-muted-foreground">Folder</p>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            className={cn(
-              "flex size-8 shrink-0 items-center justify-center rounded-lg",
-              "text-muted-foreground transition-colors",
-              "hover:bg-accent hover:text-foreground",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
-            )}
-            aria-label="Opcje folderu"
-          >
-            <MoreHorizontal className="size-4" />
-          </button>
-        </div>
-      </div>
-
-      <div className="space-y-6 p-5">
-        <div>
-          <p className="text-xs font-medium text-muted-foreground">Opis</p>
-
-          <p className="mt-1.5 text-sm leading-6 text-foreground">
-            {folder.description || "Brak opisu folderu."}
-          </p>
-        </div>
-
-        <div className="space-y-3.5">
-          <div className="flex items-start gap-2.5">
-            <FileText className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-
-            <div>
-              <p className="text-xs text-muted-foreground">Liczba szablonów</p>
-
-              <p className="mt-0.5 text-sm font-medium text-foreground">
-                {articleCount}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-2.5">
-            <CalendarDays className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-
-            <div>
-              <p className="text-xs text-muted-foreground">Utworzono</p>
-
-              <p className="mt-0.5 text-sm font-medium text-foreground">
-                {formatDate(folder.createdAt)}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </aside>
-  );
-}
-
-function FolderInformationSkeleton() {
-  return (
-    <aside className="rounded-xl border border-border bg-card">
-      <div className="border-b border-border px-5 py-4">
-        <div className="flex items-center gap-3">
-          <div className="size-10 animate-pulse rounded-lg bg-muted" />
-
-          <div className="min-w-0 flex-1 space-y-2">
-            <div className="h-4 w-2/3 animate-pulse rounded bg-muted" />
-            <div className="h-3 w-1/3 animate-pulse rounded bg-muted" />
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-6 p-5">
-        <div className="space-y-2">
-          <div className="h-3 w-1/4 animate-pulse rounded bg-muted" />
-          <div className="h-4 w-full animate-pulse rounded bg-muted" />
-          <div className="h-4 w-4/5 animate-pulse rounded bg-muted" />
-          <div className="h-4 w-3/5 animate-pulse rounded bg-muted" />
-        </div>
-
-        <div className="space-y-3.5">
-          <div className="flex items-center gap-3">
-            <div className="size-4 animate-pulse rounded bg-muted" />
-            <div className="h-4 w-1/2 animate-pulse rounded bg-muted" />
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="size-4 animate-pulse rounded bg-muted" />
-            <div className="h-4 w-1/2 animate-pulse rounded bg-muted" />
-          </div>
-        </div>
       </div>
     </aside>
   );
@@ -521,26 +540,28 @@ export function FolderPage({
         {/* Sidebar */}
         <aside className="min-w-0">
           <div className="sticky top-20 space-y-4">
+            {isLoading ? (
+              <FolderHeaderSkeleton />
+            ) : folder ? (
+              <FolderHeader folder={folder} />
+            ) : null}
+
             <SearchBox value={search} onChange={setSearch} />
 
             {isLoading ? (
-              <>
-                <FilterBarSkeleton />
-                <FolderInformationSkeleton />
-              </>
+              <FolderDetailsSkeleton />
             ) : folder ? (
-              <>
-                <FilterBar
-                  articles={articles}
-                  selectedFilter={selectedFilter}
-                  onSelectedFilterChange={setSelectedFilter}
-                />
+              <FolderDetails folder={folder} articleCount={articles.length} />
+            ) : null}
 
-                <FolderInformation
-                  folder={folder}
-                  articleCount={articles.length}
-                />
-              </>
+            {isLoading ? (
+              <FilterBarSkeleton />
+            ) : folder ? (
+              <FilterBar
+                articles={articles}
+                selectedFilter={selectedFilter}
+                onSelectedFilterChange={setSelectedFilter}
+              />
             ) : null}
           </div>
         </aside>
@@ -568,7 +589,7 @@ export function FolderPage({
               <Button
                 type="button"
                 onClick={() =>
-                  navigate(`/workspace/${workspaceId}/articles/new-article`)
+                  navigate(`/workspace/${workspaceId}/articles/new`)
                 }
                 className="shrink-0"
               >
