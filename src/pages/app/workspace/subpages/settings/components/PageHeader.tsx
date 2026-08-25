@@ -18,13 +18,13 @@ export default function PageHeader({
     <header className="mb-10 flex items-start justify-between gap-6">
       <div className="flex items-center gap-3">
         <div className="rounded-lg bg-primary/10 p-2 text-primary">
-          <Icon size={18} />
+          <Icon size={17} />
         </div>
 
         <div>
-          <h1 className="text-2xl font-semibold">{title}</h1>
+          <h1 className="text-xl font-semibold">{title}</h1>
 
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className="text-[13px] text-muted-foreground">{description}</p>
         </div>
       </div>
 

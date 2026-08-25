@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader } from "lucide-react";
+import { FilePlus, Loader } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -9,6 +9,7 @@ import {
   addWorkspaceArticleSchema,
   type AddWorkspaceArticleFormData,
 } from "../../../../../../validation/workspace-article/add";
+import PageHeader from "../../settings/components/PageHeader";
 import { WorkspaceArticleForm } from "../forms/NewWorkspaceArticleForm";
 
 type OutletContext = {
@@ -52,9 +53,13 @@ export const NewWorkspaceArticlePage = () => {
   return (
     <FormProvider {...form}>
       <div className="min-h-screen bg-background">
-        <div className="mx-auto flex w-full  flex-col gap-10 ">
+        <div className="mx-auto flex w-full  flex-col">
           {/* <CreateArticleHeader /> */}
-
+          <PageHeader
+            title="Nowy artykuł"
+            description="Wprowadź dane potrzebne do utworzenia artykułu"
+            icon={FilePlus}
+          />
           <WorkspaceArticleForm folders={folders} />
         </div>
 
@@ -71,7 +76,7 @@ export const NewWorkspaceArticlePage = () => {
             className="
               mx-auto
               flex
-              max-w-5xl
+              max-w-8xl
               items-center
               justify-end
               gap-3

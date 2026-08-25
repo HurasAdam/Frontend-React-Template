@@ -47,7 +47,7 @@ export const WorkspaceArticleForm = ({
   const form = useFormContext();
 
   return (
-    <div className="mx-auto w-full space-y-10">
+    <div className="mx-auto w-full space-y-7">
       {/* TITLE */}
 
       <Card>

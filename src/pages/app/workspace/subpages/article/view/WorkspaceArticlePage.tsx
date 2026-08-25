@@ -4,7 +4,9 @@ import {
   Copy,
   Folder,
   Hash,
+  Newspaper,
   Rocket,
+  Sparkles,
   Type,
   User,
 } from "lucide-react";
@@ -13,25 +15,33 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import PageHeader from "../../settings/components/PageHeader";
+
+type ArticleLabel = "popular";
 
 type Article = {
   id: string;
   title: string;
+  label: ArticleLabel | null;
   createdAt: string;
+
   createdBy: {
     id: string;
     name: string;
     surname: string;
   };
+
   folder: {
     id: string;
     name: string;
   };
+
   workspace: {
     id: string;
     name: string;
     labelColor: string;
   };
+
   variants: {
     id: string;
     variantName: string;
@@ -45,6 +55,29 @@ type WorkspaceArticlePageProps = {
   isLoading: boolean;
   isError: boolean;
   refetch: () => void;
+};
+
+const NEW_ARTICLE_DAYS = 3;
+
+const articleLabelConfig: Record<
+  ArticleLabel,
+  {
+    label: string;
+    icon: typeof Rocket;
+    color: string;
+  }
+> = {
+  popular: {
+    label: "Ważne",
+    icon: Rocket,
+    color: "text-amber-500",
+  },
+};
+
+const newArticleConfig = {
+  label: "Nowy wpis",
+  icon: Sparkles,
+  color: "text-blue-500",
 };
 
 const dateFormatter = new Intl.DateTimeFormat("pl-PL", {
@@ -64,6 +97,28 @@ function formatDate(iso: string) {
   const date = new Date(iso);
 
   return `${dateFormatter.format(date)}, ${timeFormatter.format(date)}`;
+}
+
+function isNewArticle(dateString: string) {
+  const createdAt = new Date(dateString).getTime();
+  const now = Date.now();
+
+  const diffMs = now - createdAt;
+  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+
+  return diffDays >= 0 && diffDays <= NEW_ARTICLE_DAYS;
+}
+
+function getArticleLabel(article: Article) {
+  if (isNewArticle(article.createdAt)) {
+    return newArticleConfig;
+  }
+
+  if (article.label) {
+    return articleLabelConfig[article.label];
+  }
+
+  return null;
 }
 
 function ContentBody({ content }: { content: string }) {
@@ -126,26 +181,20 @@ function ArticleSkeleton() {
   return (
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_0.45fr]">
       <div className="space-y-6">
-        {[1].map((i) => (
-          <article
-            key={i}
-            className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-6 py-4 md:px-8">
-              <div className="h-5 w-40 animate-pulse rounded bg-muted" />
+        <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-6 py-4 md:px-8">
+            <div className="h-5 w-40 animate-pulse rounded bg-muted" />
+            <div className="h-8 w-28 animate-pulse rounded-md bg-muted" />
+          </div>
 
-              <div className="h-8 w-28 animate-pulse rounded-md bg-muted" />
-            </div>
-
-            <div className="space-y-4 px-6 py-7 md:px-8 md:py-9">
-              <div className="h-4 w-full animate-pulse rounded bg-muted" />
-              <div className="h-4 w-full animate-pulse rounded bg-muted" />
-              <div className="h-4 w-5/6 animate-pulse rounded bg-muted" />
-              <div className="h-4 w-full animate-pulse rounded bg-muted" />
-              <div className="h-4 w-4/6 animate-pulse rounded bg-muted" />
-            </div>
-          </article>
-        ))}
+          <div className="space-y-4 px-6 py-7 md:px-8 md:py-9">
+            <div className="h-4 w-full animate-pulse rounded bg-muted" />
+            <div className="h-4 w-full animate-pulse rounded bg-muted" />
+            <div className="h-4 w-5/6 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-full animate-pulse rounded bg-muted" />
+            <div className="h-4 w-4/6 animate-pulse rounded bg-muted" />
+          </div>
+        </article>
       </div>
 
       <aside className="space-y-6">
@@ -273,10 +322,22 @@ export function WorkspaceArticlePage({
     0,
   )}${article.createdBy.surname.charAt(0)}`;
 
+  const articleLabel = getArticleLabel(article);
+
+  const LabelIcon = articleLabel?.icon ?? Rocket;
+
   return (
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_0.45fr]">
       {/* Left */}
-      <div className="space-y-6">
+
+      <div className="space-y-6 px-5">
+        <div className="pr-8">
+          <PageHeader
+            title={article.title}
+            description={` 📁  ${article.folder.name}`}
+            icon={Newspaper}
+          />
+        </div>
         {sortedVariants.map((variant, index) => (
           <VariantCard key={variant.id} variant={variant} index={index} />
         ))}
@@ -296,18 +357,22 @@ export function WorkspaceArticlePage({
               {article.folder.name}
             </MetaRow>
 
-            <MetaRow icon={Rocket} label="Etykieta">
-              <span className="inline-flex items-center gap-2">
-                <span
-                  className="size-2.5 rounded-full"
-                  style={{
-                    backgroundColor: article.workspace.labelColor,
-                  }}
-                  aria-hidden
-                />
+            <MetaRow icon={LabelIcon} label="Etykieta">
+              {articleLabel ? (
+                <span className="inline-flex items-center gap-2">
+                  <span
+                    className={`size-2.5 rounded-full ${articleLabel.color.replace(
+                      "text-",
+                      "bg-",
+                    )}`}
+                    aria-hidden
+                  />
 
-                {article.workspace.name}
-              </span>
+                  {articleLabel.label}
+                </span>
+              ) : (
+                <span className="text-muted-foreground">Brak etykiety</span>
+              )}
             </MetaRow>
 
             <MetaRow icon={User} label="Autor">
