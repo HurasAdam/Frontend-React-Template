@@ -8,6 +8,7 @@ import { WorkspaceArticlePage } from "./WorkspaceArticlePage";
 
 export default function WorkspaceArticleLayout() {
   const { id: workspaceId, articleId } = useParams();
+
   const navigate = useNavigate();
   const query = useFindOneWorkspaceArticleQuery(workspaceId!, articleId!);
 

@@ -15,8 +15,13 @@ const findByFolder = (workspaceId: string, folderId: string) => {
   return API.get(`${BASE_URL}/${workspaceId}/folders/${folderId}/articles`);
 };
 
+const updateOne = (workspaceId: string, articleId: string, payload: {}) => {
+  return API.patch(`${BASE_URL}/${workspaceId}/articles/${articleId}`, payload);
+};
+
 export const workspaceArticlesService = {
   add,
   findOne,
   findByFolder,
+  updateOne,
 };

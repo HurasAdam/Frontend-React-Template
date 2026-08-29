@@ -1,13 +1,17 @@
 import {
   Calendar,
   Check,
+  ChevronRight,
   Copy,
   Folder,
   Hash,
+  MoreHorizontal,
   Newspaper,
+  Pencil,
+  Plus,
   Rocket,
   Sparkles,
-  Type,
+  Trash2,
   User,
 } from "lucide-react";
 import { useState } from "react";
@@ -15,7 +19,18 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../../../../../../components/ui/dropdown-menu";
 import PageHeader from "../../settings/components/PageHeader";
+import ArticleModalsSection from "../components/ArticleModalsSection";
+import ResponseVariantModalsSection from "../components/ResponseVariantModalsSection";
+import { useArticleModal } from "../hooks/useArticleModal";
+import { useResponseVariantModal } from "../hooks/useResponseVariantModal";
 
 type ArticleLabel = "popular";
 
@@ -125,7 +140,7 @@ function ContentBody({ content }: { content: string }) {
   const paragraphs = content.split(/\n{2,}/);
 
   return (
-    <div className="space-y-5 text-[15px] leading-[1.75] text-foreground/85">
+    <div className="space-y-5 text-[14.5px] leading-[1.75] text-foreground/85">
       {paragraphs.map((paragraph, i) => (
         <p key={i} className="whitespace-pre-wrap break-words">
           {paragraph.split(/(https?:\/\/\S+)/g).map((chunk, j) =>
@@ -237,9 +252,13 @@ function ArticleError({ onRetry }: { onRetry: () => void }) {
 function VariantCard({
   variant,
   index,
+  onEdit,
+  onDelete,
 }: {
   variant: Article["variants"][number];
   index: number;
+  onEdit: (variant: Article["variants"][number]) => void;
+  onDelete: (variant: Article["variants"][number]) => void;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -250,7 +269,6 @@ function VariantCard({
     await navigator.clipboard.writeText(variant.variantContent);
 
     setCopied(true);
-
     toast.success("Treść szablonu skopiowana do schowka");
 
     setTimeout(() => setCopied(false), 2000);
@@ -258,7 +276,8 @@ function VariantCard({
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-6 py-4 md:px-8">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-border px-6 py-4 md:px-8">
         <div className="flex items-center gap-2.5">
           <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-xs font-semibold text-primary-foreground">
             {index + 1}
@@ -269,32 +288,69 @@ function VariantCard({
           </h2>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className="hidden items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.07em] text-muted-foreground sm:inline-flex">
-            <Type className="size-3.5" />
-            {wordCount} słów · {charCount} znaków
-          </span>
-
-          <Button size="sm" className="gap-2" onClick={handleCopy}>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-2 h-8"
+            onClick={handleCopy}
+            aria-label="Kopiuj treść szablonu"
+          >
             {copied ? (
-              <Check className="size-4" />
+              <Check className="size-4 text-emerald-600" />
             ) : (
               <Copy className="size-4" />
             )}
 
-            {copied ? "Skopiowano" : "Kopiuj szablon"}
+            <span>Kopiuj</span>
           </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-8"
+                aria-label="Więcej opcji"
+              >
+                <MoreHorizontal className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuItem onClick={() => onEdit(variant)}>
+                <Pencil className="size-4" />
+                Edytuj
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem
+                onClick={() => onDelete(variant)}
+                className="text-destructive focus:text-destructive"
+              >
+                <Trash2 className="size-4" />
+                Usuń
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
+      {/* Content */}
       <div className="px-6 py-7 md:px-8 md:py-9">
         <ContentBody content={variant.variantContent} />
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-muted/40 px-6 py-4 md:px-8">
+      {/* Footer */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border bg-muted/40 px-6 py-3.5 md:px-8">
         <p className="text-xs text-muted-foreground">
           Przed wysłaniem dostosuj zwroty grzecznościowe do odbiorcy.
         </p>
+
+        <div className="shrink-0 text-xs font-medium text-muted-foreground">
+          {wordCount} słów · {charCount} znaków
+        </div>
       </div>
     </article>
   );
@@ -306,6 +362,9 @@ export function WorkspaceArticlePage({
   isError,
   refetch,
 }: WorkspaceArticlePageProps) {
+  const articleModal = useArticleModal();
+  const responseVariantModal = useResponseVariantModal();
+
   if (isLoading) {
     return <ArticleSkeleton />;
   }
@@ -331,7 +390,7 @@ export function WorkspaceArticlePage({
       {/* Left */}
 
       <div className="space-y-6 px-5">
-        <div className="pr-8">
+        <div className="">
           <PageHeader
             title={article.title}
             description={` 📁  ${article.folder.name}`}
@@ -339,14 +398,22 @@ export function WorkspaceArticlePage({
           />
         </div>
         {sortedVariants.map((variant, index) => (
-          <VariantCard key={variant.id} variant={variant} index={index} />
+          <VariantCard
+            key={variant.id}
+            variant={variant}
+            index={index}
+            onEdit={responseVariantModal.openEdit}
+            onDelete={responseVariantModal.openDelete}
+          />
         ))}
       </div>
 
       {/* Right */}
+      {/* Right */}
       <aside className="space-y-6 lg:sticky lg:top-8">
-        <section className="overflow-hidden rounded-2xl border border-border bg-card shadow-soft">
-          <div className="border-b border-border px-5 py-3.5">
+        {/* Information */}
+        <section className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-soft">
+          <div className="border-b border-border/70 px-5 py-3.5">
             <h2 className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
               Informacje
             </h2>
@@ -407,7 +474,122 @@ export function WorkspaceArticlePage({
             </p>
           </div>
         </section>
+
+        {/* Actions */}
+        <section className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-soft">
+          <div className="border-b border-border/70 px-5 py-3.5">
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+              Akcje
+            </h2>
+          </div>
+
+          <div className="p-2">
+            {/* Add variant */}
+            <button
+              type="button"
+              onClick={() => {
+                // TODO: dodanie kolejnej wersji odpowiedzi
+              }}
+              className="group flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors hover:bg-primary/[0.06]"
+            >
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-primary/15">
+                <Plus className="size-4" />
+              </span>
+
+              <span
+                onClick={() => responseVariantModal.openAdd()}
+                className="min-w-0 flex-1"
+              >
+                <span className="block text-sm font-medium text-foreground">
+                  Dodaj wersję odpowiedzi
+                </span>
+
+                <span className="mt-0.5 block text-xs text-muted-foreground">
+                  Utwórz kolejny wariant odpowiedzi
+                </span>
+              </span>
+
+              <ChevronRight className="size-4 shrink-0 text-muted-foreground/40 transition-all group-hover:translate-x-0.5 group-hover:text-muted-foreground" />
+            </button>
+
+            <div className="mx-3 my-1 border-t border-border/60" />
+
+            {/* Edit article */}
+            <button
+              type="button"
+              onClick={() =>
+                articleModal.openEdit({
+                  id: article.id,
+                  title: article.title,
+                  folderId: article.folder.id,
+                })
+              }
+              className="group flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors hover:bg-muted/70"
+            >
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors group-hover:bg-muted/80 group-hover:text-foreground">
+                <Pencil className="size-4" />
+              </span>
+
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-medium text-foreground">
+                  Edytuj artykuł
+                </span>
+
+                <span className="mt-0.5 block text-xs text-muted-foreground">
+                  Zmień tytuł lub folder
+                </span>
+              </span>
+
+              <ChevronRight className="size-4 shrink-0 text-muted-foreground/40 transition-all group-hover:translate-x-0.5 group-hover:text-muted-foreground" />
+            </button>
+
+            <div className="mx-3 my-1 border-t border-border/60" />
+
+            {/* Important */}
+            <button
+              type="button"
+              onClick={() => {
+                // TODO: oznaczenie / usunięcie oznaczenia ważności
+              }}
+              className="group flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors hover:bg-amber-500/[0.06]"
+            >
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500 transition-colors group-hover:bg-amber-500/15">
+                <Rocket className="size-4" />
+              </span>
+
+              <span className="min-w-0 flex-1">
+                <span className="block text-sm font-medium text-foreground">
+                  {article.label === "popular"
+                    ? "Usuń oznaczenie ważne"
+                    : "Oznacz jako ważne"}
+                </span>
+
+                <span className="mt-0.5 block text-xs text-muted-foreground">
+                  {article.label === "popular"
+                    ? "Usuń wyróżnienie artykułu"
+                    : "Wyróżnij artykuł jako ważny"}
+                </span>
+              </span>
+
+              <ChevronRight className="size-4 shrink-0 text-muted-foreground/40 transition-all group-hover:translate-x-0.5 group-hover:text-muted-foreground" />
+            </button>
+          </div>
+        </section>
       </aside>
+
+      <ResponseVariantModalsSection
+        isOpen={responseVariantModal.isOpen}
+        type={responseVariantModal.type}
+        onClose={responseVariantModal.close}
+        variant={responseVariantModal.variant}
+      />
+
+      <ArticleModalsSection
+        type={articleModal.type}
+        isOpen={articleModal.isOpen}
+        onClose={articleModal.close}
+        article={articleModal.article}
+      />
     </div>
   );
 }

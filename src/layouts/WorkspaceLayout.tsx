@@ -39,6 +39,8 @@ export const WorkspaceLayout = () => {
 
   const { data: folders = [] } = useFindAllFoldersByWorkspaceQuery(id);
 
+  console.log("FOLDERS", folders);
+
   const handleNewArticle = () => {
     navigate(`/workspace/${id}/new-article`);
   };

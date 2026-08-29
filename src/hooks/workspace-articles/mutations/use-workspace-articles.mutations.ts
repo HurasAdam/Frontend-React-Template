@@ -7,3 +7,10 @@ export const useAddWorkspaceArticleMutation = () => {
       workspaceArticlesService.add({ ...payload, workspaceId }),
   });
 };
+
+export const useUpdateWorkspaceArticleMutation = () => {
+  return useMutation({
+    mutationFn: ({ workspaceId, articleId, payload }) =>
+      workspaceArticlesService.updateOne(workspaceId, articleId, payload),
+  });
+};

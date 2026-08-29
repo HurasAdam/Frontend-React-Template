@@ -2,6 +2,7 @@ import { SettingsIcon } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { ConfirmDialog } from "../../../../../../components/shared/ConfirmDialog";
 import { useConfirmDialog } from "../../../../../../components/shared/hooks/useConfirmDialog";
+import type { IFolder } from "../../../../../../services/workspace-folders/types";
 import BasicSettings from "../components/BasicSettings";
 import DangerZone from "../components/DangerZone";
 import PageHeader from "../components/PageHeader";
@@ -18,6 +19,7 @@ export interface IWorkspaceInfo {
 
 export type WorkspaceContext = {
   workspace: IWorkspaceInfo;
+  folders: IFolder[];
 };
 
 export const Settings = () => {
