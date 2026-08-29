@@ -14,15 +14,20 @@ export default function PageHeader({
   icon: Icon,
   actions,
 }: Props) {
+  const truncatedTitle =
+    title.length > 140 ? `${title.slice(0, 137)}...` : title;
+
   return (
     <header className="mb-10 flex items-start justify-between gap-6">
-      <div className="flex items-center gap-3">
-        <div className="rounded-lg bg-primary/10 p-2 text-primary">
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="shrink-0 rounded-lg bg-primary/10 p-2 text-primary">
           <Icon size={17} />
         </div>
 
-        <div>
-          <h1 className="text-xl font-semibold">{title}</h1>
+        <div className="min-w-0">
+          <h1 className="text-xl font-semibold" title={title}>
+            {truncatedTitle}
+          </h1>
 
           <p className="text-[13px] text-muted-foreground">{description}</p>
         </div>
