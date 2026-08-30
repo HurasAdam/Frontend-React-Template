@@ -1,9 +1,4 @@
-import {
-  articles,
-  currentUser,
-  labelColors,
-  type Folder,
-} from "@/lib/mockData";
+import { articles, currentUser, labelColors } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
 import {
   ArrowLeft,
@@ -21,11 +16,14 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { workspaceIconMap } from "../../../constants/workspace-icons";
+import type { IWorkspaceInfo } from "../../../pages/app/workspace/subpages/settings/view/Settings";
+import type { IFolder } from "../../../services/workspace-folders/types";
 
 type SidebarProps = {
   onClose: () => void;
   isMobileOpen: boolean;
-  workspace: unknown;
+  workspace: IWorkspaceInfo;
+  folders: IFolder[];
 };
 
 export function Sidebar({
@@ -281,7 +279,7 @@ function FolderRow({
   onEdit,
   onDelete,
 }: {
-  folder: Folder;
+  folder: IFolder;
   active: boolean;
   onSelect: () => void;
   onMenuToggle: (e: React.MouseEvent) => void;

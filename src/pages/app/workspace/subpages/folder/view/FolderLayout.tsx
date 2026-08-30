@@ -1,6 +1,5 @@
-import { useNavigate, useParams } from "react-router-dom";
-
 import { FolderOpen, LayoutDashboard } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 import { PageContainer } from "../../../../../../components/shared/PageContainer";
 import { TopBar } from "../../../../../../components/topbar/workspace-topbar";
 import { useFindWorkspaceArticlesByFolderQuery } from "../../../../../../hooks/workspace-articles/queries/use-workspace-articles.queries";
@@ -45,7 +44,6 @@ export const FolderLayout = () => {
             folder={folder}
             articles={data?.articles ?? []}
             isLoading={isLoading}
-            navigate={navigate}
           />
         </div>
       </PageContainer>

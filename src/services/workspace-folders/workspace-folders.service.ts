@@ -1,5 +1,6 @@
 import API from "../../config/api.config";
 import type { IFolderFormData } from "../../hooks/workspace-folders/mutations/types/workspace-folders.mutation.types";
+import type { IFolder } from "./types";
 
 const BASE_URL = "/api/workspace-folders";
 
@@ -10,7 +11,7 @@ const add = (workspaceId: string, payload: IFolderFormData) => {
   });
 };
 
-const findAllByWorkspace = (workspaceId: string) => {
+const findAllByWorkspace = (workspaceId: string): Promise<IFolder[]> => {
   return API.get(`${BASE_URL}/workspace/${workspaceId}`);
 };
 

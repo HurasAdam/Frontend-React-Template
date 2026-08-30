@@ -7,7 +7,7 @@ import BasicSettings from "../components/BasicSettings";
 import DangerZone from "../components/DangerZone";
 import PageHeader from "../components/PageHeader";
 import { useEditModal } from "../hooks/useEditModal";
-import { WorkspaceEditModal } from "../modals/WorkspaceEditModal";
+import { WorkspaceEditModalSection } from "../modals/WorkspaceEditModalSection";
 
 export interface IWorkspaceInfo {
   id: string;
@@ -62,7 +62,7 @@ export const Settings = () => {
 
       <DangerZone workspace={workspace} onDelete={onDelete} />
 
-      <WorkspaceEditModal
+      <WorkspaceEditModalSection
         type={editModal.type}
         isOpen={editModal.isOpen}
         onClose={editModal.close}

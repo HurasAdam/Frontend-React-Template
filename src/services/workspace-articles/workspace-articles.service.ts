@@ -1,4 +1,5 @@
 import API from "../../config/api.config";
+import type { IFindByFolderResponse } from "./types";
 
 const BASE_URL = "/api/workspace-articles";
 
@@ -11,7 +12,10 @@ const findOne = (workspaceId: string, articleId: string) => {
   return API.get(`${BASE_URL}/${workspaceId}/articles/${articleId}`);
 };
 
-const findByFolder = (workspaceId: string, folderId: string) => {
+const findByFolder = (
+  workspaceId: string,
+  folderId: string,
+): Promise<IFindByFolderResponse> => {
   return API.get(`${BASE_URL}/${workspaceId}/folders/${folderId}/articles`);
 };
 

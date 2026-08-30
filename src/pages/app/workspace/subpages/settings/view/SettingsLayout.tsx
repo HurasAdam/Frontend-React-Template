@@ -25,7 +25,7 @@ export const SettingsLayout = () => {
           },
         ]}
         containerVariant="wide"
-        onBack={() => navigate(`/workspace/${workspaceId}`)}
+        onBack={() => navigate(-1)}
         workspaceId={workspace.id}
       />
 

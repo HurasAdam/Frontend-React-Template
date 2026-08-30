@@ -31,7 +31,11 @@ export const EditWorkspaceDescriptionModal = ({
   workspace,
   onSave,
 }: Props) => {
-  const { register, handleSubmit } = useForm<FormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { isDirty },
+  } = useForm<FormData>({
     defaultValues: {
       description: workspace.description ?? "",
     },
@@ -180,7 +184,7 @@ export const EditWorkspaceDescriptionModal = ({
               Anuluj
             </Button>
 
-            <Button type="submit">
+            <Button disabled={!isDirty} type="submit">
               <Save /> Zapisz
             </Button>
           </div>

@@ -4,11 +4,12 @@ import { useParams } from "react-router-dom";
 import { useFindAllFoldersByWorkspaceQuery } from "../../../../../../hooks/workspace-folders/queries/use-workspace-folders.queries";
 import PageHeader from "../../settings/components/PageHeader";
 import FolderListSection from "../components/FolderListSection";
+import type { IFolderInfo } from "../hooks/useFolderModal";
 
 type Props = {
   folderModal: {
-    openDelete: (folder: any) => void;
-    openEdit: (folder: any) => void;
+    openDelete: (folder: IFolderInfo) => void;
+    openEdit: (folder: IFolderInfo) => void;
     openAdd: () => void;
   };
 };

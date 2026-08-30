@@ -18,7 +18,7 @@ export type UpdateWorkspaceData = Partial<
   Pick<IWorkspaceInfo, "name" | "description" | "iconKey" | "labelColor">
 >;
 
-export const WorkspaceEditModal = ({
+export const WorkspaceEditModalSection = ({
   type,
   isOpen,
   onClose,
