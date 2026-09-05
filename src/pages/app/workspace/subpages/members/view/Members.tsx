@@ -7,6 +7,8 @@ import { useFindMembersByWorkspaceQuery } from "../../../../../../hooks/workspac
 import PageHeader from "../../settings/components/PageHeader";
 import WorkspaceInviteLinkSection from "../components/InviteCodeSection";
 import { MembersSection } from "../components/MembersSection";
+import ModalsSection from "../components/ModalsSection";
+import { useMemberModal } from "../hooks/useMemberModal";
 
 export const Members = () => {
   const permissions = { addMember: true };
@@ -15,6 +17,7 @@ export const Members = () => {
   const { id, isLoading } = useParams();
   const { data: members } = useFindMembersByWorkspaceQuery(id);
   const { workspace } = useOutletContext();
+  const memberModal = useMemberModal();
 
   const handleAddMember = () => {
     // otwarcie modala
@@ -43,6 +46,16 @@ export const Members = () => {
         workspaceId={workspaceId}
         isLoading={isLoading}
         permissions={permissions}
+        onRequestEdit={memberModal.openEditMember}
+        onRequestDelete={memberModal.openDeleteMember}
+        onRequestPromote={memberModal.openPromoteMember}
+      />
+
+      <ModalsSection
+        isOpen={memberModal.isOpen}
+        type={memberModal.type}
+        onClose={memberModal.closeModal}
+        member={memberModal.member}
       />
     </>
   );

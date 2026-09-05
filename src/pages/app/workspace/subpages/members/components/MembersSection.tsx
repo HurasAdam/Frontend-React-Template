@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { WorkspaceMembersList } from "./MembersList";
 
 export interface WorkspaceMember {
@@ -22,27 +21,10 @@ export const MembersSection = ({
   workspaceMembers,
   workspaceId,
   permissions,
+  onRequestEdit,
+  onRequestDelete,
+  onRequestPromote,
 }: WorkspaceMembersSectionProps) => {
-  const [memberToRemove, setMemberToRemove] = useState<WorkspaceMember | null>(
-    null,
-  );
-  const [memberToPromote, setMemberToPromote] =
-    useState<WorkspaceMember | null>(null);
-  const [selectedMember, setSelectedMember] = useState<WorkspaceMember | null>(
-    null,
-  );
-
-  const handleConfirmRemove = () => {
-    if (!memberToRemove) return;
-  };
-
-  const handleConfirmPromote = () => {
-    if (!memberToPromote) return;
-  };
-
-  const handleCancelRemove = () => setMemberToRemove(null);
-  const handleCancelEdit = () => setSelectedMember(null);
-  const handleCancelPromote = () => setMemberToPromote(null);
   return (
     <section>
       <h2 className="text-sm font-medium text-muted-foreground mb-3">
@@ -53,9 +35,9 @@ export const MembersSection = ({
         workspaceMembers={workspaceMembers}
         isLoading={isLoading}
         workspaceId={workspaceId}
-        onRequestRemove={setMemberToRemove}
-        onRequestPromote={setMemberToPromote}
-        onRequestEdit={setSelectedMember}
+        onRequestRemove={onRequestDelete}
+        onRequestPromote={onRequestPromote}
+        onRequestEdit={onRequestEdit}
         permissions={permissions}
       />
     </section>
