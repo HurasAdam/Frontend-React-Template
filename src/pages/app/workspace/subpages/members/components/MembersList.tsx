@@ -22,32 +22,37 @@ export const WorkspaceMembersList = ({
   onRequestEdit,
   permissions,
 }: WorkspaceMembersListProps) => {
-  if (isLoading)
+  if (isLoading) {
     return (
       <p className="text-sm text-muted-foreground">
         Ładowanie listy użytkowników...
       </p>
     );
-  if (!workspaceMembers?.length)
+  }
+
+  if (!workspaceMembers?.length) {
     return (
-      <Card className="p-6 text-center text-muted-foreground">
+      <Card className="rounded-2xl border-border/70 bg-card p-6 text-center text-sm text-muted-foreground shadow-sm">
         Brak użytkowników do wyświetlenia.
       </Card>
     );
+  }
 
   return (
-    <div className="divide-y divide-border rounded-lg border">
-      {workspaceMembers.map((member) => (
-        <WorkspaceMemberCard
-          key={member._id}
-          member={member}
-          workspaceId={workspaceId}
-          onRequestRemove={onRequestRemove}
-          onRequestPromote={onRequestPromote}
-          onRequestEdit={onRequestEdit}
-          permissions={permissions}
-        />
-      ))}
+    <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+      <div className="divide-y divide-border/60">
+        {workspaceMembers.map((member) => (
+          <WorkspaceMemberCard
+            key={member._id}
+            member={member}
+            workspaceId={workspaceId}
+            onRequestRemove={onRequestRemove}
+            onRequestPromote={onRequestPromote}
+            onRequestEdit={onRequestEdit}
+            permissions={permissions}
+          />
+        ))}
+      </div>
     </div>
   );
 };
