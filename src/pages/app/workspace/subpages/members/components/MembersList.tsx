@@ -39,8 +39,8 @@ export const WorkspaceMembersList = ({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
-      <div className="divide-y divide-border/60">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+      <div className="divide-y divide-border/70">
         {workspaceMembers.map((member) => (
           <WorkspaceMemberCard
             key={member._id}

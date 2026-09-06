@@ -14,8 +14,20 @@ const transferOwnership = (workspaceId: string, memberId: string) => {
   return API.patch(`${BASE_URL}/${workspaceId}/owner/${memberId}`);
 };
 
+const updatePermissions = (
+  workspaceId: string,
+  memberId: string,
+  permissions: unknown,
+) => {
+  return API.patch(
+    `${BASE_URL}/${workspaceId}/members/${memberId}/permissions`,
+    { permissions },
+  );
+};
+
 export const workspaceMembersService = {
   findByWorkspaceId,
   deleteOne,
   transferOwnership,
+  updatePermissions,
 };

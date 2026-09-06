@@ -32,7 +32,7 @@ const WorkspaceInviteLinkSection = ({
 
   if (!inviteCode) {
     return (
-      <Card className="w-full overflow-hidden rounded-[24px] border border-border/70 bg-card shadow-sm">
+      <Card className="w-full overflow-hidden rounded-[24px] border-border bg-card shadow-sm">
         <div className="border-b border-border/60 bg-muted/30 px-6 pt-6 pb-5">
           <CardHeader className="space-y-4 p-0">
             <div className="flex items-center gap-3">

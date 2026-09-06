@@ -317,20 +317,55 @@ function VariantCard({
               </Button>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem onClick={() => onEdit(variant)}>
-                <Pencil className="size-4" />
-                Edytuj
+            <DropdownMenuContent
+              align="center"
+              sideOffset={8}
+              className="w-52 rounded-2xl border-border/70 bg-popover p-1.5 shadow-xl"
+            >
+              <div className="px-3 py-2.5">
+                <p className="text-xs font-semibold text-foreground">
+                  Zarządzanie wariantem
+                </p>
+
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  Dostępne akcje
+                </p>
+              </div>
+
+              <DropdownMenuSeparator className="bg-border/60" />
+
+              <DropdownMenuItem
+                onClick={() => onEdit(variant)}
+                className="cursor-pointer rounded-xl px-2.5 py-2.5"
+              >
+                <div className="mr-2.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted">
+                  <Pencil className="size-4 text-muted-foreground" />
+                </div>
+
+                <div>
+                  <p className="text-sm font-medium text-foreground">Edytuj</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Zmień treść wariantu
+                  </p>
+                </div>
               </DropdownMenuItem>
 
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className="my-1 bg-border/60" />
 
               <DropdownMenuItem
                 onClick={() => onDelete(variant)}
-                className="text-destructive focus:text-destructive"
+                className="cursor-pointer rounded-xl px-2.5 py-2.5 text-destructive focus:bg-destructive/10 focus:text-destructive"
               >
-                <Trash2 className="size-4" />
-                Usuń
+                <div className="mr-2.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-destructive/10">
+                  <Trash2 className="size-4" />
+                </div>
+
+                <div>
+                  <p className="text-sm font-medium">Usuń</p>
+                  <p className="text-[11px] text-destructive/70">
+                    Usuń ten wariant
+                  </p>
+                </div>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

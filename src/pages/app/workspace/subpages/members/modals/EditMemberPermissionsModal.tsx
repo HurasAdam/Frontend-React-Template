@@ -145,6 +145,7 @@ export function EditMemberPermissionsModal({
   const onSubmit = async (permissions: IWorkspaceMemberPermissions) => {
     if (!member) return;
 
+    console.log("PERMITY TO:", permissions);
     await onSave(member.memberId, permissions);
   };
 

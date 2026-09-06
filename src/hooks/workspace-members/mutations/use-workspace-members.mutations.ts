@@ -24,3 +24,22 @@ export const useTransferOwnership = () => {
     }) => workspaceMembersService.transferOwnership(workspaceId, memberId),
   });
 };
+
+export const useUpdatePermissionsMutation = () => {
+  return useMutation({
+    mutationFn: ({
+      workspaceId,
+      memberId,
+      permissions,
+    }: {
+      workspaceId: string;
+      memberId: string;
+      permissions: unknown;
+    }) =>
+      workspaceMembersService.updatePermissions(
+        workspaceId,
+        memberId,
+        permissions,
+      ),
+  });
+};

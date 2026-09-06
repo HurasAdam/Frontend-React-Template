@@ -6,6 +6,7 @@ import { ConfirmDialog } from "../../../../../../components/shared/ConfirmDialog
 import type { AxiosError } from "axios";
 import { useDeleteWorkspaceMember } from "../../../../../../hooks/workspace-members/actions/delete";
 import { useTransferWorkspaceOwnership } from "../../../../../../hooks/workspace-members/actions/transferOwnership";
+import { useUpdateWorkspaceMemberPermissions } from "../../../../../../hooks/workspace-members/actions/updatePermissions";
 import type {
   IWorkspaceMemberInfo,
   MemberModalType,
@@ -27,11 +28,13 @@ export default function ModalsSection({
   member,
 }: Props) {
   const { id: workspaceId } = useParams<{ id: string }>();
-  const { deleteWorkspaceMember, isDeletePending } = useDeleteWorkspaceMember();
 
+  const { updatePermissions } = useUpdateWorkspaceMemberPermissions();
   const { transferWorkspaceOwnership, isTransferOwnershipPending } =
     useTransferWorkspaceOwnership();
+  const { deleteWorkspaceMember, isDeletePending } = useDeleteWorkspaceMember();
 
+  //   ----- ADD ------
   const onAdd = async (userIds: string[]) => {
     if (!workspaceId) {
       throw new Error("Workspace ID is missing");
@@ -43,6 +46,7 @@ export default function ModalsSection({
     toast.success("Dodano nowych członków do kolekcji");
   };
 
+  // ---- PROMOTE ----
   const onPromote = async (memberId: string) => {
     if (!workspaceId) {
       throw new Error("Worksapce ID is missing");
@@ -69,17 +73,39 @@ export default function ModalsSection({
     toast.success("Zmieniono właściciela kolekcji");
   };
 
-  const onEditPermissions = async (
+  // ------ update permissions ---
+  const onUpdatePermissions = async (
+    memberId: string,
     permissions: IWorkspaceMemberInfo["permissions"],
   ) => {
     if (!workspaceId || !member) {
       throw new Error("Missing required data");
     }
 
-    onClose();
-    toast.success("Uprawnienia zostały zaktualizowane");
+    try {
+      await updatePermissions(workspaceId, memberId, permissions);
+      onClose();
+      toast.success("Uprawnienia zostały zaktualizowane");
+    } catch (error) {
+      const { status } = error as AxiosError;
+
+      if (status === 403) {
+        toast.error("Brak uprawnień", {
+          description:
+            "Tylko właściciel kolekcji może zarządzać uprawnieniami jej członków.",
+        });
+        onClose();
+        return;
+      }
+
+      onClose();
+      toast.error("Nie udało się zaktualizować uprawnień", {
+        description: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+      });
+    }
   };
 
+  // ------ delete member -------
   const onDelete = async () => {
     if (!workspaceId || !member) {
       throw new Error("Missing required data");
@@ -131,7 +157,7 @@ export default function ModalsSection({
           isOpen={isOpen}
           member={member}
           onClose={onClose}
-          onSave={onEditPermissions}
+          onSave={onUpdatePermissions}
           isPending={false}
         />
       );
