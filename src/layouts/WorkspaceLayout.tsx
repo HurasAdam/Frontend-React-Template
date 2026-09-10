@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { WorkspaceCommandMenu } from "../components/sidebar/workspace-command-menu/workspace-command-menu";
 import { Sidebar } from "../components/sidebar/workspace-sidebar";
+import { useAuthQuery } from "../hooks/auth/use-auth";
 
 type ProtectedRouteContext = {
   authData: AuthUserData;
@@ -35,6 +36,7 @@ export const WorkspaceLayout = () => {
     error,
   } = useFindUserWorkspaceMembershipQuery(id);
 
+  const { data: currentUser } = useAuthQuery();
   const { data: workspace = {}, isLoading: isWorkspaceDataLoading } =
     useFindOneWorkspaceQuery(id);
 
@@ -54,10 +56,13 @@ export const WorkspaceLayout = () => {
     return <WorkspaceAccessDenied message="Nie masz dostępu do tej kolekcji" />;
   }
 
-  console.log("DUPA");
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar workspace={workspace} folders={folders} />
+      <Sidebar
+        currentUser={currentUser}
+        workspace={workspace}
+        folders={folders}
+      />
 
       {/* <TopBar
         workspace={workspace}

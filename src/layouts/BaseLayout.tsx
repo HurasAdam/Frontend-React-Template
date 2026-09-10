@@ -16,7 +16,7 @@ import {
 } from "../components/ui/sidebar";
 import type { AuthUserData } from "../services/auth/auth.types";
 
-type ProtectedRouteContext = {
+export type ProtectedRouteContext = {
   authData: AuthUserData;
 };
 

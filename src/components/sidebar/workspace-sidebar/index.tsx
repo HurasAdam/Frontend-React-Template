@@ -1,5 +1,5 @@
-import { articles, currentUser, labelColors } from "@/lib/mockData";
-import { cn } from "@/lib/utils";
+import { articles, labelColors } from "@/lib/mockData";
+import { cn, getInitials } from "@/lib/utils";
 import {
   ArrowLeft,
   BookOpen,
@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { workspaceIconMap } from "../../../constants/workspace-icons";
 import type { IWorkspaceInfo } from "../../../pages/app/workspace/subpages/settings/view/Settings";
+import type { AuthUserData } from "../../../services/auth/auth.types";
 import type { IFolder } from "../../../services/workspace-folders/types";
 import { WorkspaceSwitcher } from "../workspace-switcher";
 
@@ -24,6 +25,7 @@ type SidebarProps = {
   isMobileOpen: boolean;
   workspace: IWorkspaceInfo;
   folders: IFolder[];
+  currentUser: AuthUserData;
 };
 
 export function Sidebar({
@@ -31,6 +33,7 @@ export function Sidebar({
   isMobileOpen,
   workspace,
   folders,
+  currentUser,
 }: SidebarProps) {
   const [folderMenu, setFolderMenu] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -211,16 +214,16 @@ export function Sidebar({
 
           <div className="flex items-center gap-3 rounded-lg bg-accent/50 p-2.5">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-              {currentUser.initials}
+              {getInitials(currentUser.name, currentUser.surname)}
             </div>
 
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-foreground">
-                {currentUser.name}
+                {currentUser.name} {currentUser.surname}
               </p>
 
               <p className="truncate text-xs text-muted-foreground">
-                {currentUser.role}
+                {currentUser.email}
               </p>
             </div>
           </div>

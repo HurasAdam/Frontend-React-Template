@@ -53,3 +53,7 @@ export function formatRelativeDate(date: string | Date): string {
 
   return `${Math.floor(diffDays / 365)} lat temu`;
 }
+
+export function getInitials(name: string, surname: string) {
+  return `${name.charAt(0)}${surname.charAt(0)}`.toUpperCase();
+}
