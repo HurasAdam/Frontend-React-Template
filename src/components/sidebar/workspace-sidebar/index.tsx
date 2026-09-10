@@ -11,13 +11,13 @@ import {
   Settings,
   Trash2,
   Users,
-  X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { workspaceIconMap } from "../../../constants/workspace-icons";
 import type { IWorkspaceInfo } from "../../../pages/app/workspace/subpages/settings/view/Settings";
 import type { IFolder } from "../../../services/workspace-folders/types";
+import { WorkspaceSwitcher } from "../workspace-switcher";
 
 type SidebarProps = {
   onClose: () => void;
@@ -83,30 +83,11 @@ export function Sidebar({
       >
         {/* Brand */}
 
-        <div className="shrink-0 border-b border-border px-4 py-4">
-          <div className="flex items-center gap-3">
-            <div
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-primary-foreground"
-              style={{ backgroundColor: workspace.labelColor }}
-            >
-              <WorkspaceIcon className="h-4 w-4" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-foreground">
-                {workspace.name}
-              </p>
-
-              <p className="truncate text-xs text-muted-foreground">kolekcja</p>
-            </div>
-
-            <button
-              onClick={onClose}
-              className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground lg:hidden"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
+        {/* Workspace switcher */}
+        <div className="shrink-0 border-b border-border px-3 py-3">
+          <WorkspaceSwitcher workspace={workspace} onClose={onClose} />
         </div>
+
         <div className="shrink-0 border-b border-border px-4 py-4">
           <p className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Ostatnio aktualizowane

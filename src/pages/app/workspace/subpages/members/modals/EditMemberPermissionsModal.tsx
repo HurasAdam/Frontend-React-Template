@@ -56,71 +56,71 @@ type PermissionGroup = {
 
 const permissionGroups: PermissionGroup[] = [
   {
+    title: "Ogolne ustawienia",
+    description: "Zarządzanie ustawieniami kolekcji.",
+    permissions: [
+      {
+        name: "editWorkspace",
+        label: "Edycja kolekcji",
+        description: "Umożliwia edycję podstawowych informacji kolekcji.",
+      },
+    ],
+  },
+  {
     title: "Foldery",
-    description: "Zarządzanie folderami w workspace.",
+    description: "Zarządzanie strukturą folderów kolekcji.",
     permissions: [
       {
         name: "addFolder",
         label: "Dodawanie folderów",
-        description: "Może tworzyć nowe foldery.",
+        description: "Pozwala dodawać nowe foldery w kolekcji.",
       },
       {
         name: "editFolder",
         label: "Edycja folderów",
-        description: "Może zmieniać nazwę, opis i kolor folderów.",
+        description: "Pozwala edytować istniejące foldery.",
       },
       {
         name: "deleteFolder",
         label: "Usuwanie folderów",
-        description: "Może usuwać istniejące foldery.",
+        description: "Pozwala usuwać foldery z kolekcji.",
       },
     ],
   },
   {
     title: "Artykuły",
-    description: "Zarządzanie artykułami i szablonami.",
+    description: "Zarządzanie treścią i bazą wiedzy kolekcji.",
     permissions: [
       {
         name: "addArticle",
         label: "Dodawanie artykułów",
-        description: "Może tworzyć nowe artykuły.",
+        description: "Tworzenie nowych artykułów.",
       },
       {
         name: "editArticle",
         label: "Edycja artykułów",
-        description: "Może edytować istniejące artykuły.",
+        description: "Modyfikowanie istniejących artykułów.",
       },
       {
         name: "deleteArticle",
         label: "Usuwanie artykułów",
-        description: "Może usuwać artykuły.",
+        description: "Usuwanie artykułów z kolekcji.",
       },
     ],
   },
   {
     title: "Dostęp i uprawnienia",
-    description: "Zarządzanie członkami workspace.",
+    description: "Zarządzanie dostępem do kolekcji.",
     permissions: [
       {
         name: "addMember",
         label: "Dodawanie członków",
-        description: "Może zapraszać osoby do workspace.",
+        description: "Dodawanie nowych członków do kolekcji.",
       },
       {
         name: "removeMember",
         label: "Usuwanie członków",
-        description: "Może usuwać osoby z workspace.",
-      },
-    ],
-  },
-  {
-    title: "Workspace",
-    description: "Zarządzanie ustawieniami workspace.",
-    permissions: [
-      {
-        name: "editWorkspace",
-        label: "Edycja workspace",
-        description: "Może zmieniać ustawienia workspace.",
+        description: "Usuwanie członków z kolekcji.",
       },
     ],
   },

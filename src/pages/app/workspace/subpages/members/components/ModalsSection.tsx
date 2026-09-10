@@ -11,6 +11,7 @@ import type {
   IWorkspaceMemberInfo,
   MemberModalType,
 } from "../hooks/useMemberModal";
+import { AddMemberModal } from "../modals/AddMemberModal";
 import { EditMemberPermissionsModal } from "../modals/EditMemberPermissionsModal";
 import { PromoteMemberModal } from "../modals/PromoteMemberModal";
 
@@ -33,18 +34,6 @@ export default function ModalsSection({
   const { transferWorkspaceOwnership, isTransferOwnershipPending } =
     useTransferWorkspaceOwnership();
   const { deleteWorkspaceMember, isDeletePending } = useDeleteWorkspaceMember();
-
-  //   ----- ADD ------
-  const onAdd = async (userIds: string[]) => {
-    if (!workspaceId) {
-      throw new Error("Workspace ID is missing");
-    }
-
-    // await addMembers(workspaceId, userIds);
-
-    onClose();
-    toast.success("Dodano nowych członków do kolekcji");
-  };
 
   // ---- PROMOTE ----
   const onPromote = async (memberId: string) => {
@@ -115,14 +104,14 @@ export default function ModalsSection({
       await deleteWorkspaceMember(workspaceId, member.memberId);
 
       onClose();
-      toast.success("Członek został usunięty z kolekcji");
+      toast.success("Użytkownik został usunięty z kolekcji");
     } catch (error) {
       const { status } = error as AxiosError;
 
       if (status === 403) {
         toast.error("Brak uprawnień", {
           description:
-            "Usuwanie członków jest dostępne tylko dla właściciela kolekcji.",
+            "Nie masz uprawnień do usuwania użytkowników z tej kolekcji.",
         });
         onClose();
         return;
@@ -137,15 +126,15 @@ export default function ModalsSection({
   }
 
   switch (type) {
-    // case "addMember":
-    //   return (
-    //     <AddWorkspaceMemberModal
-    //       isOpen={isOpen}
-    //       onClose={onClose}
-    //       onSave={onAdd}
-    //       isPending={false}
-    //     />
-    //   );
+    case "addMember":
+      return (
+        <AddMemberModal
+          workspaceId={workspaceId}
+          isOpen={isOpen}
+          onClose={onClose}
+          isPending={false}
+        />
+      );
 
     case "editMember":
       if (!member) {
@@ -191,7 +180,7 @@ export default function ModalsSection({
           onConfirm={onDelete}
           requireConfirmation
           isConfirmEnabled
-          isLoading={false}
+          isLoading={isDeletePending}
         >
           Czy na pewno chcesz usunąć{" "}
           <b>

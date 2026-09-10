@@ -20,7 +20,7 @@ export const Members = () => {
   const memberModal = useMemberModal();
 
   const handleAddMember = () => {
-    // otwarcie modala
+    memberModal.openAddMember();
   };
 
   return (

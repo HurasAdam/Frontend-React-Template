@@ -1,6 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import { workspaceMembersService } from "../../../services/workspace-members/workspace-members.service";
 
+export const useAddWorkspaceMembersMutation = () => {
+  return useMutation({
+    mutationFn: (payload) => workspaceMembersService.add(payload),
+  });
+};
+
 export const useDeleteWorkspaceMemberMutation = () => {
   return useMutation({
     mutationFn: ({

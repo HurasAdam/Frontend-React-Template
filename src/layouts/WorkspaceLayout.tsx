@@ -19,6 +19,7 @@ import {
   Star,
   Wrench,
 } from "lucide-react";
+import { WorkspaceCommandMenu } from "../components/sidebar/workspace-command-menu/workspace-command-menu";
 import { Sidebar } from "../components/sidebar/workspace-sidebar";
 
 type ProtectedRouteContext = {
@@ -34,7 +35,7 @@ export const WorkspaceLayout = () => {
     error,
   } = useFindUserWorkspaceMembershipQuery(id);
 
-  const { data: workspace, isLoading: isWorkspaceDataLoading } =
+  const { data: workspace = {}, isLoading: isWorkspaceDataLoading } =
     useFindOneWorkspaceQuery(id);
 
   const { data: folders = [] } = useFindAllFoldersByWorkspaceQuery(id);
@@ -53,6 +54,7 @@ export const WorkspaceLayout = () => {
     return <WorkspaceAccessDenied message="Nie masz dostępu do tej kolekcji" />;
   }
 
+  console.log("DUPA");
   return (
     <div className="min-h-screen bg-background">
       <Sidebar workspace={workspace} folders={folders} />
@@ -73,6 +75,15 @@ export const WorkspaceLayout = () => {
         <div className="mx-auto">
           <Outlet context={{ workspace, folders }} />
         </div>
+
+        <WorkspaceCommandMenu
+          onOpenArticle={(articleId) => {
+            navigate(`/workspace/${workspace?.id}/articles/${articleId}`);
+          }}
+          onOpenFolder={(folderId) => {
+            navigate(`/workspace/${workspace?.id}/folders/${folderId}`);
+          }}
+        />
       </main>
     </div>
   );

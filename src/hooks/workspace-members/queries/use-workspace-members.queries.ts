@@ -9,3 +9,12 @@ export const useFindMembersByWorkspaceQuery = (workspaceId?: string) => {
     enabled: !!workspaceId,
   });
 };
+
+export const useFindAvailableUsersByWorkspaceQuery = (workspaceId?: string) => {
+  return useQuery({
+    queryKey: ["workspace-candidates", workspaceId],
+    queryFn: () =>
+      workspaceMembersService.findAvailableByWorkspaceId(workspaceId as string),
+    enabled: !!workspaceId,
+  });
+};

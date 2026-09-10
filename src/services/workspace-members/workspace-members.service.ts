@@ -2,8 +2,16 @@ import API from "../../config/api.config";
 
 const BASE_URL = "/api/workspace-members";
 
+const add = (payload: unknown) => {
+  return API.post(`${BASE_URL}`, payload);
+};
+
 const findByWorkspaceId = (workspaceId: string) => {
   return API.get(`${BASE_URL}/${workspaceId}/members`);
+};
+
+const findAvailableByWorkspaceId = (workspaceId: string) => {
+  return API.get(`${BASE_URL}/${workspaceId}/members/available`);
 };
 
 const deleteOne = (workspaceId: string, memberId: string) => {
@@ -26,7 +34,9 @@ const updatePermissions = (
 };
 
 export const workspaceMembersService = {
+  add,
   findByWorkspaceId,
+  findAvailableByWorkspaceId,
   deleteOne,
   transferOwnership,
   updatePermissions,
