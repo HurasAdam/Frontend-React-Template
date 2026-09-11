@@ -1,3 +1,4 @@
+import type { AxiosError } from "axios";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { ConfirmDialog } from "../../../../../../components/shared/ConfirmDialog";
@@ -32,9 +33,27 @@ export default function ModalsSection({
     if (!workspaceId) {
       throw new Error("Workspace ID is missing");
     }
-    await addFolder(workspaceId, data);
-    onClose();
-    toast.success("Dodano nowy folder");
+
+    try {
+      await addFolder(workspaceId, data);
+      onClose();
+      toast.success("Dodano nowy folder");
+    } catch (error) {
+      const { status } = error as AxiosError;
+
+      if (status === 403) {
+        toast.error("Brak uprawnień", {
+          description:
+            "Nie masz uprawnień do dodawania folderów w tej kolekcji",
+        });
+        onClose();
+        return;
+      }
+      toast.error("Nie udało się dodać folderu", {
+        description: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+      });
+      onClose();
+    }
   };
 
   const onEdit = async (data: IFolderFormData) => {
