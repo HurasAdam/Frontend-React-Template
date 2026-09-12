@@ -49,6 +49,14 @@ export default function ModalsSection({
         onClose();
         return;
       }
+      if (status === 409) {
+        toast.error("Nie można dodać folderu", {
+          description: "W tej kolekcji istnieje już folder o tej nazwie.",
+        });
+        onClose();
+        return;
+      }
+
       toast.error("Nie udało się dodać folderu", {
         description: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
       });
@@ -60,9 +68,36 @@ export default function ModalsSection({
     if (!folder || !workspaceId) {
       throw new Error("Missing required data");
     }
-    await updateFolder(folder.id, workspaceId, data);
-    onClose();
-    toast.success("Folder został zaktualizowany");
+
+    try {
+      await updateFolder(folder.id, workspaceId, data);
+      onClose();
+      toast.success("Folder został zaktualizowany");
+      return;
+    } catch (error) {
+      const { status } = error as AxiosError;
+
+      if (status === 403) {
+        toast.error("Brak uprawnień", {
+          description: "Nie masz uprawnień do edycji folderów w tej kolekcji",
+        });
+        onClose();
+        return;
+      }
+
+      if (status === 409) {
+        toast.error("Nie można edytować folderu", {
+          description: "W tej kolekcji istnieje już folder o tej nazwie.",
+        });
+        onClose();
+        return;
+      }
+
+      toast.error("Nie udało się edytować folderu", {
+        description: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+      });
+      onClose();
+    }
   };
 
   const onDelete = async () => {
