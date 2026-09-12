@@ -74,8 +74,32 @@ export default function ModalsSection({
 
       onClose();
       toast.success("Folder został usunięty");
-    } catch {
-      toast.error("Nie udało się usunąć folderu");
+    } catch (error) {
+      const { status } = error as AxiosError;
+
+      if (status === 403) {
+        toast.error("Brak uprawnień", {
+          description:
+            "Nie posiadasz uprawnień do usuwania folderów w tej kolekcji.",
+        });
+        onClose();
+        return;
+      }
+
+      if (status === 409) {
+        toast.error("Nie można usunąć folderu", {
+          description:
+            "Folder zawiera artykuły. Usuń lub przenieś je przed usunięciem folderu.",
+        });
+        onClose();
+        return;
+      }
+
+      toast.error("Nie udało się usunąć folderu", {
+        description: "Spróbuj ponownie później.",
+      });
+      onClose();
+      return;
     }
   };
 
