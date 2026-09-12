@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { AxiosError } from "axios";
 import { FilePlus, Loader } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
@@ -45,9 +46,31 @@ export const NewWorkspaceArticlePage = () => {
       throw new Error("Workspace ID is missing");
     }
 
-    await addWorkspaceArticle({ workspaceId: id, payload });
-    toast.success("Dodano nowy artykuł");
-    navigate(`/workspace/${id}/folders/${payload.folderId}`);
+    try {
+      await addWorkspaceArticle({ workspaceId: id, payload });
+      toast.success("Dodano nowy artykuł");
+      navigate(`/workspace/${id}/folders/${payload.folderId}`);
+      return;
+    } catch (error) {
+      const { status } = error as AxiosError;
+      if (status === 403) {
+        toast.error("Brak uprawnień", {
+          description:
+            "Nie masz uprawnień do dodawania artykułów w tej kolekcji",
+        });
+        return;
+      }
+
+      if (status === 409) {
+        toast.error("Nie można dodać artykułu", {
+          description:
+            "Artykuł o tym tytule już istnieje. Tytuł musi być unikalny w obrębie folderu.",
+        });
+        return;
+      }
+
+      toast.error("Wystiapił błąd");
+    }
   };
 
   return (
