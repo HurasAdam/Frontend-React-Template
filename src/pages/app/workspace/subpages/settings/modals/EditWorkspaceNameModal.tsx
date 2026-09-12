@@ -50,8 +50,6 @@ export const EditWorkspaceNameModal = ({
       return;
     }
     onSave(data);
-
-    onClose();
   };
 
   return (

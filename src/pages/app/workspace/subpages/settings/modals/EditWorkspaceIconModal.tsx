@@ -1,6 +1,5 @@
 import { Check, FolderPen } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 import {
   Dialog,
@@ -41,18 +40,8 @@ export const EditWorkspaceIconModal = ({
 
   const selectedIcon = watch("iconKey");
 
-  const onSubmit = async (data: FormData) => {
-    try {
-      await onSave(data);
-      toast.success("Ikona kolekcji została zaktualizowana", {
-        position: "top-right",
-      });
-      onClose();
-    } catch {
-      toast.error("Wystąpił błąd, zmiany nie zostały zapisane", {
-        position: "top-right",
-      });
-    }
+  const onSubmit = (data: FormData) => {
+    onSave(data);
   };
 
   const CurrentIcon = workspaceIconOptions.find(

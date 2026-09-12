@@ -1,5 +1,6 @@
-import queryClient from "../../../../../../config/query.config";
-import { useUpdateWorkspaceMutation } from "../../../../../../hooks/workspaces/mutations/use-workspace.mutations";
+import type { AxiosError } from "axios";
+import { toast } from "sonner";
+import { useUpdateWorkspace } from "../../../../../../hooks/workspaces/actions/update";
 import type { EditModalType } from "../hooks/useEditModal";
 import type { IWorkspaceInfo } from "../view/Settings";
 import { EditWorkspaceDescriptionModal } from "./EditWorkspaceDescriptionModal";
@@ -24,19 +25,27 @@ export const WorkspaceEditModalSection = ({
   onClose,
   workspace,
 }: Props) => {
-  const { mutateAsync: updateWorkspace } = useUpdateWorkspaceMutation();
+  const { updateWorkspace, isUpdatePending } = useUpdateWorkspace();
 
-  const onSave = (data: UpdateWorkspaceData) => {
-    return updateWorkspace(
-      { workspaceId: workspace.id, payload: data },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({
-            queryKey: ["workspace", workspace.id],
-          });
-        },
-      },
-    );
+  const onSave = async (data: UpdateWorkspaceData) => {
+    try {
+      await updateWorkspace(workspace.id, data);
+      toast.success("Dane kolekcji zostały zaktualizowane");
+      onClose();
+      return;
+    } catch (error) {
+      const { status } = error as AxiosError;
+      if (status === 403) {
+        toast.error("Brak uprawnień", {
+          description: "Nie masz uprawnien do edycji tej kolekcji",
+        });
+        onClose();
+        return;
+      }
+      toast.error("Wystpaił błąd");
+      onClose();
+      return;
+    }
   };
 
   if (!type) return null;

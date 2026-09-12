@@ -1,6 +1,5 @@
 import { FolderPen, Save } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { Button } from "../../../../../../components/ui/button";
 import {
   Dialog,
@@ -43,10 +42,6 @@ export const EditWorkspaceDescriptionModal = ({
 
   const onSubmit = (data: FormData) => {
     onSave(data);
-
-    toast.success("Opis kolekcji został zaktualizowany");
-
-    onClose();
   };
 
   return (

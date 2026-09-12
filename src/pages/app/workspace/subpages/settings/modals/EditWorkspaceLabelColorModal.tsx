@@ -1,6 +1,5 @@
 import { Check, FolderPen, Save } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 import {
   Dialog,
@@ -66,9 +65,6 @@ export const EditWorkspaceLabelColorModal = ({
 
   const onSubmit = (data: FormData) => {
     onSave(data);
-    toast.success("Kolor kolekcji został zaktualizowany");
-
-    onClose();
   };
 
   return (
