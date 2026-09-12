@@ -46,9 +46,25 @@ export default function ResponseVariantModalsSection({
     useDeleteWorkspaceArticleResponseVariant();
 
   const onAdd = async (payload: AddWorkspaceArticleResponseVariantPayload) => {
-    await addResponseVariant(payload);
-    onClose();
-    toast.success("Dodano nowy wariant szablonu");
+    try {
+      await addResponseVariant(payload);
+      onClose();
+      toast.success("Dodano nowy wariant szablonu");
+      return;
+    } catch (error) {
+      const { status } = error as AxiosError;
+
+      if (status === 403) {
+        toast.error("Brak uprawnień", {
+          description: "Nie masz uprawnień do edycji artykułów w tej kolekcji",
+        });
+        onClose();
+        return;
+      }
+      toast.error("Wystapił błąd");
+      onClose();
+      return;
+    }
   };
 
   const onUpdate = async (
