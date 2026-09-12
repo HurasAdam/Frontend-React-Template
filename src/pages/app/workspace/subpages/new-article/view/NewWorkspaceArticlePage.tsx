@@ -64,7 +64,7 @@ export const NewWorkspaceArticlePage = () => {
       if (status === 409) {
         toast.error("Nie można dodać artykułu", {
           description:
-            "Artykuł o tym tytule już istnieje. Tytuł musi być unikalny w obrębie folderu.",
+            "W tym folderze znajduje się już artykuł o takim tytule - Tytuł musi być unikalny w obrębie folderu.",
         });
         return;
       }

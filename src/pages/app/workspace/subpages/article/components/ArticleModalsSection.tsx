@@ -1,3 +1,4 @@
+import type { AxiosError } from "axios";
 import { useOutletContext, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { ConfirmDialog } from "../../../../../../components/shared/ConfirmDialog";
@@ -37,15 +38,42 @@ export default function ArticleModalsSection({
     if (!article || !workspaceId) {
       throw new Error("Missing required data");
     }
+    try {
+      await updateWorkspaceArticle({
+        workspaceId,
+        articleId: article.id,
+        payload: data,
+      });
 
-    await updateWorkspaceArticle({
-      workspaceId,
-      articleId: article.id,
-      payload: data,
-    });
+      onClose();
+      toast.success("Artykuł został zaktualizowany");
+      return;
+    } catch (error) {
+      const { status } = error as AxiosError;
 
-    onClose();
-    toast.success("Artykuł został zaktualizowany");
+      if (status === 403) {
+        toast.error("Brak uprawnień", {
+          description:
+            "Nie masz uprawnień do edytowania artykułów w tej kolekcji.",
+        });
+        onClose();
+        return;
+      }
+
+      if (status === 409) {
+        toast.error("Nie można edytować artykułu", {
+          description: "W wybranym folderze istnieje już artykuł o tym tytule.",
+        });
+
+        onClose();
+        return;
+      }
+      toast.error("Nie udało się edytować artykułu", {
+        description: "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+      });
+      onClose();
+      return;
+    }
   };
 
   const onDelete = async () => {
