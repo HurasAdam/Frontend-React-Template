@@ -130,7 +130,7 @@ export function Sidebar({
           </button>
         </div>
         {/* Folders */}
-        <nav className="flex-1 overflow-y-auto scrollbar-thin px-3 pb-2">
+        <nav className="flex-1 overflow-y-auto scrollbar-custom px-3 pb-2">
           <div className="mb-1.5 flex items-center justify-between px-2 pt-1">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               Foldery
