@@ -11,260 +11,743 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { cn } from "@/lib/utils";
-import {
-  Clock,
-  Link as LinkIcon,
-  Mail,
-  MessageSquare,
-  Phone,
-  Plus,
-  Search,
-  Ticket,
-  X,
-} from "lucide-react";
+import { FileText, Plus, Search, Star, X } from "lucide-react";
 import { useMemo, useState } from "react";
-import { conversationTopics, getArticleById } from "../../../../lib/mockData";
 
-const statusColors: Record<string, string> = {
-  open: "bg-primary/10 text-primary border-primary/20",
-  resolved: "bg-success/10 text-success border-success/20",
-  escalated: "bg-destructive/10 text-destructive border-destructive/20",
-  pending: "bg-warning/10 text-warning border-warning/20",
-};
-const statusLabels: Record<string, string> = {
-  open: "Otwarty",
-  resolved: "Rozwiązany",
-  escalated: "Eskalowany",
-  pending: "Oczekujący",
-};
-const priorityColors: Record<string, string> = {
-  low: "text-muted-foreground",
-  medium: "text-chart-3",
-  high: "text-primary",
-  urgent: "text-destructive",
-};
-const priorityLabels: Record<string, string> = {
-  low: "Niski",
-  medium: "Średni",
-  high: "Wysoki",
-  urgent: "Pilny",
+type ArticleStatus =
+  | "DRAFT"
+  | "APPROVED"
+  | "REJECTED"
+  | "PENDING_REVIEW"
+  | "ARCHIVED";
+
+type ImportantMarker = "star" | null;
+
+type MockArticle = {
+  id: string;
+  title: string;
+  status: ArticleStatus;
+  importantMarker: ImportantMarker;
+  product: string;
+  category: string;
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
 };
 
-const channelIcons: Record<
-  string,
-  React.ComponentType<{ className?: string }>
+type MockProduct = {
+  id: string;
+  name: string;
+};
+
+type MockCategory = {
+  id: string;
+  name: string;
+};
+
+type MockTag = {
+  id: string;
+  name: string;
+};
+
+const mockProducts: MockProduct[] = [
+  {
+    id: "product-synergia",
+    name: "Synergia",
+  },
+  {
+    id: "product-librus-go",
+    name: "Librus GO",
+  },
+  {
+    id: "product-biblioteka",
+    name: "Biblioteka",
+  },
+  {
+    id: "product-mobile",
+    name: "Aplikacja Mobilna",
+  },
+];
+
+const mockCategories: MockCategory[] = [
+  {
+    id: "category-login",
+    name: "Logowanie",
+  },
+  {
+    id: "category-users",
+    name: "Użytkownicy",
+  },
+  {
+    id: "category-messages",
+    name: "Wiadomości",
+  },
+  {
+    id: "category-schedule",
+    name: "Plan lekcji",
+  },
+  {
+    id: "category-configuration",
+    name: "Konfiguracja",
+  },
+  {
+    id: "category-technical",
+    name: "Problemy techniczne",
+  },
+];
+
+const mockTags: MockTag[] = [
+  {
+    id: "login",
+    name: "logowanie",
+  },
+  {
+    id: "password",
+    name: "hasło",
+  },
+  {
+    id: "account",
+    name: "konto",
+  },
+  {
+    id: "browser",
+    name: "przeglądarka",
+  },
+  {
+    id: "cookies",
+    name: "cookies",
+  },
+  {
+    id: "schedule",
+    name: "plan lekcji",
+  },
+  {
+    id: "mobile",
+    name: "mobilna",
+  },
+  {
+    id: "messages",
+    name: "wiadomości",
+  },
+  {
+    id: "configuration",
+    name: "konfiguracja",
+  },
+  {
+    id: "error",
+    name: "błąd",
+  },
+];
+
+const mockArticles: MockArticle[] = [
+  {
+    id: "article-1",
+    title: "Reset hasła",
+    status: "APPROVED",
+    importantMarker: "star",
+    product: "product-synergia",
+    category: "category-login",
+    tags: ["login", "password", "account"],
+    createdAt: "2026-09-01T10:00:00",
+    updatedAt: "2026-09-12T14:30:00",
+  },
+  {
+    id: "article-2",
+    title: "Problem z logowaniem",
+    status: "PENDING_REVIEW",
+    importantMarker: null,
+    product: "product-librus-go",
+    category: "category-login",
+    tags: ["login", "account", "error"],
+    createdAt: "2026-09-02T09:30:00",
+    updatedAt: "2026-09-12T11:45:00",
+  },
+  {
+    id: "article-3",
+    title: "Jak wyczyścić pamięć podręczną przeglądarki?",
+    status: "APPROVED",
+    importantMarker: null,
+    product: "product-synergia",
+    category: "category-technical",
+    tags: ["browser", "cookies"],
+    createdAt: "2026-09-03T12:00:00",
+    updatedAt: "2026-09-11T15:10:00",
+  },
+  {
+    id: "article-4",
+    title: "Usuwanie wpisu z planu lekcji",
+    status: "APPROVED",
+    importantMarker: "star",
+    product: "product-synergia",
+    category: "category-schedule",
+    tags: ["schedule", "configuration"],
+    createdAt: "2026-09-04T08:15:00",
+    updatedAt: "2026-09-10T09:20:00",
+  },
+  {
+    id: "article-5",
+    title: "Wiadomości nie wyświetlają się poprawnie w przeglądarce",
+    status: "DRAFT",
+    importantMarker: null,
+    product: "product-synergia",
+    category: "category-messages",
+    tags: ["messages", "browser", "error"],
+    createdAt: "2026-09-05T11:00:00",
+    updatedAt: "2026-09-11T13:15:00",
+  },
+  {
+    id: "article-6",
+    title: "Konfiguracja konta użytkownika i podstawowych ustawień profilu",
+    status: "APPROVED",
+    importantMarker: null,
+    product: "product-librus-go",
+    category: "category-users",
+    tags: ["account", "configuration"],
+    createdAt: "2026-09-06T14:00:00",
+    updatedAt: "2026-09-09T16:40:00",
+  },
+  {
+    id: "article-7",
+    title:
+      "Brak synchronizacji danych w aplikacji mobilnej pomiędzy urządzeniem a systemem",
+    status: "REJECTED",
+    importantMarker: null,
+    product: "product-mobile",
+    category: "category-technical",
+    tags: ["mobile", "error"],
+    createdAt: "2026-09-07T09:00:00",
+    updatedAt: "2026-09-08T10:30:00",
+  },
+  {
+    id: "article-8",
+    title:
+      "Konfiguracja powiadomień użytkownika oraz dostępnych ustawień dotyczących komunikatów w systemie",
+    status: "ARCHIVED",
+    importantMarker: null,
+    product: "product-biblioteka",
+    category: "category-configuration",
+    tags: ["configuration", "account", "notifications", "settings"],
+    createdAt: "2026-08-20T09:00:00",
+    updatedAt: "2026-08-25T12:10:00",
+  },
+  {
+    id: "article-9",
+    title: "Aktualizacja danych kontaktowych użytkownika",
+    status: "APPROVED",
+    importantMarker: null,
+    product: "product-synergia",
+    category: "category-users",
+    tags: ["account", "configuration"],
+    createdAt: "2026-09-05T10:00:00",
+    updatedAt: "2026-09-07T13:20:00",
+  },
+  {
+    id: "article-10",
+    title:
+      "Brak możliwości wysłania wiadomości do użytkownika i diagnostyka problemu z komunikacją w przeglądarce",
+    status: "PENDING_REVIEW",
+    importantMarker: "star",
+    product: "product-synergia",
+    category: "category-messages",
+    tags: ["messages", "error", "browser"],
+    createdAt: "2026-09-04T15:00:00",
+    updatedAt: "2026-09-06T11:15:00",
+  },
+  {
+    id: "article-11",
+    title: "Nie można otworzyć strony logowania",
+    status: "APPROVED",
+    importantMarker: null,
+    product: "product-synergia",
+    category: "category-login",
+    tags: ["login", "browser", "error"],
+    createdAt: "2026-09-02T13:00:00",
+    updatedAt: "2026-09-05T10:30:00",
+  },
+  {
+    id: "article-12",
+    title: "Zmiana hasła użytkownika po utracie dostępu do konta",
+    status: "APPROVED",
+    importantMarker: null,
+    product: "product-librus-go",
+    category: "category-login",
+    tags: ["password", "account", "login"],
+    createdAt: "2026-09-01T14:00:00",
+    updatedAt: "2026-09-04T15:45:00",
+  },
+  {
+    id: "article-13",
+    title: "Nieprawidłowe dane użytkownika po aktualizacji profilu",
+    status: "PENDING_REVIEW",
+    importantMarker: null,
+    product: "product-librus-go",
+    category: "category-users",
+    tags: ["account", "error"],
+    createdAt: "2026-08-30T11:00:00",
+    updatedAt: "2026-09-03T12:20:00",
+  },
+  {
+    id: "article-14",
+    title:
+      "Nie można zapisać zmian w konfiguracji planu lekcji po wprowadzeniu nowych ustawień użytkownika",
+    status: "APPROVED",
+    importantMarker: "star",
+    product: "product-synergia",
+    category: "category-schedule",
+    tags: ["schedule", "configuration", "error"],
+    createdAt: "2026-08-28T09:00:00",
+    updatedAt: "2026-09-02T16:10:00",
+  },
+  {
+    id: "article-15",
+    title:
+      "Diagnostyka problemów z wysyłaniem wiadomości: przeglądarka, sesja użytkownika, uprawnienia i konfiguracja konta",
+    status: "APPROVED",
+    importantMarker: null,
+    product: "product-synergia",
+    category: "category-messages",
+    tags: ["messages", "error", "browser", "account", "configuration"],
+    createdAt: "2026-08-25T10:00:00",
+    updatedAt: "2026-09-01T13:40:00",
+  },
+];
+const statusConfig: Record<
+  ArticleStatus,
+  {
+    label: string;
+    className: string;
+  }
 > = {
-  email: Mail,
-  chat: MessageSquare,
-  phone: Phone,
-  ticket: Ticket,
+  DRAFT: {
+    label: "Wersja robocza",
+    className: "bg-muted text-muted-foreground border-border",
+  },
+  PENDING_REVIEW: {
+    label: "Do weryfikacji",
+    className: "bg-warning/10 text-warning border-warning/20",
+  },
+  APPROVED: {
+    label: "Zweryfikowany",
+    className: "bg-success/10 text-success border-success/20",
+  },
+  REJECTED: {
+    label: "Odrzucony",
+    className: "bg-destructive/10 text-destructive border-destructive/20",
+  },
+  ARCHIVED: {
+    label: "Zarchiwizowany",
+    className: "bg-muted text-muted-foreground border-border",
+  },
 };
-const channelLabels: Record<string, string> = {
-  email: "E-mail",
-  chat: "Czat",
-  phone: "Telefon",
-  ticket: "Ticket",
-};
+
+const getProductName = (id: string) =>
+  mockProducts.find((product) => product.id === id)?.name ?? "Nieznany produkt";
+
+const getCategoryName = (id: string) =>
+  mockCategories.find((category) => category.id === id)?.name ??
+  "Nieznana kategoria";
+
+const getTagName = (id: string) =>
+  mockTags.find((tag) => tag.id === id)?.name ?? id;
 
 export function ArticlesPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [priorityFilter, setPriorityFilter] = useState("all");
+  const [productFilter, setProductFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
-  const filtered = useMemo(() => {
-    let result = [...conversationTopics];
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      result = result.filter(
-        (t) =>
-          t.title.toLowerCase().includes(q) ||
-          t.client.toLowerCase().includes(q) ||
-          t.summary.toLowerCase().includes(q),
+  const filteredArticles = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
+
+    return [...mockArticles]
+      .filter((article) => {
+        if (!normalizedSearch) {
+          return true;
+        }
+
+        const searchableText = [
+          article.title,
+          getProductName(article.product),
+          getCategoryName(article.category),
+          ...article.tags.map(getTagName),
+        ]
+          .join(" ")
+          .toLowerCase();
+
+        return searchableText.includes(normalizedSearch);
+      })
+      .filter((article) => {
+        if (statusFilter === "all") {
+          return true;
+        }
+
+        return article.status === statusFilter;
+      })
+      .filter((article) => {
+        if (productFilter === "all") {
+          return true;
+        }
+
+        return article.product === productFilter;
+      })
+      .filter((article) => {
+        if (categoryFilter === "all") {
+          return true;
+        }
+
+        return article.category === categoryFilter;
+      })
+      .sort(
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
       );
-    }
-    if (statusFilter !== "all")
-      result = result.filter((t) => t.status === statusFilter);
-    if (priorityFilter !== "all")
-      result = result.filter((t) => t.priority === priorityFilter);
-    result.sort(
-      (a, b) =>
-        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-    );
-    return result;
-  }, [search, statusFilter, priorityFilter]);
+  }, [search, statusFilter, productFilter, categoryFilter]);
 
-  const stats = {
-    total: conversationTopics.length,
-    open: conversationTopics.filter((t) => t.status === "open").length,
-    resolved: conversationTopics.filter((t) => t.status === "resolved").length,
-    escalated: conversationTopics.filter((t) => t.status === "escalated")
-      .length,
+  const hasActiveFilters =
+    search.trim() !== "" ||
+    statusFilter !== "all" ||
+    productFilter !== "all" ||
+    categoryFilter !== "all";
+
+  const clearFilters = () => {
+    setSearch("");
+    setStatusFilter("all");
+    setProductFilter("all");
+    setCategoryFilter("all");
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Baza szablonów</h1>
-          <p className="text-sm text-muted-foreground"></p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Baza artykułów
+          </h1>
+
+          <p className="mt-1 text-sm text-muted-foreground">
+            Artykuły i gotowe odpowiedzi dla pomocy technicznej.
+          </p>
         </div>
-        <Button className="gap-2 self-start sm:self-auto">
-          <Plus className="h-4 w-4" />
-          Dodaj wpis
+
+        <Button className="shrink-0">
+          <Plus className="size-4" />
+          Dodaj artykuł
         </Button>
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Szukaj po tytule, kliencie, treści..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9"
-              />
-              {search && (
-                <button
-                  onClick={() => setSearch("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Wszystkie statusy</SelectItem>
-                <SelectItem value="open">Otwarte</SelectItem>
-                <SelectItem value="resolved">Rozwiązane</SelectItem>
-                <SelectItem value="escalated">Eskalowane</SelectItem>
-                <SelectItem value="pending">Oczekujące</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder="Priorytet" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Wszystkie priorytety</SelectItem>
-                <SelectItem value="urgent">Pilny</SelectItem>
-                <SelectItem value="high">Wysoki</SelectItem>
-                <SelectItem value="medium">Średni</SelectItem>
-                <SelectItem value="low">Niski</SelectItem>
-              </SelectContent>
-            </Select>
-            <div className="text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">
-                {filtered.length}
-              </span>{" "}
-              wpisów
-            </div>
+      <div className="space-y-3">
+        <div className="flex flex-col gap-2 lg:flex-row">
+          <div className="relative min-w-0 flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+
+            <Input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Szukaj artykułów..."
+              className="h-9 pl-9"
+            />
           </div>
-        </CardContent>
-      </Card>
+
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="h-9 w-full lg:w-[180px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value="all">Wszystkie statusy</SelectItem>
+              <SelectItem value="DRAFT">Wersja robocza</SelectItem>
+              <SelectItem value="PENDING_REVIEW">Do weryfikacji</SelectItem>
+              <SelectItem value="APPROVED">Zweryfikowany</SelectItem>
+              <SelectItem value="REJECTED">Odrzucony</SelectItem>
+              <SelectItem value="ARCHIVED">Zarchiwizowany</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={productFilter} onValueChange={setProductFilter}>
+            <SelectTrigger className="h-9 w-full lg:w-[170px]">
+              <SelectValue placeholder="Produkt" />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value="all">Wszystkie produkty</SelectItem>
+
+              {mockProducts.map((product) => (
+                <SelectItem key={product.id} value={product.id}>
+                  {product.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="h-9 w-full lg:w-[190px]">
+              <SelectValue placeholder="Kategoria" />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value="all">Wszystkie kategorie</SelectItem>
+
+              {mockCategories.map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {hasActiveFilters && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-9 shrink-0"
+              onClick={clearFilters}
+              aria-label="Wyczyść filtry"
+            >
+              <X className="size-4" />
+            </Button>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between px-1">
+          <span className="text-xs text-muted-foreground">
+            {filteredArticles.length}{" "}
+            {filteredArticles.length === 1
+              ? "artykuł"
+              : filteredArticles.length >= 2 && filteredArticles.length <= 4
+                ? "artykuły"
+                : "artykułów"}
+          </span>
+        </div>
+      </div>
 
       {/* List */}
-      <div className="space-y-3">
-        {filtered.map((conv) => {
-          const ChannelIcon = channelIcons[conv.channel] || Ticket;
-          const linkedArticle = conv.linkedArticleId
-            ? getArticleById(conv.linkedArticleId)
-            : null;
-          return (
-            <Card
-              key={conv.id}
-              className="group cursor-pointer transition-all hover:shadow-md hover:border-primary/30"
-            >
-              <CardContent className="p-5">
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent">
-                    <ChannelIcon className="h-5 w-5 text-accent-foreground" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                          {conv.title}
-                        </h3>
-                        <div className="flex flex-wrap items-center gap-2 mt-1">
-                          <span className="text-xs text-muted-foreground">
-                            {conv.client}
-                          </span>
-                          <span className="text-border">·</span>
-                          <span className="text-xs text-muted-foreground">
-                            {conv.product}
-                          </span>
-                          <span className="text-border">·</span>
-                          <span className="text-xs text-muted-foreground">
-                            {conv.category}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span
-                          className={cn(
-                            "text-xs font-medium",
-                            priorityColors[conv.priority],
-                          )}
-                        >
-                          {priorityLabels[conv.priority]}
-                        </span>
-                        <Badge
-                          variant="outline"
-                          className={cn(
-                            "h-5 text-[10px]",
-                            statusColors[conv.status],
-                          )}
-                        >
-                          {statusLabels[conv.status]}
-                        </Badge>
-                      </div>
-                    </div>
-                    <p className="mt-2 text-xs text-muted-foreground line-clamp-2">
-                      {conv.summary}
-                    </p>
-                    <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-border pt-3">
-                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <span className="font-medium text-foreground">
-                          {conv.agent}
-                        </span>
-                      </span>
-                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <span className="rounded bg-muted px-1.5 py-0.5">
-                          {channelLabels[conv.channel]}
-                        </span>
-                      </span>
-                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        {new Date(conv.updatedAt).toLocaleDateString("pl-PL", {
-                          day: "numeric",
-                          month: "short",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                      {linkedArticle && (
-                        <span className="flex items-center gap-1 text-xs text-primary">
-                          <LinkIcon className="h-3 w-3" />
-                          {linkedArticle.title}
-                        </span>
+      <div className="space-y-2">
+        {/* List header */}
+        <div
+          className="
+            hidden
+            items-center
+            gap-4
+            px-4
+            text-[10px]
+            font-medium
+            uppercase
+            tracking-wider
+            text-muted-foreground
+            sm:flex
+          "
+        >
+          <div className="w-9 shrink-0" />
+
+          <div className="min-w-0 flex-1">Tytuł / Produkt / Kategoria</div>
+
+          <div className="w-[220px] shrink-0">Tagi</div>
+
+          <div className="w-[120px] shrink-0 text-right">Status</div>
+        </div>
+
+        {filteredArticles.length === 0 ? (
+          <Card className="border-border/70 shadow-none">
+            <CardContent className="flex flex-col items-center justify-center py-14 text-center">
+              <div className="mb-3 flex size-10 items-center justify-center rounded-md bg-muted">
+                <FileText className="size-5 text-muted-foreground" />
+              </div>
+
+              <h3 className="text-sm font-medium">Nie znaleziono artykułów</h3>
+
+              <p className="mt-1 max-w-sm text-xs text-muted-foreground">
+                Spróbuj zmienić kryteria wyszukiwania lub wyczyścić aktywne
+                filtry.
+              </p>
+
+              {hasActiveFilters && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="mt-4"
+                  onClick={clearFilters}
+                >
+                  Wyczyść filtry
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        ) : (
+          filteredArticles.map((article) => {
+            const isImportant = article.importantMarker === "star";
+
+            const visibleTags: string[] = [];
+            let hiddenCount = 0;
+            let currentLength = 0;
+
+            for (let i = 0; i < article.tags.length; i++) {
+              const tag = `#${getTagName(article.tags[i])}`;
+
+              const nextLength =
+                currentLength === 0
+                  ? tag.length
+                  : currentLength + tag.length + 1;
+
+              if (nextLength <= 48) {
+                visibleTags.push(tag);
+                currentLength = nextLength;
+              } else {
+                hiddenCount = article.tags.length - i;
+                break;
+              }
+            }
+
+            const status = statusConfig[article.status];
+
+            return (
+              <Card
+                key={article.id}
+                className="
+                  group
+                  cursor-pointer
+                  border-border/70
+                  shadow-none
+                  transition-colors
+                  hover:border-primary/30
+                  hover:bg-accent/20
+                "
+              >
+                <CardContent className="px-4 py-3.5">
+                  <div className="flex items-start gap-4">
+                    {/* Article icon */}
+                    <div
+                      className={cn(
+                        `
+                          mt-0.5
+                          flex
+                          size-9
+                          shrink-0
+                          items-center
+                          justify-center
+                          rounded-md
+                          transition-colors
+                        `,
+                        isImportant
+                          ? "bg-amber-500/5"
+                          : "bg-muted group-hover:bg-primary/10",
+                      )}
+                    >
+                      {isImportant ? (
+                        <Star className="size-4 fill-amber-500/80 text-amber-500/80" />
+                      ) : (
+                        <FileText
+                          className="
+                            size-4
+                            text-muted-foreground
+                            transition-colors
+                            group-hover:text-primary
+                          "
+                        />
                       )}
                     </div>
+
+                    {/* Article */}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex min-w-0 items-center">
+                        <h3
+                          className="
+                            min-w-0
+                            truncate
+                            text-sm
+                            font-medium
+                            text-foreground
+                            transition-colors
+                            group-hover:text-primary
+                          "
+                        >
+                          {article.title}
+                        </h3>
+                      </div>
+
+                      <div className="mt-1 flex min-w-0 items-center gap-2">
+                        <span className="shrink-0 text-[11px] text-muted-foreground">
+                          {getProductName(article.product)}
+                        </span>
+
+                        <span className="shrink-0 text-[10px] text-border">
+                          /
+                        </span>
+
+                        <span className="shrink-0 text-[11px] text-muted-foreground">
+                          {getCategoryName(article.category)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Tags */}
+                    <div className="hidden w-[220px] shrink-0 sm:block">
+                      <div
+                        className="
+                          flex
+                          h-10
+                          flex-wrap
+                          content-start
+                          items-start
+                          gap-x-2
+                          gap-y-0.5
+                          overflow-hidden
+                        "
+                      >
+                        {visibleTags.map((tag, index) => (
+                          <span
+                            key={`${article.id}-tag-${index}`}
+                            className="
+                              shrink-0
+                              whitespace-nowrap
+                              text-[11px]
+                              leading-5
+                              text-muted-foreground
+                            "
+                          >
+                            {tag}
+                          </span>
+                        ))}
+
+                        {hiddenCount > 0 && (
+                          <span
+                            className="
+                              shrink-0
+                              whitespace-nowrap
+                              text-[11px]
+                              font-medium
+                              leading-5
+                              text-muted-foreground
+                            "
+                          >
+                            +{hiddenCount}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Status */}
+                    <div className="w-[120px] shrink-0 text-right">
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "whitespace-nowrap text-[10px] font-medium",
+                          status.className,
+                        )}
+                      >
+                        {status.label}
+                      </Badge>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+                </CardContent>
+              </Card>
+            );
+          })
+        )}
       </div>
     </div>
   );
