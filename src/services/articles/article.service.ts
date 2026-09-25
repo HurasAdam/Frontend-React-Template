@@ -6,6 +6,11 @@ const create = (payload) => {
   return API.post(`${BASE_URL}/create`, payload);
 };
 
+const find = () => {
+  return API.get(`${BASE_URL}`);
+};
+
 export const articleServie = {
   create,
+  find,
 };

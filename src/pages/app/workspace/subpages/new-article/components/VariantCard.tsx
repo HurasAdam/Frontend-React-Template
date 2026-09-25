@@ -16,26 +16,14 @@ export const VariantCard = () => {
 
   const variantName = useWatch({
     control,
-    name: "responseVariant.variantName",
+    name: "responseTemplates.0.variantName",
   });
 
   return (
     <div className="space-y-5">
-      {/* Header */}
-      <div className="flex items-center gap-2 pb-3 border-b border-border/60">
-        <div
-          className="
-            flex
-            h-8
-            w-8
-            items-center
-            justify-center
-            rounded-lg
-            bg-primary/10
-            text-primary
-          "
-        >
-          <Text className="h-4 w-4" />
+      <div className="flex items-center gap-2 border-b border-border/60 pb-3">
+        <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <Text className="size-4" />
         </div>
 
         <div>
@@ -47,11 +35,10 @@ export const VariantCard = () => {
         </div>
       </div>
 
-      {/* Fields */}
       <div className="space-y-5">
         <FormField
           control={control}
-          name="responseVariant.variantName"
+          name="responseTemplates.0.variantName"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-sm text-muted-foreground">
@@ -62,10 +49,7 @@ export const VariantCard = () => {
                 <Input
                   {...field}
                   placeholder="Np. Standardowa odpowiedź"
-                  className="
-                    bg-background
-                    focus-visible:ring-primary/30
-                  "
+                  className="bg-background focus-visible:ring-primary/30"
                 />
               </FormControl>
 
@@ -76,7 +60,7 @@ export const VariantCard = () => {
 
         <FormField
           control={control}
-          name="responseVariant.variantContent"
+          name="responseTemplates.0.variantContent"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-sm text-muted-foreground">
@@ -88,12 +72,7 @@ export const VariantCard = () => {
                   {...field}
                   rows={6}
                   placeholder="Wprowadź treść odpowiedzi dla użytkownika..."
-                  className="
-                    min-h-[180px]
-                    resize-none
-                    bg-background
-                    focus-visible:ring-primary/30
-                  "
+                  className="min-h-[180px] resize-none bg-background focus-visible:ring-primary/30"
                 />
               </FormControl>
 

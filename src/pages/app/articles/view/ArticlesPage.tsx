@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import { FileText, Plus, Search, Star, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useFindArticlesQuery } from "../../../../hooks/articles/queries/use-articles.queries";
 
 type ArticleStatus =
   | "DRAFT"
@@ -352,6 +353,7 @@ const getTagName = (id: string) =>
   mockTags.find((tag) => tag.id === id)?.name ?? id;
 
 export function ArticlesPage() {
+  const { data } = useFindArticlesQuery();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [productFilter, setProductFilter] = useState("all");

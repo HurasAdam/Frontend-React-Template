@@ -1,15 +1,17 @@
 import {
   Box,
   CheckIcon,
-  ChevronsUpDownIcon,
+  ChevronsUpDown,
   FileText,
   FolderTree,
-  Plus,
+  Info,
+  Tags,
+  Type,
+  X,
 } from "lucide-react";
 import { useState } from "react";
-import { useFieldArray, useFormContext } from "react-hook-form";
-import { Badge } from "../../../../components/ui/badge";
-import { Button } from "../../../../components/ui/button";
+import { useFormContext } from "react-hook-form";
+
 import {
   Command,
   CommandEmpty,
@@ -17,420 +19,717 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "../../../../components/ui/command";
+} from "@/components/ui/command";
 import {
-  Form,
   FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormMessage,
-} from "../../../../components/ui/form";
-import { Input } from "../../../../components/ui/input";
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "../../../../components/ui/popover";
-import { Textarea } from "../../../../components/ui/textarea";
-import { cn } from "../../../../lib/utils";
-import { FormCard } from "./FormCard";
-import { FormSection } from "./FormSection";
+} from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+
+import { VariantCard } from "../../workspace/subpages/new-article/components/VariantCard";
+
+interface SelectOption {
+  value: string;
+  label: string;
+  color?: string;
+}
+
+interface TagOption {
+  id: string;
+  name: string;
+}
+
+interface AddArticleFormProps {
+  products: SelectOption[];
+  categories: SelectOption[];
+  tags: TagOption[];
+  onProductChange: (product: string) => void;
+}
 
 export const AddArticleForm = ({
   products,
   categories,
   tags,
   onProductChange,
-}) => {
-  const [open, setOpen] = useState(false);
-  const [openCategories, setOpenCategories] = useState(false);
-  const [productValue, setProductValue] = useState("");
-  const [categoryValue, setCategoryValue] = useState("");
+}: AddArticleFormProps) => {
   const form = useFormContext();
 
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "responseTemplates",
-  });
+  const [productOpen, setProductOpen] = useState(false);
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [tagsOpen, setTagsOpen] = useState(false);
 
   return (
-    <Form {...form}>
-      <form className="w-full mx-auto space-y-6">
-        {/* HEADER */}
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10 text-primary">
-            <FileText size={18} />
-          </div>
-
-          <div>
-            <h1 className="text-2xl font-semibold">Nowy artykuł</h1>
-            <p className="text-sm text-muted-foreground">
-              Tworzenie wpisu w bazie wiedzy
-            </p>
-          </div>
-        </div>
-
-        {/* ================= BASIC ================= */}
-        <FormCard>
-          <FormSection title="Podstawowe informacje">
-            <div className="px-6 py-5 space-y-6">
-              <div>
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          placeholder="Wprowadź tytuł artykułu..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div>
-                <FormField
-                  control={form.control}
-                  name="employeeDescription"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Wprowadź uwagi dla pracownika..."
-                          {...field}
-                          className="min-h-[175px] border-input"
-                        />
-                      </FormControl>
-                      <FormDescription className="text-[13px]">
-                        Notatka dla pracowników
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-          </FormSection>
-        </FormCard>
-
-        {/* ================= VARIANTS ================= */}
-        <FormCard>
-          <FormSection
-            title="Warianty odpowiedzi (dla klienta)"
-            action={
-              <Button
-                type="button"
-                size="sm"
-                onClick={() =>
-                  append({
-                    version: fields.length + 1,
-                    variantName: "",
-                    variantContent: "",
-                  })
-                }
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Dodaj
-              </Button>
-            }
-          >
-            {/* <div className="px-6 py-5 space-y-4">
-              {fields.map((field, index) => (
-                <div
-                  key={field.id}
-                  className="rounded-xl border bg-card p-5 space-y-4"
-                >
-                  <div className="flex justify-between items-center">
-                    <p className="text-sm font-medium">Wariant #{index + 1}</p>
-
-                    <button
-                      type="button"
-                      onClick={() => remove(index)}
-                      className="text-muted-foreground hover:text-destructive"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-
-                  <Input
-                    placeholder="Nazwa wariantu"
-                    {...register(
-                      `responseTemplates.${index}.variantName` as const,
-                    )}
-                  />
-
-                  <Textarea
-                    rows={5}
-                    placeholder="Treść odpowiedzi"
-                    {...register(
-                      `responseTemplates.${index}.variantContent` as const,
-                    )}
-                  />
-                </div>
-              ))}
-            </div> */}
-          </FormSection>
-        </FormCard>
-
-        {/* ================= SETTINGS ================= */}
-        <FormCard>
-          <FormSection title="Ustawienia publikacji">
+    <div className="w-full pb-6">
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        {/* ============================================================
+            MAIN CONTENT
+        ============================================================ */}
+        <main className="min-w-0 space-y-6">
+          {/* TITLE + TAGS */}
+          <section className="rounded-xl border bg-card">
             <div className="px-6 py-5">
-              <div className="space-y-8">
-                {/* ===================================================== */}
-                {/* Produkt */}
-                {/* ===================================================== */}
-                <div className="space-y-4">
-                  <div className="border-b border-border pb-3">
-                    <div className="flex items-center gap-2">
-                      <Box className="h-4 w-4 text-primary" />
+              {/* TITLE HEADER */}
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Type className="size-4" />
+                </div>
 
-                      <h3 className="text-sm font-medium text-foreground">
-                        Produkt
-                      </h3>
-                    </div>
+                <div>
+                  <h2 className="text-sm font-semibold">Tytuł artykułu</h2>
 
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Określa obszar wiedzy, którego dotyczy artykuł.
-                    </p>
-                  </div>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    Tytuł powinien jasno określać problem lub temat artykułu.
+                  </p>
+                </div>
+              </div>
 
-                  <FormField
-                    control={form.control}
-                    name="product"
-                    render={({ field }) => {
-                      return (
-                        <FormItem>
-                          <Popover open={open} onOpenChange={setOpen}>
-                            <FormControl>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  role="combobox"
-                                  aria-expanded={open}
-                                  aria-label="product combobox"
-                                  className="w-full justify-between bg-transparent"
-                                >
-                                  {field.value.value ? (
-                                    products.find(
-                                      (method) =>
-                                        method.label === field.value.label,
-                                    )?.label
-                                  ) : (
-                                    <span className="text-muted-foreground">
-                                      Wybierz produkt...
-                                    </span>
-                                  )}
+              {/* TITLE */}
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        autoFocus
+                        placeholder="np. Jak zresetować hasło użytkownika?"
+                        className="
+                          h-12
+                          rounded-lg
+                          border-border
+                          bg-background
+                          px-4
+                          text-[15px]
+                          shadow-none
+                          transition-colors
+                          placeholder:text-muted-foreground/50
+                          focus-visible:border-ring
+                          focus-visible:ring-2
+                          focus-visible:ring-ring/15
+                        "
+                      />
+                    </FormControl>
 
-                                  <ChevronsUpDownIcon className="opacity-50" />
-                                </Button>
-                              </PopoverTrigger>
-                            </FormControl>
+                    <FormDescription className="text-xs">
+                      Pole wymagane
+                    </FormDescription>
 
-                            <PopoverContent className="w-(--radix-popper-anchor-width) p-0">
-                              <Command>
-                                <CommandInput placeholder="Wyszukaj produkt..." />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                                <CommandList className="scrollbar-custom">
-                                  <CommandEmpty>
-                                    Brak wyników spełniających kryteria
-                                    wyszukiwania
-                                  </CommandEmpty>
+              {/* TAGS */}
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => {
+                  const selectedTagIds: string[] = field.value ?? [];
 
-                                  <CommandGroup>
-                                    {products.map((method) => (
+                  const selectedTagObjects = tags.filter((tag) =>
+                    selectedTagIds.includes(tag.id),
+                  );
+
+                  const toggleTag = (tagId: string) => {
+                    const isSelected = selectedTagIds.includes(tagId);
+
+                    const nextTags = isSelected
+                      ? selectedTagIds.filter((id) => id !== tagId)
+                      : [...selectedTagIds, tagId];
+
+                    field.onChange(nextTags);
+                  };
+
+                  const removeTag = (tagId: string) => {
+                    field.onChange(selectedTagIds.filter((id) => id !== tagId));
+                  };
+
+                  return (
+                    <FormItem className="mt-6 border-t pt-5">
+                      {/* TAG HEADER */}
+                      <div className="mb-2.5 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <Tags className="size-3.5 text-muted-foreground" />
+
+                          <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            Tagi
+                          </label>
+                        </div>
+
+                        {selectedTagObjects.length > 0 && (
+                          <span className="text-[11px] tabular-nums text-muted-foreground">
+                            {selectedTagObjects.length}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* SELECTED TAGS */}
+                      {selectedTagObjects.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5">
+                          {selectedTagObjects.map((tag) => (
+                            <span
+                              key={tag.id}
+                              className="
+    inline-flex
+    items-center
+    gap-1.5
+    rounded-lg
+    border
+    bg-muted/40
+    px-2.5
+    py-1.5
+    text-xs
+    font-medium
+    text-foreground
+  "
+                            >
+                              {tag.name}
+
+                              <button
+                                type="button"
+                                onClick={() => removeTag(tag.id)}
+                                className="
+      -mr-1
+      rounded-md
+      p-0.5
+      text-muted-foreground
+      transition-colors
+      hover:bg-muted
+      hover:text-foreground
+      focus-visible:outline-none
+      focus-visible:ring-2
+      focus-visible:ring-ring/20
+    "
+                                aria-label={`Usuń tag ${tag.name}`}
+                              >
+                                <X className="size-3.5" />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <div
+                          className="
+    flex
+    h-[30px]
+    items-center
+    rounded-md
+    border
+    border-dashed
+    bg-muted/20
+    px-3
+    text-xs
+    text-muted-foreground
+  "
+                        >
+                          Nie dodano jeszcze żadnych tagów.
+                        </div>
+                      )}
+
+                      {/* ADD TAG */}
+                      <div className="mt-2.5">
+                        <Popover open={tagsOpen} onOpenChange={setTagsOpen}>
+                          <PopoverTrigger asChild>
+                            <button
+                              type="button"
+                              className="
+                                inline-flex
+                                h-8
+                                items-center
+                                gap-1.5
+                                rounded-md
+                                border
+                                border-dashed
+                                px-2.5
+                                text-xs
+                                font-medium
+                                text-muted-foreground
+                                transition-colors
+                                hover:border-border
+                                hover:bg-accent/40
+                                hover:text-foreground
+                                focus-visible:outline-none
+                                focus-visible:ring-2
+                                focus-visible:ring-ring/15
+                              "
+                            >
+                              <Tags className="size-3.5" />
+                              Dodaj tag
+                            </button>
+                          </PopoverTrigger>
+
+                          <PopoverContent
+                            align="start"
+                            sideOffset={6}
+                            className="
+                              w-[var(--radix-popover-trigger-width)]
+                              min-w-[280px]
+                              p-0
+                              sm:w-[340px]
+                            "
+                          >
+                            <Command>
+                              <CommandInput placeholder="Wyszukaj tag..." />
+
+                              <CommandList className="scrollbar-custom">
+                                <CommandEmpty>
+                                  Brak tagów spełniających kryteria
+                                  wyszukiwania.
+                                </CommandEmpty>
+
+                                <CommandGroup className="p-1.5">
+                                  {tags.map((tag) => {
+                                    const isSelected = selectedTagIds.includes(
+                                      tag.id,
+                                    );
+
+                                    return (
                                       <CommandItem
-                                        key={method.value}
-                                        value={method.label}
-                                        onSelect={() => {
-                                          setProductValue(method.value);
-                                          field.onChange(method);
-                                          onProductChange(method.value);
-                                          setOpen(false);
-                                        }}
-                                        className="group flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all hover:bg-accent/60"
+                                        key={tag.id}
+                                        value={tag.name}
+                                        onSelect={() => toggleTag(tag.id)}
+                                        className="
+                                          flex
+                                          cursor-pointer
+                                          items-center
+                                          gap-3
+                                          rounded-lg
+                                          px-3
+                                          py-2.5
+                                        "
                                       >
-                                        <div
-                                          className="flex items-center justify-center w-7 h-7 rounded-xl border shadow-sm"
-                                          style={{
-                                            borderColor: `${method.color}35`,
-                                            backgroundColor: `${method.color}35`,
-                                          }}
-                                        >
-                                          <Box
-                                            size={18}
-                                            style={{ color: method.color }}
-                                          />
-                                        </div>
+                                        <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                                          <Tags className="size-4" />
+                                        </span>
 
-                                        <span className="font-medium">
-                                          {method.label}
+                                        <span className="min-w-0 flex-1 truncate font-medium">
+                                          {tag.name}
                                         </span>
 
                                         <CheckIcon
                                           className={cn(
-                                            "ml-auto transition-opacity text-primary",
-                                            productValue === method.value
+                                            "size-4 text-primary transition-opacity",
+                                            isSelected
                                               ? "opacity-100"
                                               : "opacity-0",
                                           )}
                                         />
                                       </CommandItem>
-                                    ))}
-                                  </CommandGroup>
-                                </CommandList>
-                              </Command>
-                            </PopoverContent>
-                          </Popover>
-
-                          <FormMessage />
-                        </FormItem>
-                      );
-                    }}
-                  />
-                </div>
-
-                {/* ===================================================== */}
-                {/* Kategoria */}
-                {/* ===================================================== */}
-                <div className="space-y-4">
-                  <div className="border-b border-border pb-3">
-                    <div className="flex items-center gap-2">
-                      <FolderTree className="h-4 w-4 text-primary" />
-
-                      <h3 className="text-sm font-medium text-foreground">
-                        Kategoria
-                      </h3>
-                    </div>
-
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Lista kategorii zależy od wybranego produktu.
-                    </p>
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="category"
-                    render={({ field }) => (
-                      <FormItem>
-                        <Popover
-                          open={openCategories}
-                          onOpenChange={setOpenCategories}
-                        >
-                          <FormControl>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="outline"
-                                role="combobox"
-                                aria-expanded={openCategories}
-                                aria-label="category combobox"
-                                className="w-full justify-between bg-transparent"
-                              >
-                                {field.value.value ? (
-                                  categories.find(
-                                    (method) =>
-                                      method.label === field.value.label,
-                                  )?.label
-                                ) : (
-                                  <span className="text-muted-foreground">
-                                    Wybierz kategorię...
-                                  </span>
-                                )}
-
-                                <ChevronsUpDownIcon className="opacity-50" />
-                              </Button>
-                            </PopoverTrigger>
-                          </FormControl>
-
-                          <PopoverContent
-                            className="w-(--radix-popper-anchor-width) p-0"
-                            side="bottom"
-                            align="start"
-                            avoidCollisions={false}
-                          >
-                            <Command>
-                              <CommandInput placeholder="Wyszukaj kategorię..." />
-
-                              <CommandList className="scrollbar-custom">
-                                <CommandEmpty>
-                                  Brak kategorii spełniających kryteria
-                                  wyszukiwania
-                                </CommandEmpty>
-
-                                <CommandGroup>
-                                  {categories.map((option) => (
-                                    <CommandItem
-                                      key={option.value}
-                                      value={option.label}
-                                      onSelect={() => {
-                                        field.onChange(option);
-                                        setCategoryValue(option.value);
-                                        setOpenCategories(false);
-                                      }}
-                                      className={cn(
-                                        "group flex items-center gap-3 px-4 py-2 rounded-lg transition-all",
-                                        categoryValue === option.value
-                                          ? "bg-card shadow-sm"
-                                          : "hover:bg-accent/10",
-                                      )}
-                                    >
-                                      <FolderTree
-                                        size={14}
-                                        className="text-muted-foreground"
-                                      />
-
-                                      <span className="font-medium truncate">
-                                        {option.label}
-                                      </span>
-
-                                      <CheckIcon
-                                        className={cn(
-                                          "ml-auto w-4 h-4 transition-opacity",
-                                          categoryValue === option.value
-                                            ? "opacity-100 text-primary"
-                                            : "opacity-0",
-                                        )}
-                                      />
-                                    </CommandItem>
-                                  ))}
+                                    );
+                                  })}
                                 </CommandGroup>
                               </CommandList>
                             </Command>
                           </PopoverContent>
                         </Popover>
+                      </div>
 
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                      <FormDescription className="mt-2 text-xs">
+                        Wybierz co najmniej jeden tag opisujący artykuł.
+                      </FormDescription>
+
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+            </div>
+          </section>
+
+          {/* RESPONSE */}
+          <section className="overflow-hidden rounded-xl border bg-card">
+            <div className="border-b px-6 py-5">
+              <div className="flex items-start gap-3">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <FileText className="size-4" />
+                </div>
+
+                <div className="min-w-0">
+                  <h2 className="text-sm font-semibold">
+                    Odpowiedź dla użytkownika
+                  </h2>
+
+                  <p className="mt-0.5 text-xs leading-5 text-muted-foreground">
+                    Treść odpowiedzi, którą pracownik może przekazać
+                    użytkownikowi.
+                  </p>
                 </div>
               </div>
             </div>
-          </FormSection>
-        </FormCard>
 
-        {/* ================= TAGS ================= */}
-        <FormCard>
-          <FormSection title="Tagi">
-            <div className="px-6 py-5 space-y-4">
-              <Input placeholder="Dodaj tag..." />
+            <div className="p-6">
+              <VariantCard />
+            </div>
+          </section>
 
-              <div className="flex flex-wrap gap-2">
-                {tags.map((t) => (
-                  <Badge key={t} variant="secondary">
-                    {t}
-                  </Badge>
-                ))}
+          {/* INFO */}
+          <div className="flex items-start gap-3 rounded-xl border border-dashed bg-muted/20 px-4 py-3.5">
+            <Info className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+
+            <p className="text-xs leading-5 text-muted-foreground">
+              Po utworzeniu artykułu będzie można go edytować oraz dodawać
+              kolejne warianty odpowiedzi.
+            </p>
+          </div>
+        </main>
+
+        {/* ============================================================
+            SIDEBAR
+        ============================================================ */}
+        <aside className="min-w-0 space-y-6 xl:sticky xl:top-6">
+          {/* ARTICLE METADATA */}
+          <section className="overflow-hidden rounded-xl border bg-card">
+            <div className="border-b px-5 py-4">
+              <h2 className="text-sm font-semibold">Informacje o artykule</h2>
+
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Uzupełnij dane potrzebne do organizacji artykułu.
+              </p>
+            </div>
+
+            <div className="space-y-5 p-5">
+              {/* PRODUCT */}
+              <FormField
+                control={form.control}
+                name="product"
+                render={({ field }) => {
+                  const selectedProduct = products.find(
+                    (product) => product.value === field.value,
+                  );
+
+                  return (
+                    <FormItem>
+                      <label className="mb-2 block text-sm font-medium">
+                        Produkt
+                      </label>
+
+                      <Popover open={productOpen} onOpenChange={setProductOpen}>
+                        <FormControl>
+                          <PopoverTrigger asChild>
+                            <button
+                              type="button"
+                              role="combobox"
+                              aria-expanded={productOpen}
+                              className={cn(
+                                "flex h-11 w-full items-center gap-3 rounded-lg",
+                                "border border-border bg-background px-3",
+                                "text-sm transition-colors",
+                                "hover:bg-accent/40",
+                                "focus-visible:outline-none",
+                                "focus-visible:ring-2",
+                                "focus-visible:ring-ring/15",
+                              )}
+                            >
+                              {selectedProduct ? (
+                                <>
+                                  <span
+                                    className="flex size-7 shrink-0 items-center justify-center rounded-md border"
+                                    style={{
+                                      borderColor: selectedProduct.color
+                                        ? `${selectedProduct.color}35`
+                                        : undefined,
+                                      backgroundColor: selectedProduct.color
+                                        ? `${selectedProduct.color}12`
+                                        : undefined,
+                                    }}
+                                  >
+                                    <Box
+                                      className="size-4"
+                                      style={{
+                                        color: selectedProduct.color,
+                                      }}
+                                    />
+                                  </span>
+
+                                  <span className="min-w-0 flex-1 truncate text-left font-medium">
+                                    {selectedProduct.label}
+                                  </span>
+                                </>
+                              ) : (
+                                <span className="flex-1 text-left text-muted-foreground">
+                                  Wybierz produkt...
+                                </span>
+                              )}
+
+                              <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground" />
+                            </button>
+                          </PopoverTrigger>
+                        </FormControl>
+
+                        <PopoverContent
+                          align="start"
+                          className="w-[var(--radix-popover-trigger-width)] min-w-[280px] p-0"
+                        >
+                          <Command>
+                            <CommandInput placeholder="Wyszukaj produkt..." />
+
+                            <CommandList className="scrollbar-custom">
+                              <CommandEmpty>
+                                Brak produktu spełniającego kryteria
+                                wyszukiwania.
+                              </CommandEmpty>
+
+                              <CommandGroup className="p-1.5">
+                                {products.map((product) => {
+                                  const isSelected =
+                                    field.value === product.value;
+
+                                  return (
+                                    <CommandItem
+                                      key={product.value}
+                                      value={product.label}
+                                      onSelect={() => {
+                                        field.onChange(product.value);
+                                        onProductChange(product.value);
+                                        setProductOpen(false);
+                                      }}
+                                      className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5"
+                                    >
+                                      <span
+                                        className="flex size-7 shrink-0 items-center justify-center rounded-md border"
+                                        style={{
+                                          borderColor: product.color
+                                            ? `${product.color}35`
+                                            : undefined,
+                                          backgroundColor: product.color
+                                            ? `${product.color}12`
+                                            : undefined,
+                                        }}
+                                      >
+                                        <Box
+                                          className="size-4"
+                                          style={{
+                                            color: product.color,
+                                          }}
+                                        />
+                                      </span>
+
+                                      <span className="min-w-0 flex-1 truncate font-medium">
+                                        {product.label}
+                                      </span>
+
+                                      <CheckIcon
+                                        className={cn(
+                                          "size-4 text-primary transition-opacity",
+                                          isSelected
+                                            ? "opacity-100"
+                                            : "opacity-0",
+                                        )}
+                                      />
+                                    </CommandItem>
+                                  );
+                                })}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+
+                      <FormDescription className="text-xs">
+                        Produkt, którego dotyczy artykuł.
+                      </FormDescription>
+
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              {/* CATEGORY */}
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => {
+                  const selectedCategory = categories.find(
+                    (category) => category.value === field.value,
+                  );
+
+                  return (
+                    <FormItem>
+                      <label className="mb-2 block text-sm font-medium">
+                        Kategoria
+                      </label>
+
+                      <Popover
+                        open={categoryOpen}
+                        onOpenChange={setCategoryOpen}
+                      >
+                        <FormControl>
+                          <PopoverTrigger asChild>
+                            <button
+                              type="button"
+                              role="combobox"
+                              aria-expanded={categoryOpen}
+                              disabled={!categories.length}
+                              className={cn(
+                                "flex h-11 w-full items-center gap-3 rounded-lg",
+                                "border border-border bg-background px-3",
+                                "text-sm transition-colors",
+                                "hover:bg-accent/40",
+                                "focus-visible:outline-none",
+                                "focus-visible:ring-2",
+                                "focus-visible:ring-ring/15",
+                                "disabled:cursor-not-allowed disabled:opacity-50",
+                              )}
+                            >
+                              <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                                <FolderTree className="size-4" />
+                              </span>
+
+                              {selectedCategory ? (
+                                <span className="min-w-0 flex-1 truncate text-left font-medium">
+                                  {selectedCategory.label}
+                                </span>
+                              ) : (
+                                <span className="flex-1 text-left text-muted-foreground">
+                                  {categories.length
+                                    ? "Wybierz kategorię..."
+                                    : "Najpierw wybierz produkt"}
+                                </span>
+                              )}
+
+                              <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground" />
+                            </button>
+                          </PopoverTrigger>
+                        </FormControl>
+
+                        <PopoverContent
+                          align="start"
+                          className="w-[var(--radix-popover-trigger-width)] min-w-[280px] p-0"
+                        >
+                          <Command>
+                            <CommandInput placeholder="Wyszukaj kategorię..." />
+
+                            <CommandList className="scrollbar-custom">
+                              <CommandEmpty>
+                                Brak kategorii spełniających kryteria
+                                wyszukiwania.
+                              </CommandEmpty>
+
+                              <CommandGroup className="p-1.5">
+                                {categories.map((category) => {
+                                  const isSelected =
+                                    field.value === category.value;
+
+                                  return (
+                                    <CommandItem
+                                      key={category.value}
+                                      value={category.label}
+                                      onSelect={() => {
+                                        field.onChange(category.value);
+                                        setCategoryOpen(false);
+                                      }}
+                                      className="flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5"
+                                    >
+                                      <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                                        <FolderTree className="size-4" />
+                                      </span>
+
+                                      <span className="min-w-0 flex-1 truncate font-medium">
+                                        {category.label}
+                                      </span>
+
+                                      <CheckIcon
+                                        className={cn(
+                                          "size-4 text-primary transition-opacity",
+                                          isSelected
+                                            ? "opacity-100"
+                                            : "opacity-0",
+                                        )}
+                                      />
+                                    </CommandItem>
+                                  );
+                                })}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+
+                      <FormDescription className="text-xs">
+                        Kategoria jest zależna od wybranego produktu.
+                      </FormDescription>
+
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+            </div>
+          </section>
+
+          {/* INTERNAL NOTE */}
+          {/* INTERNAL NOTE */}
+          <section className="rounded-xl border bg-card">
+            <div className="border-b px-5 py-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <h2 className="text-sm font-semibold">
+                    Notatka dla pracownika
+                  </h2>
+
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    Informacje widoczne tylko wewnętrznie.
+                  </p>
+                </div>
+
+                <span className="shrink-0 text-[11px] text-muted-foreground">
+                  Opcjonalnie
+                </span>
               </div>
             </div>
-          </FormSection>
-        </FormCard>
-      </form>
-    </Form>
+
+            <div className="p-5">
+              <FormField
+                control={form.control}
+                name="internalNote"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder="Dodaj wewnętrzne informacje, wskazówki lub dodatkowy kontekst..."
+                        className="
+                min-h-[190px]
+                resize-y
+                rounded-lg
+                bg-background
+                px-3
+                py-2.5
+                text-sm
+                leading-5
+                shadow-none
+                placeholder:text-muted-foreground/50
+                focus-visible:ring-2
+                focus-visible:ring-ring/15
+              "
+                      />
+                    </FormControl>
+
+                    <FormDescription className="text-xs leading-5">
+                      Notatka nie jest częścią odpowiedzi przekazywanej
+                      użytkownikowi.
+                    </FormDescription>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </section>
+        </aside>
+      </div>
+    </div>
   );
 };

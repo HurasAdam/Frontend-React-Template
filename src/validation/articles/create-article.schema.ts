@@ -6,7 +6,7 @@ export const createArticleSchema = z.object({
 
   product: z.string().min(1),
   category: z.string().min(1),
-
+  tags: z.array(z.string()).min(1, "Wybierz co najmniej jeden tag"),
   responseTemplates: z
     .array(
       z.object({
