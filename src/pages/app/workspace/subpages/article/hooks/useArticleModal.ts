@@ -8,7 +8,7 @@ export type IArticleModalInfo = {
   folderId: string;
 };
 
-export const useArticleModal = () => {
+export const useWorkspaceArticleModal = () => {
   const [type, setType] = useState<ArticleModalType>(null);
 
   const [article, setArticle] = useState<IArticleModalInfo | null>(null);

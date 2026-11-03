@@ -7,15 +7,10 @@ export const createArticleSchema = z.object({
   product: z.string().min(1),
   category: z.string().min(1),
   tags: z.array(z.string()).min(1, "Wybierz co najmniej jeden tag"),
-  responseTemplates: z
-    .array(
-      z.object({
-        version: z.number(),
-        variantName: z.string().optional(),
-        variantContent: z.string().min(1),
-      }),
-    )
-    .min(1),
+  responseVariant: z.object({
+    variantName: z.string().min(2),
+    variantContent: z.string().min(2),
+  }),
 });
 
 export type CreateArticlePayload = z.infer<typeof createArticleSchema>;

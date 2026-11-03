@@ -61,13 +61,10 @@ export function NewArticlePage() {
       internalNote: "",
       product: "",
       category: "",
-      responseTemplates: [
-        {
-          version: 1,
-          variantName: "",
-          variantContent: "",
-        },
-      ],
+      responseVariant: {
+        variantName: "",
+        variantContent: "",
+      },
     },
     mode: "onChange",
   });

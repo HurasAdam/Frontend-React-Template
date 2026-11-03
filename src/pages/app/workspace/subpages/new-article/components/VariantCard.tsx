@@ -16,7 +16,7 @@ export const VariantCard = () => {
 
   const variantName = useWatch({
     control,
-    name: "responseTemplates.0.variantName",
+    name: "responseVariantvariantName",
   });
 
   return (
@@ -38,7 +38,7 @@ export const VariantCard = () => {
       <div className="space-y-5">
         <FormField
           control={control}
-          name="responseTemplates.0.variantName"
+          name="responseVariant.variantName"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-sm text-muted-foreground">
@@ -60,7 +60,7 @@ export const VariantCard = () => {
 
         <FormField
           control={control}
-          name="responseTemplates.0.variantContent"
+          name="responseVariant.variantContent"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-sm text-muted-foreground">

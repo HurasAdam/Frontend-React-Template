@@ -29,7 +29,8 @@ import {
 import PageHeader from "../../settings/components/PageHeader";
 import ArticleModalsSection from "../components/ArticleModalsSection";
 import ResponseVariantModalsSection from "../components/ResponseVariantModalsSection";
-import { useArticleModal } from "../hooks/useArticleModal";
+
+import { useWorkspaceArticleModal } from "../hooks/useArticleModal";
 import { useResponseVariantModal } from "../hooks/useResponseVariantModal";
 
 type ArticleLabel = "popular";
@@ -397,7 +398,7 @@ export function WorkspaceArticlePage({
   isError,
   refetch,
 }: WorkspaceArticlePageProps) {
-  const articleModal = useArticleModal();
+  const articleModal = useWorkspaceArticleModal();
   const responseVariantModal = useResponseVariantModal();
 
   if (isLoading) {

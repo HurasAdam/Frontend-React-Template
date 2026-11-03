@@ -17,6 +17,9 @@ import { ArticlesLayout } from "../../pages/app/articles/view/ArticlesLayout";
 import { DashboardLayout } from "../../pages/app/dashboard/view/DashboardLayout";
 
 import { WorkspaceLayout } from "../../layouts/WorkspaceLayout";
+import { ArticleHistoryLayout } from "../../pages/app/article/view/ArticleHistoryLayout";
+import { ArticleLayout } from "../../pages/app/article/view/ArticleLayout";
+import { EditArticleLayout } from "../../pages/app/article/view/EditArticleLayout";
 import { UsefulLinksLayout } from "../../pages/app/important-links/views/UsefulLinksLayout";
 import { NewArticleLayout } from "../../pages/app/newArticle/view/NewArticleLayout";
 import { NewWorkspaceLayout } from "../../pages/app/newWorkspace/view/NewWorkspaceLayout";
@@ -52,6 +55,16 @@ export const AppRoutes = () => {
           <Route element={<BaseLayout />}>
             <Route path="/dashboard" element={<DashboardLayout />} />
             <Route path="/articles" element={<ArticlesLayout />} />
+            <Route path="/articles/:articleId" element={<ArticleLayout />} />
+            <Route
+              path="/articles/:articleId/edit"
+              element={<EditArticleLayout />}
+            />
+
+            <Route
+              path="/articles/:articleId/history"
+              element={<ArticleHistoryLayout />}
+            />
             <Route path="/articles/new" element={<NewArticleLayout />} />
             <Route path="/workspaces/new" element={<NewWorkspaceLayout />} />
             <Route path="/important-links" element={<UsefulLinksLayout />} />

@@ -7,3 +7,11 @@ export const useFindArticlesQuery = () => {
     queryFn: () => articleServie.find(),
   });
 };
+
+export const useFindArticleQuery = (articleId?: string) => {
+  return useQuery({
+    queryKey: ["article", articleId],
+    queryFn: () => articleServie.findOne(articleId!),
+    enabled: !!articleId,
+  });
+};
