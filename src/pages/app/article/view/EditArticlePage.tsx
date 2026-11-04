@@ -236,18 +236,12 @@ export const EditArticlePage = () => {
 
           {/* Page title */}
           <div className="mb-10">
-            <div className="mb-2 flex items-center gap-2 text-muted-foreground">
-              <FileText className="size-5" />
-              <span className="text-xs">Ustawienia artykułu</span>
-            </div>
-
             <h1 className="text-2xl font-semibold tracking-tight">
-              Edycja artykułu
+              Ustawienia artykułu
             </h1>
 
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              Zarządzaj informacjami, klasyfikacją oraz wariantami odpowiedzi.
-              Każdą sekcję możesz edytować niezależnie.
+              Edytuj treść i zarządzaj ustawieniami artykułu.
             </p>
           </div>
 

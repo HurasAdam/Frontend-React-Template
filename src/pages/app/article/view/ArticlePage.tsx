@@ -12,7 +12,6 @@ import {
   Clock3,
   EyeOff,
   FileCog,
-  FileText,
   Globe,
   History,
   MessageSquareText,
@@ -723,23 +722,16 @@ export function ArticlePage() {
                   label="Produkt"
                   value={data?.product?.name ?? "Nie przypisano"}
                   icon={Package}
-                  secondaryLabel="Kategoria"
-                  secondaryValue={data?.category?.name ?? "Nie przypisano"}
-                  secondaryIcon={Tags}
                   onClick={(field) =>
                     console.info("Otwórz modal edycji:", field)
                   }
                 />
 
                 <EditableDetailRow
-                  field="internalNote"
-                  label="Notatka dla pracownika"
-                  value={
-                    data?.internalNote?.trim()
-                      ? "Zobacz notatkę"
-                      : "Brak notatki"
-                  }
-                  icon={FileText}
+                  field="productCategory"
+                  label="Kategoria"
+                  value={data?.category?.name ?? "Nie przypisano"}
+                  icon={Tags}
                   onClick={(field) =>
                     console.info("Otwórz modal edycji:", field)
                   }
