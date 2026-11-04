@@ -4,6 +4,7 @@ import { NavUser } from "@/components/sidebar/base-sidebar/nav-user";
 import { TeamSwitcher } from "@/components/sidebar/base-sidebar/team-switcher";
 import { NavOthers } from "@/components/ui/nav-others";
 import * as React from "react";
+import { Link as RouterLink } from "react-router-dom";
 
 import {
   Sidebar,
@@ -121,10 +122,13 @@ export function AppSidebar({ user, ...props }: IProps) {
               {data.actions.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild className="h-9">
-                    <a href={item.url} className="flex items-center gap-2">
+                    <RouterLink
+                      to={item.url}
+                      className="flex items-center gap-2"
+                    >
                       {item.icon}
                       <span>{item.title}</span>
-                    </a>
+                    </RouterLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
