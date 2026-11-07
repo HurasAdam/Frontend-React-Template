@@ -25,3 +25,11 @@ export const useLogoutMutation = () => {
     },
   });
 };
+
+export const useChangePasswordMutation = () => {
+  return useMutation({
+    mutationFn: (payload) => {
+      return authService.changePassword(payload);
+    },
+  });
+};

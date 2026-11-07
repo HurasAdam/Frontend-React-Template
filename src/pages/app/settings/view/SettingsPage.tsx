@@ -1,12 +1,19 @@
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
-import { SettingsIcon } from "lucide-react";
+import { LockKeyhole, SettingsIcon } from "lucide-react";
+
 import { ModeToggle } from "../../../../components/theme/ModeToggle";
 import { SettingsCard } from "../components/SettingsCard";
 import { SettingsRow } from "../components/SettingsRow";
 import { SettingsSection } from "../components/SettingsSection";
 
+import { Button } from "@/components/ui/button";
+import SettingsModalsSection from "../components/SettingsModalsSection";
+import { useSettingsModal } from "../hooks/useSettingsModal";
+
 export const SettingsPage = () => {
+  const settingsModal = useSettingsModal();
+
   const user = {
     name: "Jan Kowalski",
     email: "jan@example.com",
@@ -17,8 +24,8 @@ export const SettingsPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto w-full max-w-[900px] ">
-        <h1 className="text-2xl flex items-center gap-2 font-semibold mb-10">
+      <div className="mx-auto w-full max-w-[900px]">
+        <h1 className="mb-10 flex items-center gap-2 text-2xl font-semibold">
           <SettingsIcon
             size={24}
             className="text-muted-foreground"
@@ -27,11 +34,16 @@ export const SettingsPage = () => {
           <span>Ustawienia</span>
         </h1>
 
-        {/* USER */}
+        {/* ACCOUNT */}
         <SettingsSection title="Konto">
           <SettingsCard>
             <div className="flex items-center gap-4 px-6 py-6">
-              <img src={user.avatar} className="w-12 h-12 rounded-full" />
+              <img
+                src={user.avatar}
+                alt=""
+                className="h-12 w-12 rounded-full"
+              />
+
               <div>
                 <p className="text-sm font-medium">{user.name}</p>
                 <p className="text-xs text-muted-foreground">{user.email}</p>
@@ -59,6 +71,24 @@ export const SettingsPage = () => {
                 </span>
               }
             />
+
+            <SettingsDivider />
+
+            <SettingsRow
+              title="Hasło"
+              description="Zaktualizuj hasło do swojego konta"
+              right={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={settingsModal.openChangePassword}
+                  className="rounded-lg"
+                >
+                  <LockKeyhole className="mr-2 size-4" />
+                  Zmień hasło
+                </Button>
+              }
+            />
           </SettingsCard>
         </SettingsSection>
 
@@ -84,28 +114,28 @@ export const SettingsPage = () => {
           </SettingsCard>
         </SettingsSection>
       </div>
+
+      <SettingsModalsSection
+        isOpen={settingsModal.isOpen}
+        onClose={settingsModal.close}
+        type={settingsModal.type}
+      />
     </div>
   );
 };
 
+/* ================= CHANGE PASSWORD DIALOG ================= */
+
 /* ================= UI ================= */
 
-const SettingsDivider = () => <div className="h-px bg-border mx-6" />;
+const SettingsDivider = () => <div className="mx-6 h-px bg-border" />;
 
 const SettingToggle = () => (
-  <button className="w-10 h-6 rounded-full bg-primary relative">
-    <span className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition" />
+  <button className="relative h-6 w-10 rounded-full bg-primary">
+    <span className="absolute left-1 top-1 size-4 rounded-full bg-white transition" />
   </button>
 );
 
-const SettingsThemeSelect = () => (
-  <select className="text-xs px-3 py-1.5 rounded-md border bg-muted">
-    <option>Light</option>
-    <option>Dark</option>
-    <option>System</option>
-  </select>
-);
-
 const SettingsBadge = ({ label }: { label: string }) => (
-  <span className="text-xs px-2 py-1 rounded-md border bg-muted">{label}</span>
+  <span className="rounded-md border bg-muted px-2 py-1 text-xs">{label}</span>
 );
