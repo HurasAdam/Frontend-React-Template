@@ -1,10 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { articleServie } from "../../../services/articles/article.service";
+import type { FindArticlesQuery } from "../../../services/articles/types";
 
-export const useFindArticlesQuery = () => {
+export const useFindArticlesQuery = (params: FindArticlesQuery = {}) => {
   return useQuery({
-    queryKey: ["articles"],
-    queryFn: () => articleServie.find(),
+    queryKey: ["articles", params],
+    queryFn: () => articleServie.find(params),
+    placeholderData: keepPreviousData,
   });
 };
 

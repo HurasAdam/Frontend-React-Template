@@ -1,21 +1,37 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { FileText, Plus, Search, Star, X } from "lucide-react";
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import {
+  Check,
+  ChevronDown,
+  ChevronRight,
+  FileText,
+  FolderClosed,
+  Package,
+  Plus,
+  Search,
+  Star,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useFindArticlesQuery } from "../../../../hooks/articles/queries/use-articles.queries";
+import { useFindCategoriesByProductQuery } from "../../../../hooks/product-categories/queries/use-product-categories.queries";
+import { useFindProductsQuery } from "../../../../hooks/products/queries/use-products.queries";
 
 type ArticleReviewStatus =
   | "DRAFT"
@@ -26,15 +42,14 @@ type ArticleReviewStatus =
 
 type ArticlePublicationStatus = "UNPUBLISHED" | "PUBLISHED" | "ARCHIVED";
 
-type ImportantMarker = "star" | null;
-
 type Article = {
   id: string;
   title: string;
   reviewStatus: ArticleReviewStatus;
   requiresReverification: boolean;
   publicationStatus: ArticlePublicationStatus;
-  updatedAt: string;
+  createdAt: string;
+  updatedAt: string | null;
   importantMarker: "star" | "pin" | "warning" | null;
   product: {
     id: string;
@@ -49,472 +64,848 @@ type Article = {
     name: string;
   }[];
 };
-const statusConfig: Record<
-  ArticleStatus,
-  {
-    label: string;
-    className: string;
-  }
+
+type ArticlePagination = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+};
+
+type Product = {
+  id: string;
+  name: string;
+  createdBy: string;
+  createdAt: string;
+  labelColor: string;
+};
+
+const PAGE_SIZE = 50;
+
+const reviewStatusConfig: Record<
+  ArticleReviewStatus,
+  { label: string; className: string; dotClassName: string }
 > = {
   DRAFT: {
     label: "Wersja robocza",
-    className: "bg-muted text-muted-foreground border-border",
+    className: "border-border bg-muted/60 text-muted-foreground",
+    dotClassName: "bg-muted-foreground/60",
   },
   PENDING_REVIEW: {
-    label: "Wymaga weryfikacji",
-    className: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+    label: "Oczekuje na weryfikację",
+    className:
+      "border-blue-500/20 bg-blue-500/[0.07] text-blue-600 dark:text-blue-400",
+    dotClassName: "bg-blue-500",
   },
   APPROVED: {
     label: "Zweryfikowany",
-    className: "bg-success/10 text-success border-success/20",
+    className:
+      "border-emerald-500/20 bg-emerald-500/[0.07] text-emerald-600 dark:text-emerald-400",
+    dotClassName: "bg-emerald-500",
   },
   REQUIRES_REVERIFICATION: {
     label: "Wymaga weryfikacji",
-    className: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+    className:
+      "border-amber-500/20 bg-amber-500/[0.07] text-amber-600 dark:text-amber-400",
+    dotClassName: "bg-amber-500",
   },
   CHANGES_REQUESTED: {
-    label: "Wymaga weryfikacji",
-    className: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-  },
-  ARCHIVED: {
-    label: "Zarchiwizowany",
-    className: "bg-muted text-muted-foreground border-border",
+    label: "Wymaga poprawek",
+    className:
+      "border-orange-500/20 bg-orange-500/[0.07] text-orange-600 dark:text-orange-400",
+    dotClassName: "bg-orange-500",
   },
 };
 
+const publicationStatusConfig: Record<
+  ArticlePublicationStatus,
+  { label: string; className: string; dotClassName: string }
+> = {
+  UNPUBLISHED: {
+    label: "Nieopublikowany",
+    className: "border-border bg-muted/60 text-muted-foreground",
+    dotClassName: "bg-muted-foreground/60",
+  },
+  PUBLISHED: {
+    label: "Opublikowany",
+    className:
+      "border-emerald-500/20 bg-emerald-500/[0.07] text-emerald-600 dark:text-emerald-400",
+    dotClassName: "bg-emerald-500",
+  },
+  ARCHIVED: {
+    label: "Zarchiwizowany",
+    className: "border-border bg-muted/60 text-muted-foreground",
+    dotClassName: "bg-muted-foreground/60",
+  },
+};
+
+const formatDate = (date: string) =>
+  new Intl.DateTimeFormat("pl-PL", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(date));
+
+const pluralizeArticles = (count: number) => {
+  if (count === 1) return "artykuł";
+  if (count >= 2 && count <= 4) return "artykuły";
+  return "artykułów";
+};
+
 export function ArticlesPage() {
-  const { data: articles = [] } = useFindArticlesQuery();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [productFilter, setProductFilter] = useState("all");
-  const [categoryFilter, setCategoryFilter] = useState("all");
+  // URL jest źródłem prawdy dla filtrów i paginacji.
+  const searchParam = searchParams.get("search") ?? "";
+  const productFilter = searchParams.get("product") ?? "all";
+  const categoryFilter = searchParams.get("category") ?? "all";
 
-  const products = useMemo(() => {
-    const productsMap = new Map<string, { id: string; name: string }>();
+  const parsedPage = Number(searchParams.get("page"));
+  const currentPage =
+    Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
 
-    articles.forEach((article: Article) => {
-      if (article.product) {
-        productsMap.set(article.product.id, article.product);
-      }
+  const [search, setSearch] = useState(searchParam);
+  const [debouncedSearch, setDebouncedSearch] = useState(searchParam);
+
+  const [openProduct, setOpenProduct] = useState(false);
+  const [openCategory, setOpenCategory] = useState(false);
+
+  // Debounce wyszukiwania.
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 350);
+
+    return () => clearTimeout(timeout);
+  }, [search]);
+
+  // Synchronizacja z URL, np. podczas nawigacji wstecz/do przodu.
+  useEffect(() => {
+    setSearch(searchParam);
+    setDebouncedSearch(searchParam);
+  }, [searchParam]);
+
+  // Aktualizacja URL po zakończeniu debounce.
+  // Zmiana wyszukiwania resetuje paginację.
+  useEffect(() => {
+    if (debouncedSearch === searchParam) return;
+
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+
+        if (debouncedSearch) {
+          next.set("search", debouncedSearch);
+        } else {
+          next.delete("search");
+        }
+
+        next.delete("page");
+
+        return next;
+      },
+      { replace: true },
+    );
+  }, [debouncedSearch, searchParam, setSearchParams]);
+
+  // Pobieranie artykułów na podstawie filtrów i paginacji.
+  const { data: articlesResponse, isLoading: isArticlesLoading } =
+    useFindArticlesQuery({
+      search: debouncedSearch || undefined,
+      product: productFilter !== "all" ? productFilter : undefined,
+      category: categoryFilter !== "all" ? categoryFilter : undefined,
+      page: currentPage,
+      limit: PAGE_SIZE,
     });
 
-    return [...productsMap.values()];
-  }, [articles]);
+  const articles = articlesResponse?.data ?? [];
+  const pagination = articlesResponse?.pagination;
 
-  const categories = useMemo(() => {
-    const categoriesMap = new Map<string, { id: string; name: string }>();
+  const { data: products = [] } = useFindProductsQuery({});
 
-    articles.forEach((article: Article) => {
-      if (article.category) {
-        categoriesMap.set(article.category.id, article.category);
-      }
-    });
+  const { data: categories = [], isLoading: isCategoriesLoading } =
+    useFindCategoriesByProductQuery(
+      productFilter === "all" ? null : productFilter,
+    );
 
-    return [...categoriesMap.values()];
-  }, [articles]);
+  const selectedProduct = products.find(
+    (product: Product) => product.id === productFilter,
+  );
 
-  const filteredArticles = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
-
-    return [...articles]
-      .filter((article: Article) => {
-        if (!normalizedSearch) {
-          return true;
-        }
-
-        const searchableText = [
-          article.title,
-          article.product?.name,
-          article.category?.name,
-          ...article.tags.map((tag) => tag.name),
-        ]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
-
-        return searchableText.includes(normalizedSearch);
-      })
-      .filter((article: Article) => {
-        if (statusFilter === "all") {
-          return true;
-        }
-
-        return article.status === statusFilter;
-      })
-      .filter((article: Article) => {
-        if (productFilter === "all") {
-          return true;
-        }
-
-        return article.product?.id === productFilter;
-      })
-      .filter((article: Article) => {
-        if (categoryFilter === "all") {
-          return true;
-        }
-
-        return article.category?.id === categoryFilter;
-      })
-      .sort(
-        (a, b) =>
-          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-      );
-  }, [articles, search, statusFilter, productFilter, categoryFilter]);
+  const selectedCategory = categories.find(
+    (category) => category.id === categoryFilter,
+  );
 
   const hasActiveFilters =
-    search.trim() !== "" ||
-    statusFilter !== "all" ||
-    productFilter !== "all" ||
-    categoryFilter !== "all";
+    search.trim() !== "" || productFilter !== "all" || categoryFilter !== "all";
+
+  // Zmiana produktu resetuje kategorię i paginację.
+  const handleProductChange = (value: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+
+      if (value === "all") {
+        next.delete("product");
+      } else {
+        next.set("product", value);
+      }
+
+      next.delete("category");
+      next.delete("page");
+
+      return next;
+    });
+
+    setOpenCategory(false);
+  };
+
+  // Zmiana kategorii resetuje paginację.
+  const handleCategoryChange = (value: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+
+      if (value === "all") {
+        next.delete("category");
+      } else {
+        next.set("category", value);
+      }
+
+      next.delete("page");
+
+      return next;
+    });
+
+    setOpenCategory(false);
+  };
+
+  const clearSearch = () => {
+    setSearch("");
+    setDebouncedSearch("");
+
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("search");
+        next.delete("page");
+        return next;
+      },
+      { replace: true },
+    );
+  };
 
   const clearFilters = () => {
     setSearch("");
-    setStatusFilter("all");
-    setProductFilter("all");
-    setCategoryFilter("all");
+    setDebouncedSearch("");
+    setSearchParams({});
+    setOpenProduct(false);
+    setOpenCategory(false);
+  };
+
+  // Zmiana strony.
+  const handlePageChange = (page: number) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+
+      if (page <= 1) {
+        next.delete("page");
+      } else {
+        next.set("page", String(page));
+      }
+
+      return next;
+    });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight">
+    <div className="space-y-4">
+      {/* Page header */}
+      <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+        <div className="min-w-0 space-y-1.5">
+          <h1 className="text-[22px] font-semibold tracking-[-0.035em] sm:text-2xl">
             Baza artykułów
           </h1>
 
-          <p className="mt-1 text-sm text-muted-foreground">
-            Wyszukaj gotowy szabkon odpowiedzi.
+          <p className="text-[13px] leading-relaxed text-muted-foreground">
+            Znajdź sprawdzone rozwiązania i gotowe odpowiedzi na zgłoszenia.
           </p>
         </div>
 
-        <Button className="shrink-0">
+        <Button
+          onClick={() => navigate("/articles/new")}
+          className="h-10 shrink-0 gap-2 rounded-lg px-4 text-[13px] shadow-sm"
+        >
           <Plus className="size-4" />
           Dodaj artykuł
         </Button>
-      </div>
+      </section>
 
-      {/* Filters */}
-      <div className="space-y-3">
-        <div className="flex flex-col gap-2 lg:flex-row">
+      {/* Results summary + top pagination */}
+      {!isArticlesLoading && pagination && pagination.total > 0 && (
+        <section className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-[12px] text-muted-foreground">
+            Wyświetlono{" "}
+            <span className="font-semibold tabular-nums text-foreground">
+              {(pagination.page - 1) * pagination.limit + 1}–
+              {Math.min(pagination.page * pagination.limit, pagination.total)}
+            </span>{" "}
+            z{" "}
+            <span className="font-semibold tabular-nums text-foreground">
+              {pagination.total}
+            </span>{" "}
+            {pluralizeArticles(pagination.total)}
+          </p>
+
+          <div className="flex items-center justify-between gap-3 sm:justify-end">
+            <span className="whitespace-nowrap text-[11px] tabular-nums text-muted-foreground">
+              Strona{" "}
+              <span className="font-medium text-foreground">
+                {pagination.page}
+              </span>{" "}
+              z {pagination.totalPages}
+            </span>
+
+            <div className="flex items-center gap-1.5">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={!pagination.hasPreviousPage}
+                onClick={() => handlePageChange(pagination.page - 1)}
+                className="h-8 rounded-lg px-3 text-[11px]"
+              >
+                <ChevronRight className="mr-1 size-3.5 rotate-180" />
+                Poprzednia
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={!pagination.hasNextPage}
+                onClick={() => handlePageChange(pagination.page + 1)}
+                className="h-8 rounded-lg px-3 text-[11px]"
+              >
+                Następna
+                <ChevronRight className="ml-1 size-3.5" />
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Filter bar */}
+      <section className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3">
+          {/* Search */}
           <div className="relative min-w-0 flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
             <Input
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Szukaj artykułów..."
-              className="h-9 pl-9"
+              placeholder="Szukaj artykułów, produktów, kategorii..."
+              className="h-10 border-border/60 bg-background pl-9 pr-9 text-[13px] shadow-none placeholder:text-muted-foreground/55 focus-visible:border-primary/40 focus-visible:ring-2 focus-visible:ring-primary/10"
             />
+
+            {search && (
+              <button
+                type="button"
+                onClick={clearSearch}
+                aria-label="Wyczyść wyszukiwanie"
+                className="absolute right-2 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                <X className="size-3.5" />
+              </button>
+            )}
           </div>
 
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="h-9 w-full lg:w-[180px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
+          {/* Product */}
+          <Popover open={openProduct} onOpenChange={setOpenProduct}>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                role="combobox"
+                aria-expanded={openProduct}
+                className={cn(
+                  "h-10 w-full justify-between gap-2 rounded-lg border-border/60 bg-background px-3 text-[12px] font-medium shadow-none transition-colors hover:bg-muted/40 sm:w-[190px]",
+                  productFilter !== "all" &&
+                    "border-primary/30 bg-primary/[0.035] text-foreground",
+                )}
+              >
+                <span className="flex min-w-0 items-center gap-2">
+                  {selectedProduct ? (
+                    <span
+                      className="size-2 shrink-0 rounded-full"
+                      style={{
+                        backgroundColor: selectedProduct.labelColor,
+                      }}
+                    />
+                  ) : (
+                    <Package className="size-3.5 shrink-0 text-muted-foreground" />
+                  )}
 
-            <SelectContent>
-              <SelectItem value="all">Wszystkie statusy</SelectItem>
-              <SelectItem value="DRAFT">Wersja robocza</SelectItem>
-              <SelectItem value="PENDING_REVIEW">Do weryfikacji</SelectItem>
-              <SelectItem value="APPROVED">Zweryfikowany</SelectItem>
-              <SelectItem value="REJECTED">Odrzucony</SelectItem>
-              <SelectItem value="ARCHIVED">Zarchiwizowany</SelectItem>
-            </SelectContent>
-          </Select>
+                  <span className="truncate">
+                    {selectedProduct?.name ?? "Wszystkie produkty"}
+                  </span>
+                </span>
 
-          <Select value={productFilter} onValueChange={setProductFilter}>
-            <SelectTrigger className="h-9 w-full lg:w-[170px]">
-              <SelectValue placeholder="Produkt" />
-            </SelectTrigger>
+                <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
+              </Button>
+            </PopoverTrigger>
 
-            <SelectContent>
-              <SelectItem value="all">Wszystkie produkty</SelectItem>
-
-              {products.map((product) => (
-                <SelectItem key={product.id} value={product.id}>
-                  {product.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="h-9 w-full lg:w-[190px]">
-              <SelectValue placeholder="Kategoria" />
-            </SelectTrigger>
-
-            <SelectContent>
-              <SelectItem value="all">Wszystkie kategorie</SelectItem>
-
-              {categories.map((category) => (
-                <SelectItem key={category.id} value={category.id}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {hasActiveFilters && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="size-9 shrink-0"
-              onClick={clearFilters}
-              aria-label="Wyczyść filtry"
+            <PopoverContent
+              align="end"
+              className="w-[var(--radix-popover-trigger-width)] min-w-[230px] rounded-xl p-0"
             >
-              <X className="size-4" />
-            </Button>
-          )}
-        </div>
+              <Command>
+                <CommandInput placeholder="Wyszukaj produkt..." />
+                <CommandList className="max-h-[280px]">
+                  <CommandEmpty>Nie znaleziono produktu.</CommandEmpty>
 
-        <div className="flex items-center justify-between px-1">
-          <span className="text-xs text-muted-foreground">
-            {filteredArticles.length}{" "}
-            {filteredArticles.length === 1
-              ? "artykuł"
-              : filteredArticles.length >= 2 && filteredArticles.length <= 4
-                ? "artykuły"
-                : "artykułów"}
-          </span>
-        </div>
-      </div>
-
-      {/* List */}
-      <div className="space-y-2">
-        {/* List header */}
-        <div
-          className="
-            hidden
-            items-center
-            gap-4
-            px-4
-            text-[10px]
-            font-medium
-            uppercase
-            tracking-wider
-            text-muted-foreground
-            sm:flex
-          "
-        >
-          <div className="w-9 shrink-0" />
-
-          <div className="min-w-0 flex-1">Tytuł / Produkt / Kategoria</div>
-
-          <div className="w-[220px] shrink-0">Tagi</div>
-
-          <div className="w-[120px] shrink-0 text-right">Status</div>
-        </div>
-
-        {filteredArticles.length === 0 ? (
-          <Card className="border-border/70 shadow-none">
-            <CardContent className="flex flex-col items-center justify-center py-14 text-center">
-              <div className="mb-3 flex size-10 items-center justify-center rounded-md bg-muted">
-                <FileText className="size-5 text-muted-foreground" />
-              </div>
-
-              <h3 className="text-sm font-medium">Nie znaleziono artykułów</h3>
-
-              <p className="mt-1 max-w-sm text-xs text-muted-foreground">
-                Spróbuj zmienić kryteria wyszukiwania lub wyczyścić aktywne
-                filtry.
-              </p>
-
-              {hasActiveFilters && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="mt-4"
-                  onClick={clearFilters}
-                >
-                  Wyczyść filtry
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        ) : (
-          filteredArticles.map((article: Article) => {
-            const isImportant = article.importantMarker === "star";
-
-            const visibleTags: string[] = [];
-            let hiddenCount = 0;
-            let currentLength = 0;
-
-            for (let i = 0; i < article.tags.length; i++) {
-              const tag = `#${article.tags[i].name}`;
-
-              const nextLength =
-                currentLength === 0
-                  ? tag.length
-                  : currentLength + tag.length + 1;
-
-              if (nextLength <= 48) {
-                visibleTags.push(tag);
-                currentLength = nextLength;
-              } else {
-                hiddenCount = article.tags.length - i;
-                break;
-              }
-            }
-
-            const status = article.requiresReverification
-              ? {
-                  label: "Wymaga weryfikacji",
-                  className:
-                    "bg-amber-500/10 text-amber-600 border-amber-500/20",
-                }
-              : statusConfig[article.reviewStatus];
-
-            return (
-              <Link to={`/articles/${article.id}`} className="block">
-                <Card
-                  key={article.id}
-                  className="
-                  group
-                  cursor-pointer
-                  border-border/70
-                  shadow-none
-                  transition-colors
-                  hover:border-primary/30
-                  hover:bg-accent/20
-                "
-                >
-                  <CardContent className="px-4 py-3.5">
-                    <div className="flex items-start gap-4">
-                      {/* Article icon */}
-                      <div
+                  <CommandGroup>
+                    <CommandItem
+                      value="Wszystkie produkty"
+                      onSelect={() => handleProductChange("all")}
+                    >
+                      <Package className="size-3.5 text-muted-foreground" />
+                      Wszystkie produkty
+                      <Check
                         className={cn(
-                          `
-                          mt-0.5
-                          flex
-                          size-9
-                          shrink-0
-                          items-center
-                          justify-center
-                          rounded-md
-                          transition-colors
-                        `,
-                          isImportant
-                            ? "bg-amber-500/5"
-                            : "bg-muted group-hover:bg-primary/10",
+                          "ml-auto size-4 text-primary",
+                          productFilter === "all" ? "opacity-100" : "opacity-0",
                         )}
-                      >
-                        {isImportant ? (
-                          <Star className="size-4 fill-amber-500/80 text-amber-500/80" />
-                        ) : (
-                          <FileText
-                            className="
-                            size-4
-                            text-muted-foreground
-                            transition-colors
-                            group-hover:text-primary
-                          "
-                          />
-                        )}
-                      </div>
+                      />
+                    </CommandItem>
 
-                      {/* Article */}
-                      <div className="min-w-0 flex-1">
-                        <div className="flex min-w-0 items-center">
-                          <h3
-                            className="
-                            min-w-0
-                            truncate
-                            text-sm
-                            font-medium
-                            text-foreground
-                            transition-colors
-                            group-hover:text-primary
-                          "
-                          >
-                            {article.title}
-                          </h3>
+                    {products.map((product: Product) => (
+                      <CommandItem
+                        key={product.id}
+                        value={product.name}
+                        onSelect={() => handleProductChange(product.id)}
+                      >
+                        <span
+                          className="size-2 shrink-0 rounded-full"
+                          style={{
+                            backgroundColor: product.labelColor,
+                          }}
+                        />
+                        <span className="truncate">{product.name}</span>
+
+                        <Check
+                          className={cn(
+                            "ml-auto size-4 text-primary",
+                            productFilter === product.id
+                              ? "opacity-100"
+                              : "opacity-0",
+                          )}
+                        />
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+
+          {/* Category */}
+          <Popover open={openCategory} onOpenChange={setOpenCategory}>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                role="combobox"
+                aria-expanded={openCategory}
+                disabled={productFilter === "all" || isCategoriesLoading}
+                className={cn(
+                  "h-10 w-full justify-between gap-2 rounded-lg border-border/60 bg-background px-3 text-[12px] font-medium shadow-none transition-colors hover:bg-muted/40 sm:w-[190px]",
+                  categoryFilter !== "all" &&
+                    "border-primary/30 bg-primary/[0.035] text-foreground",
+                )}
+              >
+                <span className="flex min-w-0 items-center gap-2">
+                  <FolderClosed className="size-3.5 shrink-0 text-muted-foreground" />
+
+                  <span className="truncate">
+                    {productFilter === "all"
+                      ? "Wybierz produkt"
+                      : isCategoriesLoading
+                        ? "Ładowanie..."
+                        : (selectedCategory?.name ?? "Wszystkie kategorie")}
+                  </span>
+                </span>
+
+                <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" />
+              </Button>
+            </PopoverTrigger>
+
+            <PopoverContent
+              align="end"
+              className="w-[var(--radix-popover-trigger-width)] min-w-[230px] rounded-xl p-0"
+            >
+              <Command>
+                <CommandInput placeholder="Wyszukaj kategorię..." />
+                <CommandList className="max-h-[280px]">
+                  <CommandEmpty>Nie znaleziono kategorii.</CommandEmpty>
+
+                  <CommandGroup>
+                    <CommandItem
+                      value="Wszystkie kategorie"
+                      onSelect={() => handleCategoryChange("all")}
+                    >
+                      <FolderClosed className="size-3.5 text-muted-foreground" />
+                      Wszystkie kategorie
+                      <Check
+                        className={cn(
+                          "ml-auto size-4 text-primary",
+                          categoryFilter === "all"
+                            ? "opacity-100"
+                            : "opacity-0",
+                        )}
+                      />
+                    </CommandItem>
+
+                    {categories.map((category) => (
+                      <CommandItem
+                        key={category.id}
+                        value={category.name}
+                        onSelect={() => handleCategoryChange(category.id)}
+                      >
+                        <span className="truncate">{category.name}</span>
+
+                        <Check
+                          className={cn(
+                            "ml-auto size-4 text-primary",
+                            categoryFilter === category.id
+                              ? "opacity-100"
+                              : "opacity-0",
+                          )}
+                        />
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        {/* Active filters */}
+        {hasActiveFilters && (
+          <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border/60 pt-3">
+            <span className="mr-1 text-[11px] font-medium text-muted-foreground">
+              Aktywne filtry:
+            </span>
+
+            {search.trim() && (
+              <button
+                type="button"
+                onClick={clearSearch}
+                className="group inline-flex h-7 items-center gap-1.5 rounded-md border border-border/60 bg-background px-2.5 text-[11px] text-foreground transition-colors hover:bg-muted"
+              >
+                <Search className="size-3 text-muted-foreground" />
+                <span className="max-w-[150px] truncate">{search.trim()}</span>
+                <X className="size-3 text-muted-foreground group-hover:text-foreground" />
+              </button>
+            )}
+
+            {productFilter !== "all" && (
+              <button
+                type="button"
+                onClick={() => handleProductChange("all")}
+                className="group inline-flex h-7 items-center gap-1.5 rounded-md border border-border/60 bg-background px-2.5 text-[11px] text-foreground transition-colors hover:bg-muted"
+              >
+                {selectedProduct && (
+                  <span
+                    className="size-2 shrink-0 rounded-full"
+                    style={{ backgroundColor: selectedProduct.labelColor }}
+                  />
+                )}
+
+                <span className="max-w-[150px] truncate">
+                  {selectedProduct?.name ?? "Produkt"}
+                </span>
+
+                <X className="size-3 text-muted-foreground group-hover:text-foreground" />
+              </button>
+            )}
+
+            {categoryFilter !== "all" && (
+              <button
+                type="button"
+                onClick={() => handleCategoryChange("all")}
+                className="group inline-flex h-7 items-center gap-1.5 rounded-md border border-border/60 bg-background px-2.5 text-[11px] text-foreground transition-colors hover:bg-muted"
+              >
+                <FolderClosed className="size-3 text-muted-foreground" />
+
+                <span className="max-w-[150px] truncate">
+                  {selectedCategory?.name ?? "Kategoria"}
+                </span>
+
+                <X className="size-3 text-muted-foreground group-hover:text-foreground" />
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="ml-1 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Wyczyść
+            </button>
+          </div>
+        )}
+      </section>
+
+      {/* Article list */}
+      <section>
+        {isArticlesLoading ? (
+          <div className="flex min-h-[300px] items-center justify-center">
+            <div className="size-6 animate-spin rounded-full border-2 border-muted border-t-primary" />
+          </div>
+        ) : articles.length === 0 ? (
+          <div className="flex min-h-[300px] flex-col items-center justify-center rounded-2xl border border-dashed border-border/80 bg-muted/[0.12] px-6 py-12 text-center">
+            <div className="mb-4 flex size-12 items-center justify-center rounded-xl border border-border/70 bg-card">
+              <Search className="size-5 text-muted-foreground" />
+            </div>
+
+            <h3 className="text-sm font-semibold">Nie znaleziono artykułów</h3>
+
+            <p className="mt-1.5 max-w-xs text-xs leading-5 text-muted-foreground">
+              Zmień kryteria wyszukiwania lub usuń filtry, aby zobaczyć dostępne
+              artykuły.
+            </p>
+
+            {hasActiveFilters && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={clearFilters}
+                className="mt-5 h-9 rounded-lg"
+              >
+                Wyczyść filtry
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className="overflow-hidden rounded-xl border border-border/70 bg-card">
+            {/* Table header */}
+            <div className="hidden grid-cols-[minmax(0,1fr)_190px_190px] items-center gap-4 border-b border-border/70 bg-muted/30 px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-muted-foreground lg:grid">
+              <span>Artykuł</span>
+              <span>Tagi</span>
+              <span className="text-right">Status</span>
+            </div>
+
+            <div className="divide-y divide-border/70">
+              {articles.map((article: Article) => {
+                const isImportant = article.importantMarker === "star";
+
+                const status = article.requiresReverification
+                  ? {
+                      label: "Wymaga weryfikacji",
+                      className:
+                        "border-amber-500/20 bg-amber-500/[0.07] text-amber-600 dark:text-amber-400",
+                      dotClassName: "bg-amber-500",
+                    }
+                  : article.publicationStatus === "ARCHIVED"
+                    ? publicationStatusConfig.ARCHIVED
+                    : reviewStatusConfig[article.reviewStatus];
+
+                const visibleTags = article.tags.slice(0, 3);
+                const hiddenTagsCount = Math.max(
+                  0,
+                  article.tags.length - visibleTags.length,
+                );
+
+                const articleDate = article.updatedAt ?? article.createdAt;
+
+                return (
+                  <Link
+                    key={article.id}
+                    to={`/articles/${article.id}`}
+                    className="group block outline-none transition-colors hover:bg-muted/35 focus-visible:bg-muted/40"
+                  >
+                    <div className="grid grid-cols-1 items-center gap-3 px-4 py-4 sm:px-5 lg:grid-cols-[minmax(0,1fr)_190px_190px] lg:gap-4">
+                      {/* Article information */}
+                      <div className="flex min-w-0 items-start gap-3.5">
+                        <div
+                          className={cn(
+                            "mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg border transition-colors",
+                            isImportant
+                              ? "border-amber-500/15 bg-amber-500/[0.07]"
+                              : "border-border/70 bg-muted/50 group-hover:border-primary/20 group-hover:bg-primary/[0.05]",
+                          )}
+                        >
+                          {isImportant ? (
+                            <Star className="size-4 fill-amber-500 text-amber-500" />
+                          ) : (
+                            <FileText className="size-4 text-muted-foreground transition-colors group-hover:text-primary" />
+                          )}
                         </div>
 
-                        <div className="mt-1 flex min-w-0 items-center gap-2">
-                          <span className="shrink-0 text-[11px] text-muted-foreground">
-                            {article.product?.name ?? "Nieznany produkt"}
-                          </span>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="truncate text-[13px] font-semibold tracking-[-0.01em] text-foreground transition-colors group-hover:text-primary">
+                            {article.title}
+                          </h3>
 
-                          <span className="shrink-0 text-[10px] text-border">
-                            /
-                          </span>
+                          <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-muted-foreground">
+                            <span className="truncate">
+                              {article.product?.name ?? "Nieznany produkt"}
+                            </span>
 
-                          <span className="shrink-0 text-[11px] text-muted-foreground">
-                            {article.category?.name ?? "Nieznana kategoria"}
-                          </span>
+                            <span className="text-border">/</span>
+
+                            <span className="truncate">
+                              {article.category?.name ?? "Nieznana kategoria"}
+                            </span>
+
+                            <span className="hidden text-border sm:inline">
+                              ·
+                            </span>
+
+                            <span className="hidden shrink-0 sm:inline">
+                              {formatDate(articleDate)}
+                            </span>
+                          </div>
+
+                          {/* Mobile status */}
+                          <div className="mt-3 flex flex-wrap items-center gap-2 lg:hidden">
+                            <Badge
+                              variant="outline"
+                              className={cn(
+                                "h-[23px] gap-1.5 rounded-md px-2 text-[10px] font-medium",
+                                status.className,
+                              )}
+                            >
+                              <span
+                                className={cn(
+                                  "size-1.5 rounded-full",
+                                  status.dotClassName,
+                                )}
+                              />
+                              {status.label}
+                            </Badge>
+
+                            <span className="text-[10px] text-muted-foreground sm:hidden">
+                              {formatDate(articleDate)}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
                       {/* Tags */}
-                      <div className="hidden w-[220px] shrink-0 sm:block">
-                        <div
-                          className="
-                          flex
-                          h-10
-                          flex-wrap
-                          content-start
-                          items-start
-                          gap-x-2
-                          gap-y-0.5
-                          overflow-hidden
-                        "
-                        >
-                          {visibleTags.map((tag, index) => (
-                            <span
-                              key={`${article.id}-tag-${index}`}
-                              className="
-                              shrink-0
-                              whitespace-nowrap
-                              text-[11px]
-                              leading-5
-                              text-muted-foreground
-                            "
-                            >
-                              {tag}
-                            </span>
-                          ))}
+                      <div className="hidden min-w-0 items-center gap-1.5 overflow-hidden lg:flex">
+                        {visibleTags.length > 0 ? (
+                          <>
+                            {visibleTags.map((tag) => (
+                              <span
+                                key={tag.id}
+                                className="max-w-[100px] truncate rounded-md bg-muted/70 px-2 py-1 text-[10px] text-muted-foreground"
+                              >
+                                {tag.name}
+                              </span>
+                            ))}
 
-                          {hiddenCount > 0 && (
-                            <span
-                              className="
-                              shrink-0
-                              whitespace-nowrap
-                              text-[11px]
-                              font-medium
-                              leading-5
-                              text-muted-foreground
-                            "
-                            >
-                              +{hiddenCount}
-                            </span>
-                          )}
-                        </div>
+                            {hiddenTagsCount > 0 && (
+                              <span className="shrink-0 text-[10px] font-medium text-muted-foreground">
+                                +{hiddenTagsCount}
+                              </span>
+                            )}
+                          </>
+                        ) : (
+                          <span className="text-[11px] text-muted-foreground/50">
+                            Brak tagów
+                          </span>
+                        )}
                       </div>
 
                       {/* Status */}
-                      <div className="w-[120px] shrink-0 text-right">
+                      <div className="hidden items-center justify-end gap-3 lg:flex">
                         <Badge
                           variant="outline"
                           className={cn(
-                            "whitespace-nowrap text-[10px] font-medium",
+                            "h-[23px] gap-1.5 rounded-md px-2 text-[10px] font-medium",
                             status.className,
                           )}
                         >
+                          <span
+                            className={cn(
+                              "size-1.5 rounded-full",
+                              status.dotClassName,
+                            )}
+                          />
                           {status.label}
                         </Badge>
+
+                        <ChevronRight className="size-3.5 shrink-0 text-muted-foreground/0 transition-all group-hover:translate-x-0.5 group-hover:text-muted-foreground" />
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            );
-          })
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
         )}
-      </div>
+      </section>
+
+      {/* Bottom pagination */}
+      {!isArticlesLoading && pagination && pagination.total > 0 && (
+        <section className="flex flex-col gap-3 border-t border-border/60 pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-[11px] text-muted-foreground">
+            Wyświetlono{" "}
+            <span className="font-medium text-foreground tabular-nums">
+              {(pagination.page - 1) * pagination.limit + 1}–
+              {Math.min(pagination.page * pagination.limit, pagination.total)}
+            </span>{" "}
+            z{" "}
+            <span className="font-medium text-foreground tabular-nums">
+              {pagination.total}
+            </span>{" "}
+            {pluralizeArticles(pagination.total)}
+          </p>
+
+          <div className="flex items-center justify-between gap-3 sm:justify-end">
+            <span className="text-[11px] text-muted-foreground tabular-nums">
+              Strona {pagination.page} z {pagination.totalPages}
+            </span>
+
+            <div className="flex items-center gap-1.5">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={!pagination.hasPreviousPage}
+                onClick={() => handlePageChange(pagination.page - 1)}
+                className="h-8 rounded-lg px-3 text-[11px]"
+              >
+                <ChevronRight className="mr-1 size-3.5 rotate-180" />
+                Poprzednia
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={!pagination.hasNextPage}
+                onClick={() => handlePageChange(pagination.page + 1)}
+                className="h-8 rounded-lg px-3 text-[11px]"
+              >
+                Następna
+                <ChevronRight className="ml-1 size-3.5" />
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import API from "../../config/api.config";
+import type { FindArticlesQuery } from "./types";
 
 const BASE_URL = "/api/articles";
 
@@ -6,8 +7,8 @@ const create = (payload) => {
   return API.post(`${BASE_URL}/create`, payload);
 };
 
-const find = () => {
-  return API.get(`${BASE_URL}`);
+const find = (params: FindArticlesQuery = {}) => {
+  return API.get(`${BASE_URL}`, { params });
 };
 
 const findOne = (articleId: string) => {

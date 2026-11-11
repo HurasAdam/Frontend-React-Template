@@ -2,6 +2,7 @@ export interface IProduct {
   id: string;
   name: string;
   labelColor: string;
+  createdAt: string;
   createdBy: string;
 }
 
