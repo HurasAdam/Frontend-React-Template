@@ -1,11 +1,6 @@
-import { FolderPlus, LinkIcon, Plus } from "lucide-react";
+import { FolderPlus, Plus } from "lucide-react";
+
 import { Button } from "../../../../components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../../../../components/ui/dropdown-menu";
 
 interface UsefulLinksHeaderProps {
   openAddLink: () => void;
@@ -17,35 +12,35 @@ export const UsefulLinksHeader = ({
   openAddCategory,
 }: UsefulLinksHeaderProps) => {
   return (
-    <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Przydatne linki</h1>
+    <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="space-y-1.5">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Przydatne linki
+        </h1>
 
-        <p className="text-sm text-muted-foreground">
-          Zewnętrzne zasoby, dokumentacje i narzędzia pomocnicze
+        <p className="max-w-xl text-sm text-muted-foreground">
+          Linki i materiały przydatne w codziennej pracy Helpdesku.
         </p>
       </div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button className="gap-2 self-start sm:self-auto">
-            <Plus className="h-4 w-4" />
-            Dodaj
-          </Button>
-        </DropdownMenuTrigger>
+      <div className="flex shrink-0 items-center gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={openAddCategory}
+          className="gap-2"
+        >
+          <FolderPlus className="h-4 w-4" />
+          <span className="hidden sm:inline">Nowa kategoria</span>
+          <span className="sm:hidden">Kategoria</span>
+        </Button>
 
-        <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem onClick={openAddLink}>
-            <LinkIcon className="mr-2 h-4 w-4" />
-            Dodaj link
-          </DropdownMenuItem>
-
-          <DropdownMenuItem onClick={openAddCategory}>
-            <FolderPlus className="mr-2 h-4 w-4" />
-            Dodaj kategorię
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+        <Button type="button" size="sm" onClick={openAddLink} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Dodaj link
+        </Button>
+      </div>
     </div>
   );
 };

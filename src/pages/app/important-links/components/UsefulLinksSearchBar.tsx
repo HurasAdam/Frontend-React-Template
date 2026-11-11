@@ -1,11 +1,12 @@
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 
+import { Button } from "../../../../components/ui/button";
 import { Input } from "../../../../components/ui/input";
-import { cn } from "../../../../lib/utils";
 
 interface Category {
   id: string;
   name: string;
+  count: number;
 }
 
 interface Props {
@@ -14,6 +15,10 @@ interface Props {
   categories: Category[];
   selectedCategory: string;
   onCategoryChange: (categoryId: string) => void;
+  totalCount: number;
+  filteredCount: number;
+  hasActiveFilters: boolean;
+  onClearFilters: () => void;
 }
 
 export const UsefulLinksSearchBar = ({
@@ -22,62 +27,89 @@ export const UsefulLinksSearchBar = ({
   categories,
   selectedCategory,
   onCategoryChange,
+  totalCount,
+  filteredCount,
+  hasActiveFilters,
+  onClearFilters,
 }: Props) => {
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      {/* Search */}
-      <div className="relative min-w-[220px] max-w-md flex-1">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+    <section className="mb-7">
+      <div className="flex flex-col gap-3">
+        {/* Search */}
+        <div className="relative w-full sm:max-w-md">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
-        <Input
-          placeholder="Szukaj linków..."
-          value={search}
-          onChange={(event) => onSearchChange(event.target.value)}
-          className="pl-9"
-        />
+          <Input
+            value={search}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="Szukaj linków, opisów lub adresów..."
+            aria-label="Szukaj przydatnych linków"
+            className="h-10 rounded-xl pl-9"
+          />
+        </div>
 
-        {search && (
-          <button
+        {/* Category filters */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
             type="button"
-            onClick={() => onSearchChange("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+            variant={selectedCategory === "all" ? "secondary" : "ghost"}
+            size="sm"
+            aria-pressed={selectedCategory === "all"}
+            className={
+              selectedCategory === "all"
+                ? "h-8 rounded-lg border border-border px-3 font-medium"
+                : "h-8 rounded-lg px-3 font-normal text-muted-foreground"
+            }
+            onClick={() => onCategoryChange("all")}
           >
-            <X className="h-4 w-4" />
-          </button>
-        )}
-      </div>
+            Wszystkie
+            <span className="ml-1.5 text-xs text-muted-foreground">
+              {totalCount}
+            </span>
+          </Button>
 
-      {/* Categories */}
-      <div className="flex flex-wrap gap-1.5">
-        <button
-          type="button"
-          onClick={() => onCategoryChange("all")}
-          className={cn(
-            "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
-            selectedCategory === "all"
-              ? "border-primary bg-primary text-primary-foreground"
-              : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+          {categories.map((category) => {
+            const isActive = selectedCategory === category.id;
+
+            return (
+              <Button
+                key={category.id}
+                type="button"
+                variant={isActive ? "secondary" : "ghost"}
+                size="sm"
+                aria-pressed={isActive}
+                className={
+                  isActive
+                    ? "h-8 rounded-lg border border-border px-3 font-medium"
+                    : "h-8 rounded-lg px-3 font-normal text-muted-foreground"
+                }
+                onClick={() => onCategoryChange(category.id)}
+              >
+                {category.name}
+                <span className="ml-1.5 text-xs text-muted-foreground">
+                  {category.count}
+                </span>
+              </Button>
+            );
+          })}
+
+          {hasActiveFilters && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="ml-1 h-8 rounded-lg px-2 text-xs font-normal text-muted-foreground hover:text-foreground"
+              onClick={onClearFilters}
+            >
+              Wyczyść filtry
+            </Button>
           )}
-        >
-          Wszystkie
-        </button>
 
-        {categories.map((category) => (
-          <button
-            type="button"
-            key={category.id}
-            onClick={() => onCategoryChange(category.id)}
-            className={cn(
-              "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
-              selectedCategory === category.id
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-            )}
-          >
-            {category.name}
-          </button>
-        ))}
+          <span className="ml-auto hidden text-xs text-muted-foreground sm:block">
+            {filteredCount} {filteredCount === 1 ? "link" : "linków"}
+          </span>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
