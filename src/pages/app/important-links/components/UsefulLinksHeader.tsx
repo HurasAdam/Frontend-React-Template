@@ -29,14 +29,19 @@ export const UsefulLinksHeader = ({
           variant="outline"
           size="sm"
           onClick={openAddCategory}
-          className="gap-2"
+          className="h-10 shrink-0 gap-2 rounded-lg px-4 text-[13px] shadow-sm"
         >
           <FolderPlus className="h-4 w-4" />
           <span className="hidden sm:inline">Nowa kategoria</span>
           <span className="sm:hidden">Kategoria</span>
         </Button>
 
-        <Button type="button" size="sm" onClick={openAddLink} className="gap-2">
+        <Button
+          type="button"
+          size="sm"
+          onClick={openAddLink}
+          className="h-10 shrink-0 gap-2 rounded-lg px-4 text-[13px] shadow-sm"
+        >
           <Plus className="h-4 w-4" />
           Dodaj link
         </Button>
