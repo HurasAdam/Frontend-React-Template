@@ -10,6 +10,24 @@ export const useFindArticlesQuery = (params: FindArticlesQuery = {}) => {
   });
 };
 
+export const useFindDraftArticlesQuery = (params: FindArticlesQuery = {}) => {
+  return useQuery({
+    queryKey: ["draft-articles", params],
+    queryFn: () => articleServie.findDraft(params),
+    placeholderData: keepPreviousData,
+  });
+};
+
+export const useFindReviewScheduledArticlesQuery = (
+  params: FindArticlesQuery = {},
+) => {
+  return useQuery({
+    queryKey: ["review-scheduled-articles", params],
+    queryFn: () => articleServie.findReviewScheduled(params),
+    placeholderData: keepPreviousData,
+  });
+};
+
 export const useFindArticleQuery = (articleId?: string) => {
   return useQuery({
     queryKey: ["article", articleId],

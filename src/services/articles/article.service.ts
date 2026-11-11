@@ -11,6 +11,14 @@ const find = (params: FindArticlesQuery = {}) => {
   return API.get(`${BASE_URL}`, { params });
 };
 
+const findDraft = (params: FindArticlesQuery = {}) => {
+  return API.get(`${BASE_URL}/drafts`, { params });
+};
+
+const findReviewScheduled = (params: FindArticlesQuery = {}) => {
+  return API.get(`${BASE_URL}/review-scheduled`, { params });
+};
+
 const findOne = (articleId: string) => {
   return API.get(`${BASE_URL}/${articleId}`);
 };
@@ -52,6 +60,8 @@ const updateArticleTags = (aritlceId: string, payload: {}) => {
 export const articleServie = {
   create,
   find,
+  findDraft,
+  findReviewScheduled,
   findOne,
   approveOne,
   verifyOne,

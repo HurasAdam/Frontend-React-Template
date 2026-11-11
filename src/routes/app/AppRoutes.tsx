@@ -20,10 +20,12 @@ import { WorkspaceLayout } from "../../layouts/WorkspaceLayout";
 import { ArticleHistoryLayout } from "../../pages/app/article/view/ArticleHistoryLayout";
 import { ArticleLayout } from "../../pages/app/article/view/ArticleLayout";
 import { EditArticleLayout } from "../../pages/app/article/view/EditArticleLayout";
+import { DraftArticlesLayout } from "../../pages/app/draft-articles/view/DraftArticlesLayout";
 import { UsefulLinksLayout } from "../../pages/app/important-links/views/UsefulLinksLayout";
 import { NewArticleLayout } from "../../pages/app/newArticle/view/NewArticleLayout";
 import { NewWorkspaceLayout } from "../../pages/app/newWorkspace/view/NewWorkspaceLayout";
 import { RegisterActivityLayout } from "../../pages/app/register-activity/view/RegisterActivityLayout";
+import { ReviewScheduledArticlesLayout } from "../../pages/app/review-scheduled-articles/view/ReviewScheduledArticlesLayout";
 import { SettingsLayout as AppSettingsLayout } from "../../pages/app/settings/view/SettingsLayout";
 import { SettingsPage } from "../../pages/app/settings/view/SettingsPage";
 import WorkspaceArticleLayout from "../../pages/app/workspace/subpages/article/view/WorkspaceArticleLayout";
@@ -55,6 +57,11 @@ export const AppRoutes = () => {
           <Route element={<BaseLayout />}>
             <Route path="/dashboard" element={<DashboardLayout />} />
             <Route path="/articles" element={<ArticlesLayout />} />
+            <Route path="/draft-articles" element={<DraftArticlesLayout />} />
+            <Route
+              path="/review-scheduled-articles"
+              element={<ReviewScheduledArticlesLayout />}
+            />
             <Route path="/articles/:articleId" element={<ArticleLayout />} />
             <Route
               path="/articles/:articleId/edit"

@@ -21,8 +21,10 @@ import {
   AudioLinesIcon,
   BookOpen,
   BookSearch,
+  CalendarClock,
   ChartNoAxesCombined,
   CircleQuestionMark,
+  FilePlus,
   Heart,
   House,
   LandPlot,
@@ -42,6 +44,7 @@ import {
   TerminalIcon,
 } from "lucide-react";
 import type { AuthUserData } from "../../../services/auth/auth.types";
+import { NavReview } from "./nav-review";
 
 // --- DATA ---
 const data = {
@@ -78,6 +81,19 @@ const data = {
     { title: "Działy i kontakty", url: "/departments", icon: <NotebookTabs /> },
     { title: "Zabawne wiad.", url: "/fun", icon: <Smile /> },
     { title: "Oczekujące", url: "/pending", icon: <PieChartIcon /> },
+  ],
+
+  review: [
+    {
+      title: "Nowe artykuły",
+      url: "/draft-articles",
+      icon: <FilePlus />,
+    },
+    {
+      title: "Weryfikacja okresowa",
+      url: "/review-scheduled-articles",
+      icon: <CalendarClock />,
+    },
   ],
 
   projects: [
@@ -137,6 +153,7 @@ export function AppSidebar({ user, ...props }: IProps) {
 
           <NavMain items={data.navMain} />
           <NavProjects projects={data.projects} />
+          <NavReview items={data.review} />
           <NavOthers others={data.others} />
         </SidebarContent>
 
