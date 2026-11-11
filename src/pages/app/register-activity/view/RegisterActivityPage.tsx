@@ -1,8 +1,10 @@
+import { Plus, Search } from "lucide-react";
 import { useMemo, useState } from "react";
+
 import { useFindAllTopicsQuery } from "../../../../hooks/product-topics/queries/use-product-topic-queries";
 
+import { Button } from "../../../../components/ui/button";
 import { FilterSection } from "../components/FilterSection";
-import { Header } from "../components/Header";
 import { TopicsSection } from "../components/TopicsSection";
 
 export type ContactType = "phone" | "message";
@@ -23,7 +25,7 @@ export function RegisterActivityPage() {
   const { data: activityTopics = [] } = useFindAllTopicsQuery();
 
   const [search, setSearch] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState<string>("all");
+  const [selectedProduct, setSelectedProduct] = useState("all");
 
   const topics = activityTopics as Topic[];
 
@@ -50,13 +52,13 @@ export function RegisterActivityPage() {
   }, [topics]);
 
   const filteredTopics = useMemo(() => {
-    const query = search.trim().toLowerCase();
+    const query = search.trim().toLocaleLowerCase("pl");
 
     return topics.filter((topic) => {
       const matchesSearch =
         !query ||
-        topic.name.toLowerCase().includes(query) ||
-        topic.product.name.toLowerCase().includes(query);
+        topic.name.toLocaleLowerCase("pl").includes(query) ||
+        topic.product.name.toLocaleLowerCase("pl").includes(query);
 
       const matchesProduct =
         selectedProduct === "all" || topic.product.id === selectedProduct;
@@ -94,33 +96,97 @@ export function RegisterActivityPage() {
   const hasActiveFilters =
     search.trim().length > 0 || selectedProduct !== "all";
 
-  return (
-    <div className="min-h-full bg-background">
-      <div className="mx-auto w-full">
-        <Header
-          filteredTopics={filteredTopics}
-          hasActiveFilters={hasActiveFilters}
-        />
+  const productCount = groupedTopics.length;
 
-        <FilterSection
-          search={search}
-          products={products}
-          counts={counts}
-          selectedProduct={selectedProduct}
-          hasActiveFilters={hasActiveFilters}
-          clearFilters={clearFilters}
-          setSearch={setSearch}
-          setSelectedProduct={setSelectedProduct}
-        />
+  const topicCount = filteredTopics.length;
+
+  const topicLabel =
+    topicCount === 1
+      ? "temat"
+      : topicCount >= 2 && topicCount <= 4
+        ? "tematy"
+        : "tematów";
+
+  const productLabel =
+    productCount === 1
+      ? "produkt"
+      : productCount >= 2 && productCount <= 4
+        ? "produkty"
+        : "produktów";
+
+  return (
+    <main className="min-h-full w-full min-w-0 pb-10 text-foreground">
+      <div className="mx-auto w-full">
+        {/* Page header */}
+
+        <header className="mb-8 border-b border-border/70 pb-6">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1.5">
+              <h1 className="text-2xl font-semibold tracking-tight">
+                Rejestr zgłoszeń
+              </h1>
+
+              <p className="max-w-xl text-sm text-muted-foreground">
+                Odnotuj temat poruszony podczas kontaktu z użytkownikiem.
+              </p>
+            </div>
+
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => {}}
+              className="shrink-0 gap-2"
+            >
+              <Plus className="size-4" />
+              Dodaj temat
+            </Button>
+          </div>
+        </header>
+        {/* Filters */}
+
+        <section aria-label="Filtrowanie tematów" className="mb-9">
+          <FilterSection
+            search={search}
+            products={products}
+            counts={counts}
+            selectedProduct={selectedProduct}
+            hasActiveFilters={hasActiveFilters}
+            clearFilters={clearFilters}
+            setSearch={setSearch}
+            setSelectedProduct={setSelectedProduct}
+          />
+        </section>
+
+        {/* Topics header */}
+
+        <div className="mb-5 flex items-center justify-between gap-4">
+          <div>
+            <h2 className="text-sm font-semibold tracking-tight">
+              Dostępne tematy
+            </h2>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              Wybierz temat, aby zarejestrować kontakt z użytkownikiem.
+            </p>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground">
+            <Search className="size-3.5" />
+
+            <span className="tabular-nums">
+              {filteredTopics.length} / {topics.length}
+            </span>
+          </div>
+        </div>
+
+        {/* Topics */}
 
         <TopicsSection
           topics={groupedTopics}
           hasActiveFilters={hasActiveFilters}
           clearFilters={clearFilters}
         />
-
-        <div className="h-8" />
       </div>
-    </div>
+    </main>
   );
 }

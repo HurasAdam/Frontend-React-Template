@@ -31,7 +31,6 @@ export function TopicRow({ topic }: Props) {
   const { mutateAsync, isPending } = useAddContactRecordMutation();
 
   const [pendingType, setPendingType] = useState<ContactType | null>(null);
-
   const [successType, setSuccessType] = useState<ContactType | null>(null);
 
   const handleContact = async (type: ContactType) => {
@@ -47,7 +46,6 @@ export function TopicRow({ topic }: Props) {
       });
 
       reset();
-
       setSuccessType(type);
 
       toast.success(
@@ -68,119 +66,109 @@ export function TopicRow({ topic }: Props) {
 
   const renderIcon = (type: ContactType) => {
     if (isPending && pendingType === type) {
-      return <Loader2 className="h-3.5 w-3.5 animate-spin" />;
+      return <Loader2 className="size-4 animate-spin" />;
     }
 
     if (successType === type) {
-      return <Check className="h-3.5 w-3.5 text-emerald-500" />;
+      return (
+        <Check className="size-4 text-emerald-600 dark:text-emerald-400" />
+      );
     }
 
     return type === "message" ? (
-      <MessageSquare className="h-3.5 w-3.5" />
+      <MessageSquare className="size-4" />
     ) : (
-      <Phone className="h-3.5 w-3.5" />
+      <Phone className="size-4" />
     );
   };
 
   return (
-    <Card className="group overflow-hidden rounded-lg bg-card shadow-sm transition-shadow duration-200 hover:shadow-md">
+    <Card className="group overflow-hidden rounded-xl border-border/70 bg-card shadow-none transition-colors duration-200 hover:border-border hover:bg-muted/[0.12]">
       <CardContent className="p-0">
-        <div className="px-5 py-4 sm:px-6">
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-center">
-            <div className="flex min-w-0 flex-1 items-center gap-3">
-              <div
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-                style={{
-                  backgroundColor: `${topic.product.labelColor}12`,
-                  color: topic.product.labelColor,
-                }}
-              >
-                <span className="text-xs font-bold">
-                  {topic.name.slice(0, 1).toUpperCase()}
-                </span>
-              </div>
+        <div className="grid grid-cols-1 items-center gap-4 px-4 py-4 sm:px-5 lg:grid-cols-[minmax(200px,1fr)_minmax(240px,1.3fr)_auto] lg:gap-6">
+          {/* Topic information */}
 
-              <div className="min-w-0">
-                <div className="truncate text-sm font-semibold tracking-[-0.01em]">
-                  {topic.name}
-                </div>
+          <div className="min-w-0">
+            <h3 className="truncate text-sm font-semibold tracking-tight text-foreground">
+              {topic.name}
+            </h3>
 
-                <div className="mt-1">
-                  <ProductBadge product={topic.product} />
-                </div>
-              </div>
+            <div className="mt-2">
+              <ProductBadge product={topic.product} />
             </div>
+          </div>
 
-            <div className="flex w-1/2 items-center justify-center gap-20">
-              <div className="w-full lg:max-w-[500px]">
-                <Textarea
-                  {...register("note")}
-                  placeholder="Dodaj notatkę (opcjonalne)"
-                  className="min-h-[42px] resize-none rounded-xl border-border/60 bg-muted/30 px-3 py-2 text-sm shadow-none transition-colors placeholder:text-muted-foreground/60 focus-visible:bg-background"
-                  rows={1}
-                  disabled={isPending}
-                />
-              </div>
-              <div className="flex shrink-0 items-center gap-2.5">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  disabled={isPending}
-                  onClick={() => handleContact("message")}
-                  aria-label="Odnotuj wiadomość"
-                  className="
-      size-11
-      rounded-xl
-      border-border/70
-      bg-background
-      text-muted-foreground
-      shadow-none
-      transition-all
-      duration-200
-      hover:-translate-y-px
-      hover:border-border
-      hover:bg-muted/60
-      hover:text-foreground
-      hover:shadow-sm
-      active:translate-y-0
-      disabled:pointer-events-none
-      disabled:opacity-50
-    "
-                >
-                  {renderIcon("message")}
-                </Button>
+          {/* Optional note */}
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  disabled={isPending}
-                  onClick={() => handleContact("phone")}
-                  aria-label="Odnotuj kontakt telefoniczny"
-                  className="
-      size-11
-      rounded-xl
-      border-border/70
-      bg-background
-      text-muted-foreground
-      shadow-none
-      transition-all
-      duration-200
-      hover:-translate-y-px
-      hover:border-border
-      hover:bg-muted/60
-      hover:text-foreground
-      hover:shadow-sm
-      active:translate-y-0
-      disabled:pointer-events-none
-      disabled:opacity-50
-    "
-                >
-                  {renderIcon("phone")}
-                </Button>
-              </div>
-            </div>
+          <div className="min-w-0">
+            <Textarea
+              {...register("note")}
+              placeholder="Dodaj notatkę (opcjonalnie)..."
+              aria-label={`Notatka do tematu: ${topic.name}`}
+              rows={1}
+              disabled={isPending}
+              className="
+                min-h-[42px] max-h-24 resize-y
+                rounded-lg border-border/60
+                bg-muted/25 px-3 py-2.5
+                text-sm leading-relaxed shadow-none
+                placeholder:text-muted-foreground/55
+                transition-colors
+                focus-visible:border-primary/40
+                focus-visible:bg-background
+                focus-visible:ring-2
+                focus-visible:ring-primary/10
+                disabled:opacity-60
+              "
+            />
+          </div>
+
+          {/* Contact actions */}
+
+          <div className="flex items-center gap-2 lg:justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isPending}
+              onClick={() => handleContact("message")}
+              aria-label="Odnotuj wiadomość"
+              className="
+                h-10 flex-1 gap-2 rounded-lg
+                border-border/70 bg-background
+                px-3 text-xs font-medium
+                text-muted-foreground shadow-none
+                transition-colors
+                hover:border-border hover:bg-muted
+                hover:text-foreground
+                sm:flex-none
+              "
+            >
+              {renderIcon("message")}
+              <span>Wiadomość</span>
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isPending}
+              onClick={() => handleContact("phone")}
+              aria-label="Odnotuj kontakt telefoniczny"
+              className="
+                h-10 flex-1 gap-2 rounded-lg
+                border-border/70 bg-background
+                px-3 text-xs font-medium
+                text-muted-foreground shadow-none
+                transition-colors
+                hover:border-border hover:bg-muted
+                hover:text-foreground
+                sm:flex-none
+              "
+            >
+              {renderIcon("phone")}
+              <span>Telefon</span>
+            </Button>
           </div>
         </div>
       </CardContent>
