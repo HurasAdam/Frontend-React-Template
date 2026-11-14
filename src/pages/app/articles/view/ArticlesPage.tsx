@@ -327,20 +327,25 @@ export function ArticlesPage() {
   return (
     <div className="space-y-4">
       {/* Page header */}
+      {/* Page header */}
       <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
-        <div className="min-w-0 space-y-1.5">
-          <h1 className="text-[22px] font-semibold tracking-[-0.035em] sm:text-2xl">
-            Baza artykułów
-          </h1>
+        <div className="min-w-0 space-y-2">
+          {/* <ArticlesPageBreadcrumbs /> */}
 
-          <p className="text-[13px] leading-relaxed text-muted-foreground">
-            Znajdź sprawdzone rozwiązania i gotowe odpowiedzi na zgłoszenia.
-          </p>
+          <div className="space-y-1.5">
+            <h1 className="text-[22px] font-semibold tracking-[-0.035em] sm:text-2xl">
+              Baza artykułów
+            </h1>
+
+            <p className="text-[13px] leading-relaxed text-muted-foreground">
+              Znajdź gotowy szablon odpowiedzi.
+            </p>
+          </div>
         </div>
 
         <Button
           onClick={() => navigate("/articles/new")}
-          className="h-10 shrink-0 gap-2 rounded-lg px-4 text-[13px] shadow-sm"
+          className="h-9 shrink-0 gap-2 rounded-lg px-3 text-[12px] shadow-sm"
         >
           <Plus className="size-4" />
           Dodaj artykuł

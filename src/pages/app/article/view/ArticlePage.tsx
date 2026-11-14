@@ -5,13 +5,13 @@
 
 import {
   Archive,
-  ArrowLeft,
   Bell,
   CheckCircle2,
   ChevronRight,
   Clock3,
   EyeOff,
   FileCog,
+  FileText,
   Globe,
   History,
   MessageSquareText,
@@ -351,29 +351,29 @@ export function ArticlePage() {
       <div className="mx-auto w-full max-w-[1480px]">
         {/* Nagłówek strony */}
         <header className="flex flex-col gap-4 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex min-w-0 items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              aria-label="Wróć do poprzedniej strony"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft />
-              Powrót
-            </Button>
-
-            <nav
-              aria-label="Okruszki"
-              className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-muted-foreground"
-            >
-              <span>Baza wiedzy</span>
-              <span aria-hidden="true">/</span>
-              <span>{data?.product?.name ?? "Produkt"}</span>
-              <span aria-hidden="true">/</span>
-              <span className="break-words font-medium text-foreground">
-                {data?.title ?? "Artykuł"}
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <div className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-border/70 bg-muted/30 px-2 py-1">
+              <Package className="size-3.5 shrink-0 text-muted-foreground" />
+              <span className="truncate text-xs font-medium text-foreground">
+                {data?.product?.name ?? "Nie przypisano produktu"}
               </span>
-            </nav>
+            </div>
+
+            <div className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-border/70 bg-muted/30 px-2 py-1">
+              <Tags className="size-3.5 shrink-0 text-muted-foreground" />
+              <span className="truncate text-xs font-medium text-foreground">
+                {data?.category?.name ?? "Nie przypisano kategorii"}
+              </span>
+            </div>
+
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-medium ${reviewConfig.buttonClassName}`}
+            >
+              <span
+                className={`size-1.5 rounded-full ${reviewConfig.indicatorClassName}`}
+              />
+              {reviewConfig.label}
+            </span>
           </div>
 
           <div className="flex shrink-0 items-center">
@@ -393,29 +393,26 @@ export function ArticlePage() {
           <div className="min-w-0 space-y-4">
             {/* Panel tytułu */}
             <div className="min-w-0 rounded-xl border border-border bg-card p-5 sm:p-6">
-              <div className="flex flex-wrap items-center gap-2">
-                <span
-                  className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium ${reviewConfig.buttonClassName}`}
-                >
-                  <span
-                    className={`size-1.5 rounded-full ${reviewConfig.indicatorClassName}`}
-                  />
-                  {reviewConfig.label}
-                </span>
+              <div className="mb-4 flex items-center gap-2 text-[11px] text-muted-foreground">
+                <FileText className="size-3.5 shrink-0" />
 
-                {data?.importantMarker === "pin" && (
+                <span className="font-medium">Artykuł</span>
+
+                <span className="text-border">/</span>
+
+                <span className="font-mono tracking-wide text-foreground/70">
+                  {articleId}
+                </span>
+              </div>
+
+              {data?.importantMarker === "pin" && (
+                <div className="flex">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-chart-4/10 px-2.5 py-1 text-[11px] font-medium text-chart-4">
                     <Pin className="size-3" />
                     Przypięty
                   </span>
-                )}
-
-                {data?.category?.name && (
-                  <span className="rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground">
-                    {data.category.name}
-                  </span>
-                )}
-              </div>
+                </div>
+              )}
 
               <h1 className="mt-4 break-words text-2xl font-semibold leading-tight tracking-tight sm:text-[24px]">
                 {data?.title ?? "Artykuł"}
@@ -423,9 +420,9 @@ export function ArticlePage() {
 
               <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border/70 pt-4 text-xs text-muted-foreground">
                 <span>
-                  Autor:{" "}
+                  Zweryfikowano :{" "}
                   <span className="font-medium text-foreground/80">
-                    {authorName}
+                    {formatDate(data?.lastVerifiedAt)}
                   </span>
                 </span>
 
@@ -437,9 +434,9 @@ export function ArticlePage() {
                 </span>
 
                 <span>
-                  Dodano{" "}
+                  Autor:{" "}
                   <span className="font-medium text-foreground/80">
-                    {formatDate(data?.createdAt)}
+                    {authorName}
                   </span>
                 </span>
 
@@ -527,11 +524,11 @@ export function ArticlePage() {
           </div>
 
           {/* Kafelki akcji */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-1">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-1">
             <button
               type="button"
               onClick={() => navigate(`/articles/${articleId}/history`)}
-              className="group flex min-h-[68px] min-w-0 items-center gap-2.5 rounded-lg border border-dashed border-border/80 bg-transparent p-3 text-left transition-colors hover:border-border hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="group flex min-h-[56px] min-w-0 items-center gap-2.5 rounded-lg border border-dashed border-border/80 bg-transparent p-3 text-left transition-colors hover:border-border hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted/60 text-muted-foreground transition-colors group-hover:text-foreground">
                 <History className="size-4" />
@@ -550,7 +547,7 @@ export function ArticlePage() {
             <button
               onClick={() => navigate(`/articles/${articleId}/edit`)}
               type="button"
-              className="group flex min-h-[68px] min-w-0 items-center gap-2.5 rounded-lg border border-dashed border-border/80 bg-transparent p-3 text-left transition-colors hover:border-border hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="group flex min-h-[56px] min-w-0 items-center gap-2.5 rounded-lg border border-dashed border-border/80 bg-transparent p-3 text-left transition-colors hover:border-border hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted/60 text-muted-foreground transition-colors group-hover:text-foreground">
                 <FileCog className="size-4" />
@@ -569,7 +566,7 @@ export function ArticlePage() {
             <button
               type="button"
               onClick={() => responseVariantModal.openAdd()}
-              className="group flex min-h-[68px] min-w-0 items-center gap-2.5 rounded-lg border border-dashed border-border/80 bg-transparent p-3 text-left transition-colors hover:border-border hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="group flex min-h-[56px] min-w-0 items-center gap-2.5 rounded-lg border border-dashed border-border/80 bg-transparent p-3 text-left transition-colors hover:border-border hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted/60 text-muted-foreground transition-colors group-hover:text-foreground">
                 <Plus className="size-4" />
